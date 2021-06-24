@@ -1,0 +1,22 @@
+{
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "build": "concurrently -r yarn:build:*",
+    "build:js": "esbuild Resources/Private/Assets/Backend.js --bundle --minify --outfile=Resources/Public/Scripts/Backend.js",
+    "build:css": "tailwindcss -i Resources/Private/Assets/Backend.pcss -m -o Resources/Public/Styles/Backend.css",
+    "watch": "concurrently -r yarn:watch:*",
+    "watch:js": "esbuild Resources/Private/Assets/Backend.js --bundle --watch --outfile=Resources/Public/Scripts/Backend.js",
+    "watch:css": "tailwindcss -i Resources/Private/Assets/Backend.pcss -w -o Resources/Public/Styles/Backend.css",
+    "pipeline:install": "yarn install --silent --non-interactive",
+    "pipeline": "concurrently -r yarn:pipeline:*;yarn build"
+  },
+  "dependencies": {
+    "alpinejs": "^3.1.1",
+    "autoprefixer": "^10.2.6",
+    "concurrently": "^6.2.0",
+    "esbuild": "^0.12.9",
+    "postcss": "^8.3.5",
+    "tailwindcss": "^2.2.4"
+  }
+}
