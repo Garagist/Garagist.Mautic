@@ -1,0 +1,10 @@
+Neos:
+  EventSourcing:
+    EventStore:
+      stores:
+        'Garagist.Mautic:EventStore':
+          storage: 'Neos\EventSourcing\EventStore\Storage\Doctrine\DoctrineEventStorage'
+          storageOptions:
+            eventTableName: 'garagist_mautic_events'
+          listeners:
+            'Garagist\Mautic\Manager\MauticProcessManager': true

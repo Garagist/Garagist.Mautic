@@ -1,0 +1,25 @@
+include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+
+Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
+    renderer = afx`
+        index
+    `
+}
+
+Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
+
+    test = ${templateUrl}
+
+    renderer = afx`
+        {props.test}
+    `
+}
+
+Garagist.Mautic.BackendController.create = Neos.Fusion:Component {
+
+    test = ${templateUrl}
+
+    renderer = afx`
+        {props.test}
+    `
+}

@@ -1,0 +1,38 @@
+Garagist:
+  Mautic:
+    api:
+      baseUrl: 'http://dev.mautic.emk.loc'
+      userName: 'ds'
+      password: '12345678'
+
+
+Neos:
+  Flow:
+    log:
+      psr3:
+        'Neos\Flow\Log\PsrLoggerFactory':
+          'Garagist.Mautic:MauticLogger':
+            default:
+              class: Neos\Flow\Log\Backend\FileBackend
+              options:
+                logFileURL: '%FLOW_PATH_DATA%Logs/Mautic.log'
+                createParentDirectories: true
+                severityThreshold: '%LOG_INFO%'
+  Neos:
+    modules:
+      management:
+        submodules:
+          mautic:
+            label: Mautic
+            description: 'Mautic related status and actions'
+            icon: 'fas fa-chart-pie'
+            controller: \Garagist\Mautic\Controller\BackendController
+            privilegeTarget: 'Garagist.Mautic:BackendModule'
+            position: end
+            mainStylesheet: Lite
+#            additionalResources:
+#              javaScripts:
+#                - 'resource://Carbon.Plausible/Public/LocalStorage.js'
+#                - 'resource://Carbon.Plausible/Public/Module.js'
+#              styleSheets:
+#                - 'resource://Carbon.Plausible/Public/Module.css'
