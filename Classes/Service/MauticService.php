@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Garagist\Mautic\Service;
 
+use Garagist\Mautic\Event\MauticEmailCreate;
 use Neos\Flow\Annotations as Flow;
 use Garagist\Mautic\Domain\Model\MauticEmail;
 use Garagist\Mautic\Domain\Repository\MauticEmailRepository;
@@ -63,6 +64,13 @@ class MauticService
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function createEmail(string $nodeIdentifier, string $templateUrl) {
+        $event = new MauticEmailCreate($nodeIdentifier,$templateUrl);
+        $streamName = StreamName::fromString('email-create-' . $nodeIdentifier);
+
+        $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
+    }
+
+    public function saveEmail(string $nodeIdentifier, string $templateUrl) {
         $email = new MauticEmail();
         $email->setTemplateUrl($templateUrl);
         $email->setNodeIdentifier($nodeIdentifier);
@@ -79,6 +87,14 @@ class MauticService
      */
     public function getEmail(string $emailIdentifier) {
         return $this->mauticEmailRepository->findByIdentifier($emailIdentifier);
+    }
+
+    /**
+     * @param string $nodeIdentifier
+     * @return mixed
+     */
+    public function getEmails(string $nodeIdentifier) {
+        return $this->mauticEmailRepository->findByNodeIdentifier($nodeIdentifier);
     }
 
     /**

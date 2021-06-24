@@ -2,7 +2,10 @@
 declare(strict_types=1);
 namespace Garagist\Mautic\Manager;
 
+use Garagist\Mautic\Event\MauticEmailCreate;
 use Garagist\Mautic\Event\MauticEmailSent;
+use Garagist\Mautic\Service\MauticService;
+use MongoDB\Driver\Exception\ExecutionTimeoutException;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
@@ -21,6 +24,12 @@ final class MauticProcessManager implements EventListenerInterface
      * @var ApiService
      */
     protected $apiService;
+
+    /**
+     * @Flow\Inject
+     * @var MauticService
+     */
+    protected $mauticService;
 
     /**
      * @var EventStore
@@ -42,6 +51,16 @@ final class MauticProcessManager implements EventListenerInterface
     protected function initializeObject(): void
     {
         $this->eventStore = $this->eventStoreFactory->create('Garagist.Mautic:EventStore');
+    }
+
+    public function whenMauticEmailCreate(MauticEmailCreate $event): void
+    {
+        $this->mauticLogger->info(sprintf('Creating email with identifier:%s', $event->getNodeIdentifier()));
+        try {
+            $this->mauticService->saveEmail($event->getNodeIdentifier(), $event->getTemplateUrl());
+        } catch (Exception $e) {
+            $this->mauticLogger->error(sprintf('Creating email with node identifier:%s failed! Reason:', $e->getMessage()));
+        }
     }
 
     public function whenMauticEmailSend(MauticEmailSend $event): void
