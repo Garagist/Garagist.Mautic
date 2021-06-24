@@ -1,4 +1,3 @@
-include: resource://Neos.Fusion/Private/Fusion/Root.fusion
 
 Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
     renderer = afx`
@@ -8,10 +7,24 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
 
 Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
 
-    test = ${templateUrl}
+    emails = ${emails}
 
     renderer = afx`
-        {props.test}
+        <section class='mautic-list'>
+            <h2>{Translation.translate('emails.headline', 'E-mails', [], 'Module', 'Garagist.Mautic')}</h2>
+            <table class='neos-table'>
+                <tbody>
+                    <tr>
+                        Test
+                    </tr>
+                    <Neos.Fusion:Loop items={props.emails}>
+                        <tr>
+                            <td>{item.templateUrl}</td>
+                        </tr>
+                    </Neos.Fusion:Loop>
+                </tbody>
+            </table>
+        </section>
     `
 }
 

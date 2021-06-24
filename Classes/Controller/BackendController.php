@@ -57,17 +57,6 @@ class BackendController extends AbstractModuleController
     ];
 
     /**
-     * Sets the Fusion path pattern on the view to avoid conflicts with the frontend fusion
-     *
-     * This is not needed if your package does not register itself to `Neos.Neos.fusion.autoInclude.*`
-     */
-    protected function initializeView(ViewInterface $view)
-    {
-        parent::initializeView($view);
-        $view->setFusionPathPattern('resource://Garagist.Mautic/Private/Fusion/Backend');
-    }
-
-    /**
      * Allow invisible nodes to be redirected to
      *
      * @return void
@@ -90,7 +79,9 @@ class BackendController extends AbstractModuleController
 
     public function emailAction(NodeInterface $node): void
     {
+        $emails = $this->mauticService->getEmails($node->getIdentifier());
 
+        $this->view->assign('emails', $emails);
     }
 
     /**
@@ -112,6 +103,6 @@ class BackendController extends AbstractModuleController
         $this->mauticService->createEmail($node->getIdentifier(), $templateUrl);
 
 //        die('test');
-//        $this->redirect('email', null, null, ['node' => $node]);
+        $this->redirect('email', null, null, ['node' => $node]);
     }
 }

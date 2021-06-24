@@ -1,0 +1,6 @@
+- requestFilter: 'isPackage("Garagist.Mautic") && isController("Backend")'
+  viewObjectName: 'Neos\Fusion\View\FusionView'
+  options:
+    fusionPathPatterns:
+      - 'resource://Neos.Fusion/Private/Fusion'
+      - 'resource://Garagist.Mautic/Private/Fusion/Backend'
