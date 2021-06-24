@@ -1,11 +1,11 @@
 {
-    "description": "",
-    "type": "neos-package",
+    "description": "Neos adapter for the Mautic API",
+    "type": "neos-plugin",
     "name": "garagist/mautic",
     "require": {
         "neos/neos-ui": "^7.1",
         "neos/event-sourcing": "^2.0",
-        "neos/neos": "^5.0 || ^7.0",
+        "neos/neos": "^7.1",
         "mautic/api-library": "^2.0.0"
     },
     "autoload": {
