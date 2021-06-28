@@ -17,9 +17,9 @@ class MauticCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var ChurchLetterService
+     * @var ApiService
      */
-    protected $churchLetterService;
+    protected $apiService;
 
     /**
      * @Flow\Inject
@@ -27,28 +27,20 @@ class MauticCommandController extends CommandController
      */
     protected $mauticService;
 
-    /**
-     * @throws \Neos\ContentRepository\Exception\NodeException
-     */
-    function updateEmailCommand() {
-        $result = $this->churchLetterService->updateEmail('20cfbec0-03f8-4143-882c-95f4fb6f9b29');
-        $this->outputLine($result);
+
+
+    public function getCommand(string $neosIdentifier) {
+        \Neos\Flow\var_dump($this->apiService->findEmailByNeosIdentifier($neosIdentifier));
     }
 
-    function createEmailCommand() {
-        $this->mauticService->createEmail('114b2100-bae6-4af7-b7a0-6cc9e4fd83e3', 'http://dev.neos.emk.loc/de/gemeinden/wien-fuenfhaus/gemeinde-news/2021/150-jahre-emk-oesterreich.maizzle');
+    public function segmentsCommand(string $neosIdentifier) {
+        $email = $this->mauticService->getByEmailIdentifier($neosIdentifier);
+        \Neos\Flow\var_dump($this->mauticService->getSegmentsForEmail($email));
     }
 
-    function publishEmailCommand(\DateTime $date = null) {
-        $this->mauticService->publishEmail('20cfbec0-03f8-4143-882c-95f4fb6f9b29');
-    }
-
-    function unPublishEmailCommand(\DateTime $date = null) {
-        $this->mauticService->unPublishEamil('20cfbec0-03f8-4143-882c-95f4fb6f9b29');
-    }
-
-    function sendEmailCommand(\DateTime $date = null) {
-        $this->mauticService->sendEmail('20cfbec0-03f8-4143-882c-95f4fb6f9b29');
+    public function streamCommand(string $neosIdentifier) {
+        $email = $this->mauticService->getByEmailIdentifier($neosIdentifier);
+        \Neos\Flow\var_dump($this->mauticService->getAuditLog($email));
     }
 
 }

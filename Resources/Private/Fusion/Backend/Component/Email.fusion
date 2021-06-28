@@ -1,0 +1,85 @@
+Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
+
+    emails = ${emails}
+    node = ${node}
+    flashMessages = ${flashMessages}
+
+    severityMapping = Neos.Fusion:DataStructure {
+        OK = 'success'
+        Notice = 'notice'
+        Warning = 'warning'
+        Error = 'error'
+    }
+
+    renderer = afx`
+        <Neos.Fusion:Loop items={props.flashMessages} itemName="flashMessage">
+            <div class={'neos-tooltip neos-bottom neos-in neos-tooltip-' + props.severityMapping[flashMessage.severity]}>
+                <script @if.error={flashMessage.severity == 'Error'}>
+                    {"document.querySelector('fieldset').classList.add('effect--shake');"}
+                </script>
+                <div class="neos-tooltip-arrow"></div>
+                <div class="neos-tooltip-inner" role="alert">
+                    {flashMessage}
+                    <!--                    {I18n.id('flashMessage.' + flashMessage.code).value(flashMessage).package('Neos.Neos').source('Main')}-->
+                </div>
+            </div>
+        </Neos.Fusion:Loop>
+        <section class='mautic-list'>
+            <h2>{Translation.translate('emails.headline', 'E-mails', [], 'Module', 'Garagist.Mautic')}: {q(node).property('title')}</h2>
+            <table class='neos-table'>
+                <thead>
+                <tr>
+                    <td>Erstellt am</td>
+                    <td>Identifier</td>
+                    <td>Gesendet am</td>
+                    <td>Aktionen</td>
+                </tr>
+                </thead>
+                <tbody>
+                <Neos.Fusion:Loop items={props.emails}>
+                    <tr>
+                        <td>{Date.format(item.dateCreated, 'd.m.Y h:m:s')}</td>
+                        <td>{item.emailIdentifier}</td>
+                        <td>{item.dateSent ? Date.format(item.dateSent, 'd.m.Y h:m:s') : '-'}</td>
+                        <td @if.idel={item.task == 'idle'}>
+                            <div class="neos-pull-right">
+                                <Neos.Fusion:Link.Action @if.unpublished={item.dateModified != null && item.dateSend == null && !item.published} class="neos-button neos-button-primary" href.action="publish" href.arguments.node={props.node} href.arguments.email={item} >
+                                    <i class="fas fa-upload"></i>
+                                </Neos.Fusion:Link.Action>
+                                <Neos.Fusion:Link.Action @if.published={item.dateSent == null && item.published} class="neos-button neos-button-primary" href.action="unPublish" href.arguments.node={props.node} href.arguments.email={item} >
+                                    <i class="fas fa-download"></i>
+                                </Neos.Fusion:Link.Action>
+                                <Neos.Fusion:Link.Action @if.published={item.dateSent == null && item.published} class="neos-button neos-button-primary" href.action="send" href.arguments.node={props.node} href.arguments.email={item} >
+                                    <i class="fas fa-play"></i>
+                                </Neos.Fusion:Link.Action>
+                                <Neos.Fusion:Link.Action @if.published={item.dateSent == null && !item.published} class="neos-button neos-button-primary" href.action="update" href.arguments.node={props.node} href.arguments.email={item} >
+                                    <i class="fas fa-sync icon-white"></i>
+                                </Neos.Fusion:Link.Action>
+                                <Neos.Fusion:Link.Action class="neos-button neos-button-primary" href.action="info" href.arguments.node={props.node} href.arguments.email={item} >
+                                    <i class="fas fa-info icon-white"></i>
+                                </Neos.Fusion:Link.Action>
+                            </div>
+                        </td>
+                        <td @if.running={item.task != 'idle' && item.task != 'failed'}>
+                            <div class="neos-pull-right">
+                                The Task "{item.task}" is currently running... please wait!
+                            </div>
+                        </td>
+                        <td @if.running={item.task == 'failed'}>
+                            <div class="neos-pull-right">
+                                The last task could not be executed! Please check the info log.
+                                <Neos.Fusion:Link.Action class="neos-button neos-button-primary" href.action="info" href.arguments.node={props.node} href.arguments.email={item} >
+                                    <i class="fas fa-info icon-white"></i>
+                                </Neos.Fusion:Link.Action>
+                            </div>
+                        </td>
+                    </tr>
+                </Neos.Fusion:Loop>
+                </tbody>
+            </table>
+            <Neos.Fusion:Link.Action class="neos-button neos-button-primary" href.action="create" href.arguments.node={props.node} href.arguments.email={item} >
+                Neue E-Mail erstellen
+            </Neos.Fusion:Link.Action>
+        </section>
+    `
+}

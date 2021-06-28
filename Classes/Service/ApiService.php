@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Garagist\Mautic\Service;
 
+use Garagist\Mautic\Domain\Dto\Segment;
+use Mautic\Api\Contacts;
 use Neos\Flow\Annotations as Flow;
 use Mautic\Api\Emails;
 use Mautic\Exception\ContextNotFoundException;
@@ -40,6 +42,11 @@ class ApiService
     protected $emailApi;
 
     /**
+     * @var Contacts
+     */
+    protected $contactApi;
+
+    /**
      * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
      * @var LoggerInterface
      */
@@ -64,6 +71,7 @@ class ApiService
 
         $api = new MauticApi();
         $this->emailApi = $api->newApi("emails", $auth, $this->settings['api']['baseUrl'].'/api/');
+        $this->contactApi = $api->newApi("contacts", $auth, $this->settings['api']['baseUrl'].'/api/');
     }
 
     /**
@@ -72,14 +80,14 @@ class ApiService
      */
     public function alterEmail(string $nodeIdentifier, array $data) {
 
-        $emailRecord = $this->findEmailByNodeIdentifier($nodeIdentifier);
+        $emailRecord = $this->findEmailByNeosIdentifier($nodeIdentifier);
 
         if ($emailRecord) { //match found -> update
             $response = $this->emailApi->edit($emailRecord['id'],$data);
-            $this->mauticLogger->info(sprintf('Edit email with identifier:%s', $nodeIdentifier));
+            $this->mauticLogger->info(sprintf('Edit mautic record with identifier:%s', $nodeIdentifier));
         } else { // no match found -> create
             $response = $this->emailApi->create($data);
-            $this->mauticLogger->info(sprintf('Create email with identifier:%s', $nodeIdentifier));
+            $this->mauticLogger->info(sprintf('Create new mautic record with identifier:%s', $nodeIdentifier));
         }
 
         if(isset($response['error'])) {
@@ -94,17 +102,17 @@ class ApiService
      * @return int|null
      */
     public function isEmailPublished(string $nodeIdentifier) {
-        $emailRecord = $this->findEmailByNodeIdentifier($nodeIdentifier);
+        $emailRecord = $this->findEmailByNeosIdentifier($nodeIdentifier);
 
         return $emailRecord['isPublished'] === true ? (int) $emailRecord['id'] : null;
     }
 
     /**
-     * @param string $nodeIdentifier
+     * @param string $neosIdentifier
      * @return mixed|null
      */
-    public function findEmailByNodeIdentifier(string $nodeIdentifier) {
-        $match = $this->emailApi->getList($nodeIdentifier);
+    public function findEmailByNeosIdentifier(string $neosIdentifier) {
+        $match = $this->emailApi->getList($neosIdentifier);
 
         if ($match['total'] === 1) { //match found
             return array_pop($match['emails']);
@@ -139,5 +147,19 @@ class ApiService
         }
 
         throw new Exception('Email could not be send because it does not exist or ist not published');
+    }
+
+    /**
+     * @return Segment[]
+     */
+    public function getAllSegments(): array
+    {
+        $data = [];
+        $segments = $this->contactApi->getSegments();
+        foreach ($segments as $segment) {
+            $data[] = new Segment($segment['id'], $segment['name'], $segment['alias']);
+        }
+
+        return $data;
     }
  }

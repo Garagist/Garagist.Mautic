@@ -4,7 +4,7 @@ namespace Garagist\Mautic\Event;
 
 use Neos\EventSourcing\Event\DomainEventInterface;
 
-final class MauticEmailCreate implements DomainEventInterface
+final class MauticEmailUnPublish implements DomainEventInterface
 {
     /**
      * @var string
@@ -16,16 +16,11 @@ final class MauticEmailCreate implements DomainEventInterface
      */
     private $emailIdentifier;
 
-    /**
-     * @var string
-     */
-    private $templateUrl;
 
-    public function __construct(string $emailIdentifier, string $nodeIdentifier, string $templateUrl)
+    public function __construct(string $emailIdentifier, string $nodeIdentifier)
     {
         $this->emailIdentifier = $emailIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
-        $this->templateUrl = $templateUrl;
     }
 
     /**
@@ -47,22 +42,6 @@ final class MauticEmailCreate implements DomainEventInterface
     /**
      * @return string
      */
-    public function getTemplateUrl(): string
-    {
-        return $this->templateUrl;
-    }
-
-    /**
-     * @param string $templateUrl
-     */
-    public function setTemplateUrl(string $templateUrl): void
-    {
-        $this->templateUrl = $templateUrl;
-    }
-
-    /**
-     * @return string
-     */
     public function getEmailIdentifier(): string
     {
         return $this->emailIdentifier;
@@ -75,5 +54,4 @@ final class MauticEmailCreate implements DomainEventInterface
     {
         $this->emailIdentifier = $emailIdentifier;
     }
-
 }

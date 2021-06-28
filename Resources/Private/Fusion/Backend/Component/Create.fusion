@@ -1,0 +1,5 @@
+Garagist.Mautic.BackendController.create = Neos.Fusion:Component {
+    renderer = afx`
+        publish
+    `
+}

@@ -1,0 +1,63 @@
+Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
+    email = ${email}
+    node = ${node}
+    history = ${history}
+    mauticRecord = ${mauticRecord}
+    renderer = afx`
+        <main class="neos-tab-content" style="height: 100vh;">
+            <div class="neos-tab-pane neos-active" style="height: 100vh;">
+                <div class="neos-row-fluid">
+                    <div class="neos-span6 neos-image-inputs">
+                        <fieldset>
+                            <legend>Meta Daten</legend>
+                            <table class="neos-info-table">
+                                <tbody>
+                                <tr>
+                                    <th>Name</th>
+                                    <td>{props.mauticRecord.name}</td>
+                                </tr>
+                                <tr>
+                                    <th>Subject</th>
+                                    <td>{props.mauticRecord.subject}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </fieldset>
+                        <fieldset>
+                            <legend>Historie</legend>
+                            <table class="neos-info-table">
+                                <thead>
+                                <th>Datum</th>
+                                <th>Typ</th>
+                                <th>Message</th>
+                                </thead>
+                                <tbody>
+                                <Neos.Fusion:Loop items={props.history}>
+                                    <tr @if.render={item.type != 'Garagist.Mautic:MauticEmailTaskFinished' || item.error}>
+                                        <td>{Date.format(item.date, 'd.m.Y h:m:s')}</td>
+                                        <td>{item.type}</td>
+                                        <td>{item.message}</td>
+                                    </tr>
+                                </Neos.Fusion:Loop>
+                                </tbody>
+                            </table>
+                        </fieldset>
+                    </div>
+                    <div class="neos-span6 neos-image-example" style="height: 100vh;">
+                        <div class="neos-preview-image" style="height: 100vh;">
+                            <iframe srcdoc={props.mauticRecord.customHtml} width="100%" height="100%"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <div class="neos-footer">
+            <Neos.Fusion:Link.Action class="neos-button neos-button-primary" href.action="email" href.arguments.node={props.node} href.arguments.email={props.email}>
+                Zurück
+            </Neos.Fusion:Link.Action>
+            <Neos.Fusion:Link.Action @if.error={Array.last(props.history).error} class="neos-button neos-button-warning" href.action="unlock" href.arguments.node={props.node} href.arguments.email={props.email}>
+                Unlock Task
+            </Neos.Fusion:Link.Action>
+        </div>
+    `
+}
