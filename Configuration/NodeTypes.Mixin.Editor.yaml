@@ -1,4 +1,10 @@
 'Garagist.Mautic:Mixin.Editor':
+  ui:
+    inspector:
+      groups:
+        mautic:
+          label: Mautic
+          icon: gear
   properties:
     borderColor:
       type: string
@@ -11,25 +17,12 @@
      ui:
        inspector:
          editor: Garagist.Mautic/Inspector/Editors/EmailModule
-         group: headline
+         group: mautic
          editorOptions:
-           label: 'Show Newsletter'
+           label: 'Show E-mails'
            icon: paper-plane
            src: >-
              ClientEval:
              "/neos/management/mautic/email?"
              + encodeURIComponent("moduleArguments[node]")
              + "=" + encodeURIComponent(node.contextPath)
-    mauticEmailCreate:
-      ui:
-        inspector:
-          editor: Garagist.Mautic/Inspector/Editors/EmailModule
-          group: headline
-          editorOptions:
-            label: 'Create Newsletter'
-            icon: paper-plane
-            src: >-
-              ClientEval:
-              "/neos/management/mautic/create?"
-              + encodeURIComponent("moduleArguments[node]")
-              + "=" + encodeURIComponent(node.contextPath)
