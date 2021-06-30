@@ -162,4 +162,15 @@ class ApiService
 
         return $data;
     }
+
+    public function ping() {
+        $response = $this->emailApi->getList('', 0, 1);
+
+
+        if(isset($response['error'])) {
+            return false;
+        }
+
+        return true;
+    }
  }

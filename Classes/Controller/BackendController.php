@@ -85,6 +85,11 @@ class BackendController extends AbstractModuleController
         }
     }
 
+    public function indexAction()
+    {
+        $this->view->assign('ping',$this->apiService->ping());
+    }
+
     /**
      * Renders the view
      */
@@ -178,8 +183,7 @@ class BackendController extends AbstractModuleController
         $this->mauticService->createEmailEvent($node->getIdentifier(), $templateUrl);
 
         $this->addFlashMessage('New E-mail as been created',  Message::SEVERITY_OK);
-
-//        $this->redirect('email', 'Backend', null, ['node' => $node]);
+        $this->view->assign('node', $node);
     }
 
     public function unlockAction(NodeInterface $node, MauticEmail $email) {

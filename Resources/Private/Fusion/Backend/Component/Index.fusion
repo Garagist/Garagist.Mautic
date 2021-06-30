@@ -1,0 +1,27 @@
+Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
+    ping = ${ping}
+    renderer = afx`
+        <main class='mautic'>
+            <div class="neos-tab-pane neos-active" style="height: 100vh;">
+                <div class="neos-row-fluid">
+                    <div class="neos-span3">
+                        <h1 class="mb-4">
+                            <img width='152' alt='Plausible'>
+                                <Neos.Fusion:ResourceUri @path='attributes.src' path='resource://Garagist.Mautic/Public/Logo.svg' />
+                            </img>
+                        </h1>
+                        <h2>Mautic API Status</h2>
+                        <table class='neos-table'>
+                            <tbody>
+                                <tr>
+                                    <td>Active</td>
+                                    <td>{props.ping ? 'yes' : 'no'}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    `
+}
