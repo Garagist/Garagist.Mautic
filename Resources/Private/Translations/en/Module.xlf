@@ -19,6 +19,36 @@
                 <source>The new email for {0} has been created</source>
                 <target>The new email for {0} has been created</target>
             </trans-unit>
+            <trans-unit id="list.emails.header" xml:space="preserve">
+                <source>Available Newsletters</source>
+                <target>Available Newsletters</target>
+            </trans-unit>
+            <trans-unit id="list.emails.none" xml:space="preserve">
+                <source>No pages with newsletters were found</source>
+                <target>No pages with newsletters were found</target>
+            </trans-unit>
+            <group id="list.emails.count" restype="x-gettext-plurals">
+                <trans-unit id="list.emails.count[0]" xml:space="preserve">
+                    <source>email</source>
+                    <target>email</target>
+                </trans-unit>
+                <trans-unit id="list.emails.count[1]" xml:space="preserve">
+                    <source>emails</source>
+                    <target>emails</target>
+                </trans-unit>
+            </group>
+            <trans-unit id="status.headline" xml:space="preserve">
+                <source>Mautic API Status</source>
+                <target>Mautic API Status</target>
+            </trans-unit>
+            <trans-unit id="status.active" xml:space="preserve">
+                <source>Active</source>
+                <target>Active</target>
+            </trans-unit>
+            <trans-unit id="status.inactive" xml:space="preserve">
+                <source>Inactive</source>
+                <target>Inactive</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
