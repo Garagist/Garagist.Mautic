@@ -20,12 +20,17 @@ Neos:
                 createParentDirectories: true
                 severityThreshold: '%LOG_INFO%'
   Neos:
+    userInterface:
+      translation:
+        autoInclude:
+          Garagist.Mautic:
+            - Module
     modules:
       management:
         submodules:
           mautic:
-            label: Mautic
-            description: 'Mautic related status and actions'
+            label: 'Garagist.Mautic:Module:module.mautic.label'
+            description: 'Garagist.Mautic:Module:module.mautic.description'
             icon: 'fas fa-paper-plane'
             controller: \Garagist\Mautic\Controller\BackendController
             privilegeTarget: 'Garagist.Mautic:BackendModule'

@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+<xliff version="1.2"
+    xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file original="" product-name="Garagist.Mautic" source-language="en" target-language="en" datatype="plaintext">
         <body>
-            <trans-unit id="emails.headline" xml:space="preserve">
+            <trans-unit id="module.mautic.label" xml:space="preserve">
                 <source>Newsletter</source>
                 <target>Newsletter</target>
+            </trans-unit>
+            <trans-unit id="module.mautic.description" xml:space="preserve">
+                <source>This module manages the newsletter with mautic. It shows the status and handle the actions.</source>
+                <target>This module manages the newsletter with mautic. It shows the status and handle the actions.</target>
+            </trans-unit>
+            <trans-unit id="emails.headline" xml:space="preserve">
+                <source>Newsletter: {0}</source>
+                <target>Newsletter: {0}</target>
+            </trans-unit>
+            <trans-unit id="newEmailcreated" xml:space="preserve">
+                <source>The new email for {0} has been created</source>
+                <target>The new email for {0} has been created</target>
             </trans-unit>
         </body>
     </file>
