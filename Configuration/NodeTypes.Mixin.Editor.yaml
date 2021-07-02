@@ -4,25 +4,18 @@
       groups:
         mautic:
           label: Mautic
-          icon: gear
+          icon: paper-plane
   properties:
-    borderColor:
-      type: string
+    emailModule:
       ui:
         inspector:
-          group: headline
-          hidden: 'ClientEval:console.info(node)'
-
-    emailModule:
-     ui:
-       inspector:
-         editor: Garagist.Mautic/Inspector/Editors/EmailModule
-         group: mautic
-         editorOptions:
-           label: 'Show E-mails'
-           icon: paper-plane
-           src: >-
-             ClientEval:
-             "/neos/management/mautic/email?"
-             + encodeURIComponent("moduleArguments[node]")
-             + "=" + encodeURIComponent(node.contextPath)
+          editor: Garagist.Mautic/Inspector/Editors/EmailModule
+          group: mautic
+          editorOptions:
+            label: 'Show E-Mails'
+            icon: paper-plane
+            src: >-
+              ClientEval:
+              "/neos/management/mautic/email?"
+              + encodeURIComponent("moduleArguments[node]")
+              + "=" + encodeURIComponent(node.contextPath)
