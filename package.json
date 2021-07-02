@@ -8,8 +8,7 @@
     "watch": "concurrently -r yarn:watch:*",
     "watch:js": "esbuild Resources/Private/Assets/Backend.js --bundle --watch --outfile=Resources/Public/Scripts/Backend.js",
     "watch:css": "tailwindcss -i Resources/Private/Assets/Backend.pcss -w -o Resources/Public/Styles/Backend.css",
-    "pipeline:install": "yarn install --silent --non-interactive",
-    "pipeline": "concurrently -r yarn:pipeline:*;yarn build"
+    "pipeline": "yarn install --silent --non-interactive;concurrently -r yarn:pipeline:*;yarn build"
   },
   "dependencies": {
     "alpinejs": "^3.1.1",
