@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Fix Neos Stuff */
+#neos-application,
+#neos-application *,
+#neos-application ::before,
+#neos-application ::after,
+.neos-breadcrumb,
+.neos-breadcrumb *,
+.neos-breadcrumb ::before,
+.neos-breadcrumb ::after {
+  box-sizing: content-box;
+}
+
+.neos .neos-button {
+  box-sizing: border-box !important;
+}
