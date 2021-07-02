@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Garagist\Mautic\Service;
@@ -70,27 +71,28 @@ class ApiService
         $auth = $initAuth->newAuth($this->settings['api'], 'BasicAuth');
 
         $api = new MauticApi();
-        $this->emailApi = $api->newApi("emails", $auth, $this->settings['api']['baseUrl'].'/api/');
-        $this->contactApi = $api->newApi("contacts", $auth, $this->settings['api']['baseUrl'].'/api/');
+        $this->emailApi = $api->newApi("emails", $auth, $this->settings['api']['baseUrl'] . '/api/');
+        $this->contactApi = $api->newApi("contacts", $auth, $this->settings['api']['baseUrl'] . '/api/');
     }
 
     /**
      * @throws NodeException|Exception
      * @return array
      */
-    public function alterEmail(string $nodeIdentifier, array $data) {
+    public function alterEmail(string $nodeIdentifier, array $data)
+    {
 
         $emailRecord = $this->findEmailByNeosIdentifier($nodeIdentifier);
 
         if ($emailRecord) { //match found -> update
-            $response = $this->emailApi->edit($emailRecord['id'],$data);
+            $response = $this->emailApi->edit($emailRecord['id'], $data);
             $this->mauticLogger->info(sprintf('Edit mautic record with identifier:%s', $nodeIdentifier));
         } else { // no match found -> create
             $response = $this->emailApi->create($data);
             $this->mauticLogger->info(sprintf('Create new mautic record with identifier:%s', $nodeIdentifier));
         }
 
-        if(isset($response['error'])) {
+        if (isset($response['error'])) {
             throw new Exception($response['error']['message']);
         }
 
@@ -101,7 +103,8 @@ class ApiService
      * @param string $nodeIdentifier
      * @return int|null
      */
-    public function isEmailPublished(string $nodeIdentifier) {
+    public function isEmailPublished(string $nodeIdentifier)
+    {
         $emailRecord = $this->findEmailByNeosIdentifier($nodeIdentifier);
 
         return $emailRecord['isPublished'] === true ? (int) $emailRecord['id'] : null;
@@ -111,7 +114,8 @@ class ApiService
      * @param string $neosIdentifier
      * @return mixed|null
      */
-    public function findEmailByNeosIdentifier(string $neosIdentifier) {
+    public function findEmailByNeosIdentifier(string $neosIdentifier)
+    {
         $match = $this->emailApi->getList($neosIdentifier);
 
         if ($match['total'] === 1) { //match found
@@ -126,11 +130,11 @@ class ApiService
      * @return array
      * @throws Exception
      */
-    public function sendEmail(string $emailIdentifier, $mauticIdentifier) : array
+    public function sendEmail(string $emailIdentifier, $mauticIdentifier): array
     {
         $mauticIdentifier = $this->isEmailPublished($emailIdentifier);
 
-        if($mauticIdentifier) {
+        if ($mauticIdentifier) {
             //TODO: new contacts, that are in the same list, will be added as pending contacts at any point in time. Therefore it's hard to say when a send out is done
             //array(3)
             // string "success" (7) => integer 1
@@ -139,7 +143,7 @@ class ApiService
 
             $response = $this->emailApi->send($mauticIdentifier);
 
-            if(isset($response['error'])) {
+            if (isset($response['error'])) {
                 throw new Exception($response['error']['message']);
             }
 
@@ -163,14 +167,15 @@ class ApiService
         return $data;
     }
 
-    public function ping() {
+    public function ping()
+    {
         $response = $this->emailApi->getList('', 0, 1);
 
 
-        if(isset($response['error'])) {
+        if (isset($response['error'])) {
             return false;
         }
 
         return true;
     }
- }
+}
