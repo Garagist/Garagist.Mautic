@@ -1,4 +1,5 @@
 'Garagist.Mautic:Mixin.Editor':
+  abstract: true
   ui:
     inspector:
       groups:
