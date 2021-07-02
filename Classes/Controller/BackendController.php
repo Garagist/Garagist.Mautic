@@ -6,6 +6,7 @@ namespace Garagist\Mautic\Controller;
 
 use Neos\Flow\Annotations as Flow;
 use Garagist\Mautic\Domain\Model\MauticEmail;
+use Garagist\Mautic\Service\NodeService;
 use Garagist\Mautic\Service\ApiService;
 use Garagist\Mautic\Service\MauticService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -39,6 +40,12 @@ class BackendController extends AbstractModuleController
      * @var Context
      */
     protected $securityContext;
+
+    /**
+     * @Flow\Inject
+     * @var NodeService
+     */
+    protected $nodeService;
 
     /**
      * @Flow\Inject
@@ -87,7 +94,26 @@ class BackendController extends AbstractModuleController
 
     public function indexAction()
     {
-        $this->view->assign('ping',$this->apiService->ping());
+        $ping = $this->apiService->ping();
+        $nodes = $this->nodeService->getNodesByType('Garagist.Mautic:Mixin.Editor');
+        $pages = [];
+        foreach ($nodes as $node) {
+            $title = $node->getProperty('title');
+            $parentNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Subtitle');
+            $subtitle = $parentNode ? $parentNode->getProperty('title') : null;
+            $pages[] = [
+                "count" => count(
+                    $this->mauticService->getEmailsNodeIdentifier(
+                        $node->getIdentifier()
+                    )
+                ),
+                "node" => $node,
+                "title" => $title,
+                "subtitle" => $subtitle
+            ];
+        }
+
+        $this->view->assignMultiple(['pages' => $pages, 'ping' => $ping]);
     }
 
     /**
@@ -149,7 +175,6 @@ class BackendController extends AbstractModuleController
         $this->view->assign('emails', $emails);
         $this->view->assign('node', $node);
         $this->view->assign('flashMessages', $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush());
-
     }
 
     public function infoAction(NodeInterface $node, MauticEmail $email): void
@@ -162,7 +187,6 @@ class BackendController extends AbstractModuleController
         $this->view->assign('history', $history);
         $this->view->assign('mauticRecord', $mauticRecord);
         $this->view->assign('flashMessages', $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush());
-
     }
 
     /**
@@ -175,7 +199,7 @@ class BackendController extends AbstractModuleController
         $uri = $uriBuilder->reset()
             ->setFormat('html')
             ->setCreateAbsoluteUri(true)
-            ->setArguments(['maizzle'=>true])
+            ->setArguments(['maizzle' => true])
             ->uriFor('show', ['node' => $node], 'Frontend\Node', 'Neos.Neos');
 
 
@@ -186,7 +210,8 @@ class BackendController extends AbstractModuleController
         $this->view->assign('node', $node);
     }
 
-    public function unlockAction(NodeInterface $node, MauticEmail $email) {
+    public function unlockAction(NodeInterface $node, MauticEmail $email)
+    {
 
         if ($email->getTask() == MauticEmail::TaskFailed) {
             $this->mauticService->setTask($email, MauticEmail::Idle);

@@ -1,0 +1,4 @@
+# This Mixin is for getting the subtitle in the overview
+
+'Garagist.Mautic:Mixin.Subtitle':
+  abstract: true
