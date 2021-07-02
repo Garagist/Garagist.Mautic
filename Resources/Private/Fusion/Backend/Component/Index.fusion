@@ -2,26 +2,27 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
     ping = ${ping}
     renderer = afx`
         <main class='mautic'>
-            <div class="neos-tab-pane neos-active" style="height: 100vh;">
-                <div class="neos-row-fluid">
-                    <div class="neos-span3">
-                        <h1 class="mb-4">
-                            <img width='152' alt='Plausible'>
-                                <Neos.Fusion:ResourceUri @path='attributes.src' path='resource://Garagist.Mautic/Public/Logo.svg' />
-                            </img>
-                        </h1>
-                        <h2>Mautic API Status</h2>
-                        <table class='neos-table'>
-                            <tbody>
-                                <tr>
-                                    <td>Active</td>
-                                    <td>{props.ping ? 'yes' : 'no'}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </main>
+            <h1 class="mb-4">
+                <img width='152' alt='Mautic'>
+                    <Neos.Fusion:ResourceUri @path='attributes.src' path='resource://Garagist.Mautic/Public/Assets/Logo.svg' />
+                </img>
+            </h1>
+            <h2 class="text-xl mb-4">Mautic API Status</h2>
+            <table class='neos-table'>
+                <tbody>
+                    <tr>
+                        <td width="1%">Active</td>
+                        <td width="1%">
+                            <i @if.set={props.ping} class='fas fa-check pr-4 w-20 text-green-500 inline-block' aria-hidden='true'></i>
+                            <i @if.set={!props.ping} class='fas fa-times pr-4 text-red-500 inline-block' aria-hidden='true'></i>
+                        </td>
+                        <td>
+                            {props.ping ? 'Yes' : 'Not active'}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+      </main>
     `
 }
+
