@@ -2,7 +2,7 @@ const colors = require("tailwindcss/colors");
 
 module.exports = {
   mode: "jit",
-  purge: ["Resources/Private/{Assets,Fusion}/**/*.{js,fusion,pcss}"],
+  purge: ["Resources/Private/{Assets,Fusion,Modules}/**/*.{js,fusion,pcss}"],
   important: ".mautic",
   darkMode: false, // or 'media' or 'class'
   theme: {
@@ -15,6 +15,15 @@ module.exports = {
       red: colors.red,
       yellow: colors.amber,
       green: colors.emerald,
+      neos: {
+        blue: "#00b5ff",
+        green: "#01a338",
+        red: "#ff460d",
+        light: "#3f3f3f",
+        DEFAULT: "#323232",
+        dark: "#222222",
+        darker: "#141414",
+      },
     },
     fontFamily: {
       sans: [
