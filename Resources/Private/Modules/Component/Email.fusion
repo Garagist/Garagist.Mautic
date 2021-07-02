@@ -11,9 +11,10 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
         Error = 'error'
     }
 
-    renderer = afx`
-        <main>
+    title = ${q(node).property('title')}
 
+    renderer = afx`
+        <main class="mautic">
             <Neos.Fusion:Loop items={props.flashMessages} itemName="flashMessage">
                 <div class={'neos-tooltip neos-bottom neos-in neos-tooltip-' + props.severityMapping[flashMessage.severity]}>
                     <script @if.error={flashMessage.severity == 'Error'}>
@@ -27,15 +28,15 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                 </div>
             </Neos.Fusion:Loop>
             <section class='mautic-list'>
-                <h2>{Translation.translate('emails.headline', 'E-mails', [], 'Module', 'Garagist.Mautic')}: {q(node).property('title')}</h2>
+                <h2 class="text-xl font-bold mb-4">{Translation.translate('emails.headline', 'Newsletter: {0}', [props.title], 'Module', 'Garagist.Mautic')}</h2>
                 <table class='neos-table'>
                     <thead>
-                    <tr>
-                        <td>Erstellt am</td>
-                        <td>Identifier</td>
-                        <td>Gesendet am</td>
-                        <td>Aktionen</td>
-                    </tr>
+                        <tr>
+                            <td>Erstellt am</td>
+                            <td>Identifier</td>
+                            <td>Gesendet am</td>
+                            <td class="!text-right">Aktionen</td>
+                        </tr>
                     </thead>
                     <tbody>
                     <Neos.Fusion:Loop items={props.emails}>
@@ -86,7 +87,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                 Neue E-Mail erstellen
             </Neos.Fusion:Link.Action>
             <Neos.Fusion:Link.Action class="neos-button neos-button-secondary" href.action="email" href.arguments.node={props.node} href.arguments.email={item} >
-                List aktualisieren
+                Liste aktualisieren
             </Neos.Fusion:Link.Action>
         </div>
     `

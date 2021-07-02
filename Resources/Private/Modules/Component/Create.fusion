@@ -1,7 +1,8 @@
 Garagist.Mautic.BackendController.create = Neos.Fusion:Component {
     node = ${node}
+    title = ${q(this.node).property('title')}
     renderer = afx`
-        New e-mail as been created
+        {Translation.translate('newEmailcreated', 'The new email for {0} has been created', [props.title], 'Module', 'Garagist.Mautic')}
 
         <div class="neos-footer">
             <Neos.Fusion:Link.Action class="neos-button neos-button-secondary" href.action="email" href.controller="Backend" href.arguments.node={props.node} >

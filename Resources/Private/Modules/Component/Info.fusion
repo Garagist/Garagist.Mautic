@@ -4,7 +4,7 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
     history = ${history}
     mauticRecord = ${mauticRecord}
     renderer = afx`
-        <main class="neos-tab-content" style="height: 100vh;">
+        <main class="mautic neos-tab-content" style="height: 100vh;">
             <div class="neos-tab-pane neos-active" style="height: 100vh;">
                 <div class="neos-row-fluid">
                     <div class="neos-span6 neos-image-inputs">
