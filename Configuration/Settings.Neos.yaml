@@ -1,0 +1,43 @@
+Neos:
+  EventSourcing:
+    EventStore:
+      stores:
+        'Garagist.Mautic:EventStore':
+          storage: 'Neos\EventSourcing\EventStore\Storage\Doctrine\DoctrineEventStorage'
+          storageOptions:
+            eventTableName: 'garagist_mautic_events'
+          listeners:
+            'Garagist\Mautic\Manager\MauticProcessManager': true
+  Flow:
+    log:
+      psr3:
+        'Neos\Flow\Log\PsrLoggerFactory':
+          'Garagist.Mautic:MauticLogger':
+            default:
+              class: Neos\Flow\Log\Backend\FileBackend
+              options:
+                logFileURL: '%FLOW_PATH_DATA%Logs/Mautic.log'
+                createParentDirectories: true
+                severityThreshold: '%LOG_INFO%'
+  Neos:
+    modules:
+      management:
+        submodules:
+          mautic:
+            label: Mautic
+            description: 'Mautic related status and actions'
+            icon: 'fas fa-paper-plane'
+            controller: \Garagist\Mautic\Controller\BackendController
+            privilegeTarget: 'Garagist.Mautic:BackendModule'
+            position: end
+            mainStylesheet: Lite
+            additionalResources:
+              javaScripts:
+                - 'resource://Garagist.Mautic/Public/Scripts/Backend.js'
+              styleSheets:
+                - 'resource://Garagist.Mautic/Public/Styles/Backend.css'
+    Ui:
+      resources:
+        javascript:
+          Garagist.Mautic:EmailModuleEditor:
+            resource: resource://Garagist.Mautic/Public/EmailModuleEditor/Plugin.js

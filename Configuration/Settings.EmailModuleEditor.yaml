@@ -1,9 +1,0 @@
-Neos:
-  Neos:
-    Ui:
-      resources:
-        javascript:
-          Garagist.Mautic:EmailModuleEditor:
-            resource: resource://Garagist.Mautic/Public/EmailModuleEditor/Plugin.js
-
-

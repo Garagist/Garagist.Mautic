@@ -1,0 +1,7 @@
+Garagist:
+  Mautic:
+    api:
+      baseUrl: 'http://dev.mautic.emk.loc'
+      userName: 'ds'
+      password: '12345678'
+    segmentMapping: []
