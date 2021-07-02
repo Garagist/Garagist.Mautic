@@ -1,8 +1,6 @@
 <?php
 namespace Garagist\Mautic\Command;
 
-use Emk\Church\Service\ChurchLetterService;
-use Garagist\Mautic\Domain\Model\MauticEmail;
 use Garagist\Mautic\Service\ApiService;
 use Garagist\Mautic\Service\MauticService;
 use Neos\Flow\Annotations as Flow;
