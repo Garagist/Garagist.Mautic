@@ -171,22 +171,28 @@ class BackendController extends AbstractModuleController
     public function emailAction(NodeInterface $node): void
     {
         $emails = $this->mauticService->getEmailsNodeIdentifier($node->getIdentifier());
-
-        $this->view->assign('emails', $emails);
-        $this->view->assign('node', $node);
-        $this->view->assign('flashMessages', $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush());
+        $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
+        $this->view->assignMultiple([
+            'emails' => $emails,
+            'node' => $node,
+            'flashMessages' => $flashMessages
+        ]);
     }
 
     public function infoAction(NodeInterface $node, MauticEmail $email): void
     {
         $mauticRecord = $this->apiService->findEmailByNeosIdentifier($email->getEmailIdentifier());
         $history = $this->mauticService->getAuditLog($email);
+        $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
 
-        $this->view->assign('email', $email);
-        $this->view->assign('node', $node);
-        $this->view->assign('history', $history);
-        $this->view->assign('mauticRecord', $mauticRecord);
-        $this->view->assign('flashMessages', $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush());
+
+        $this->view->assignMultiple([
+            'email' => $email,
+            'node' => $node,
+            'history' => $history,
+            'mauticRecord' => $mauticRecord,
+            'flashMessages' => $flashMessages,
+        ]);
     }
 
     /**
