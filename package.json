@@ -5,9 +5,12 @@
     "build": "concurrently -r yarn:build:*",
     "build:js": "esbuild Resources/Private/Assets/Backend.js --bundle --minify --outfile=Resources/Public/Scripts/Backend.js",
     "build:css": "tailwindcss -i Resources/Private/Assets/Backend.pcss -m -o Resources/Public/Styles/Backend.css",
+    "build:editor": "yarn --cwd Resources/Private/Editor/ build",
     "watch": "concurrently -r yarn:watch:*",
     "watch:js": "esbuild Resources/Private/Assets/Backend.js --bundle --watch --outfile=Resources/Public/Scripts/Backend.js",
     "watch:css": "tailwindcss -i Resources/Private/Assets/Backend.pcss -w -o Resources/Public/Styles/Backend.css",
+    "watch:editor": "yarn --cwd Resources/Private/Editor/ watch",
+    "pipeline:editor": "yarn --cwd Resources/Private/Editor/ install",
     "pipeline": "yarn install --silent --non-interactive;concurrently -r yarn:pipeline:*;yarn build"
   },
   "dependencies": {
