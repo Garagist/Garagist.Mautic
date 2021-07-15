@@ -65,14 +65,14 @@ class NodeService
         return $context->getNodeByIdentifier($identifier);
     }
 
-     /**
-      * Get nodes by type
-      *
-      * @param string $nodeTypeName The name of the node type
-      * @param Context|null  $context 
-      *
-      * @return array
-      */
+    /**
+     * Get nodes by type
+     *
+     * @param string $nodeTypeName The name of the node type
+     * @param Context|null  $context 
+     *
+     * @return array
+     */
     public function getNodesByType(string $nodeTypeName, ?Context $context = null): array
     {
         if (!isset($context)) {
@@ -80,7 +80,9 @@ class NodeService
         }
 
         $flowQuery = new FlowQuery(array($context->getCurrentSiteNode()));
-        return $flowQuery->find('[instanceof ' . $nodeTypeName . ']')->get();
+        return $flowQuery->context([
+            'invisibleContentShown' => false
+        ])->find('[instanceof ' . $nodeTypeName . ']')->get();
     }
 
     /**
@@ -91,7 +93,8 @@ class NodeService
      * 
      * @return NodeInterface|null
      */
-    public function getParentByType(NodeInterface $node, string $nodeTypeName): ?NodeInterface {
+    public function getParentByType(NodeInterface $node, string $nodeTypeName): ?NodeInterface
+    {
         $flowQuery = new FlowQuery(array($node));
         return $flowQuery->parent()->closest('[instanceof ' . $nodeTypeName . ']')->get(0);
     }
