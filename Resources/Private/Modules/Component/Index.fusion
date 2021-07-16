@@ -13,8 +13,8 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
             <h2 class="text-xl mt-8 mb-4">{props.i18n.id('list.emails.header').translate() || 'Available Newsletters'}</h2>
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" @if.set={props.hasPages}>
                 <Neos.Fusion:Loop items={props.pages}>
-                    <div class="relative rounded-lg bg-neos px-6 py-5 shadow-sm flex items-center space-x-3 hover:bg-neos-darker focus-within:bg-neos-darker">
-                        <div class={[item.count ? "bg-green-800" : "bg-red-800" ,"leading-none flex-shrink-0 h-16 w-16 rounded-sm flex flex-col items-center justify-center"]}>
+                    <div class="relative rounded-lg bg-neos shadow-sm flex items-center space-x-3 hover:bg-neos-darker focus-within:bg-neos-darker">
+                        <div class={[item.count ? "bg-green-800" : "bg-red-800" ,"leading-none flex-shrink-0 h-16 w-16 rounded-l-lg flex flex-col items-center justify-center"]}>
                             <span class="text-lg">{item.count}</span>
                             <span class="text-xs">{props.i18n.id('list.emails.count').quantity(item.count).translate() || (item.count == 1 ? 'email' : 'emails')}</span>
                         </div>
