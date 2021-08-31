@@ -209,7 +209,8 @@ class BackendController extends AbstractModuleController
             ->uriFor('show', ['node' => $node], 'Frontend\Node', 'Neos.Neos');
 
 
-        $templateUrl = preg_replace('/^(.*)(@user.*)(.maizzle)$/', '$1$3', $uri);
+        $templateUrl = explode('@', $uri)[0] . '.maizzle';
+
         $this->mauticService->createEmailEvent($node->getIdentifier(), $templateUrl);
 
         $this->addFlashMessage('New E-mail as been created',  Message::SEVERITY_OK);
