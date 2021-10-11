@@ -266,10 +266,10 @@
     webpack "^4.41.5"
     webpack-livereload-plugin "^2.2.0"
 
-"@neos-project/neos-ui-extensibility@^7.1.0":
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/@neos-project/neos-ui-extensibility/-/neos-ui-extensibility-7.1.1.tgz#d949e9c47cf311932264ed1e83d4f33f3d3e3ea4"
-  integrity sha512-we0t7sElUDJQvPe9pUzbO4LO3zte1y43Rdx39w72RMbcrTvmmSGYi/GoQfYGlKUYaxmjuuuJeL6/npD00RwbXA==
+"@neos-project/neos-ui-extensibility@^7.2.0":
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/@neos-project/neos-ui-extensibility/-/neos-ui-extensibility-7.2.0.tgz#4e12f6276f93761701b8c584fe53dde6c06bd01f"
+  integrity sha512-OvEPgAwCEJZenpa4GsQuD6nM3+oSjA5EGdNQv8VZOPXfbS80JF4VR3gMkknjLcet7C6fQxkXH/Yrl8GKpJGxRQ==
   dependencies:
     "@neos-project/build-essentials" "5.2.5"
     "@neos-project/positional-array-sorter" "5.2.5"
@@ -296,10 +296,10 @@
   resolved "https://registry.yarnpkg.com/@neos-project/positional-array-sorter/-/positional-array-sorter-5.2.5.tgz#4647842d99414c598479d752f9625a0fff5f4c97"
   integrity sha512-dhcXB/o6hzDHAl01XmtpT42LbU3Z9tOFhE9ZlxlJOHu8Z9Lsg8sbxNLbnTnIzaODwdJiA1UlJGLZXQqMUg6IBg==
 
-"@neos-project/react-ui-components@^7.1.0":
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/@neos-project/react-ui-components/-/react-ui-components-7.1.1.tgz#874cf561f6acf476a0da055369bac21aaa841c15"
-  integrity sha512-+Sodb7FKLH+z4n1UFboExSC5dBAStB9n4PUzIczc1KrQsgLSOSTLTg7koq5I6XWuJIFCdEWXSf3rYVSv7X/9Pg==
+"@neos-project/react-ui-components@^7.2.0":
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/@neos-project/react-ui-components/-/react-ui-components-7.2.0.tgz#221ce3b9b9e042af7cac04de649e7dcf8a93f09e"
+  integrity sha512-5MK8e1TNq1oNAwiLByYAwrQUGCor5fzxfvkqZwU9buZ81V2Ed/D9clq5IVtpNALJA5StAm1gBY2ZOOp4i9j4ZA==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
