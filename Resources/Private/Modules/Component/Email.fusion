@@ -66,6 +66,9 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                             <td @if.running={item.task != 'idle' && item.task != 'failed'}>
                                 <div class="neos-pull-right">
                                     The Task "{item.task}" is currently running... please wait!
+                                    <Neos.Fusion:Link.Action class="neos-button neos-button-primary" href.action="info" href.arguments.node={props.node} href.arguments.email={item} >
+                                        <i class="fas fa-info icon-white"></i>
+                                    </Neos.Fusion:Link.Action>
                                 </div>
                             </td>
                             <td @if.running={item.task == 'failed'}>
