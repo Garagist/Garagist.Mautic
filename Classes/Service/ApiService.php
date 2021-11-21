@@ -171,8 +171,8 @@ class ApiService
     {
         $response = $this->emailApi->getList('', 0, 1);
 
-
         if (isset($response['error'])) {
+            $this->mauticLogger->alert('Could not ping mauitc api. Reason:'. json_encode($response['error']));
             return false;
         }
 
