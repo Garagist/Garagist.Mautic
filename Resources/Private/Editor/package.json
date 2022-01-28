@@ -8,8 +8,8 @@
     "buildTargetDirectory": "../../Public/EmailModuleEditor"
   },
   "devDependencies": {
-    "@neos-project/neos-ui-extensibility": "^7.2.0",
-    "@neos-project/react-ui-components": "^7.2.0",
+    "@neos-project/neos-ui-extensibility": "^7.3.0",
+    "@neos-project/react-ui-components": "^7.3.0",
     "prop-types": "^15.7.2",
     "react": "^16.8"
   }

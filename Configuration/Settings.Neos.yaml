@@ -25,6 +25,7 @@ Neos:
         autoInclude:
           Garagist.Mautic:
             - Module
+            - 'NodeTypes/*'
     modules:
       management:
         submodules:

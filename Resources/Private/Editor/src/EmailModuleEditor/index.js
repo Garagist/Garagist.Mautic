@@ -1,8 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Button, Icon, Label } from '@neos-project/react-ui-components';
+import React, { PureComponent } from "react";
+import PropTypes from "prop-types";
+import { Button, Icon, Label } from "@neos-project/react-ui-components";
+import I18n from "@neos-project/neos-ui-i18n";
+import { $get } from "plow-js";
 
-export default class EmailModuleEditor extends React.PureComponent {
+export default class EmailModuleEditor extends PureComponent {
     static propTypes = {
         className: PropTypes.string,
         identifier: PropTypes.string.isRequired,
@@ -13,23 +15,25 @@ export default class EmailModuleEditor extends React.PureComponent {
     };
 
     render = () => {
-        const { className, identifier, options, renderHelpIcon } = this.props;
-        const { icon, label, src, name } = options;
+        const { label, className, identifier, options, renderHelpIcon } = this.props;
+        const disabled = $get("options.disabled", this.props);
+        const { icon, src, name } = options;
 
         return (
             <div>
                 <Label htmlFor={identifier}>
                     <Button
                         className={className}
+                        disabled={disabled}
                         onClick={() => {
-                            this.props.renderSecondaryInspector('IFRAME', () => {
+                            this.props.renderSecondaryInspector("IFRAME", () => {
                                 return (
                                     <iframe
-                                        style={{ height: '100%', width: '100%', border: 0 }}
-                                        name={name || 'email-module'}
+                                        style={{ height: "100%", width: "100%", border: 0 }}
+                                        name={name || "email-module"}
                                         src={
-                                            src.indexOf('ClientEval:') === 0
-                                                ? eval(src.replace('ClientEval:', ''))
+                                            src.indexOf("ClientEval:") === 0
+                                                ? eval(src.replace("ClientEval:", ""))
                                                 : src
                                         }
                                     />
@@ -39,7 +43,7 @@ export default class EmailModuleEditor extends React.PureComponent {
                         style="lighter"
                     >
                         {icon ? <Icon icon={icon} padded="right" /> : null}
-                        {label}
+                        <I18n id={label} />
                     </Button>
                 </Label>
                 {renderHelpIcon ? renderHelpIcon() : null}

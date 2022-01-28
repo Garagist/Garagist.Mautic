@@ -9,11 +9,11 @@
   properties:
     emailModule:
       ui:
+        label: i18n
         inspector:
           editor: Garagist.Mautic/Inspector/Editors/EmailModule
           group: mautic
           editorOptions:
-            label: 'Show E-Mails'
             icon: paper-plane
             src: >-
               ClientEval:
