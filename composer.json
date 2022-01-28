@@ -17,5 +17,26 @@
         "neos": {
             "package-key": "Garagist.Mautic"
         }
+    },
+    "archive": {
+        "exclude": [
+            ".github",
+            ".editorconfig",
+            ".eslintignore",
+            ".eslintrc",
+            ".gitattributes",
+            ".gitignore",
+            ".jshintrc",
+            ".nvmrc",
+            ".postcssrc.yml",
+            ".prettierignore",
+            ".prettierrc",
+            ".stylelintrc",
+            ".yarnclean",
+            "CODE_OF_CONDUCT.md",
+            "package.json",
+            "tailwind.config.js",
+            "yarn.lock"
+        ]
     }
 }
