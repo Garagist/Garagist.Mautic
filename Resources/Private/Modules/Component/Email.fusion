@@ -12,6 +12,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
     }
 
     title = ${q(node).property('title')}
+    i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
 
     renderer = afx`
         <main class="mautic">
@@ -23,19 +24,21 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                     <div class="neos-tooltip-arrow"></div>
                     <div class="neos-tooltip-inner" role="alert">
                         {flashMessage}
-                        <!--                    {I18n.id('flashMessage.' + flashMessage.code).value(flashMessage).package('Neos.Neos').source('Main')}-->
+                        <!-- {I18n.id('flashMessage.' + flashMessage.code).value(flashMessage).package('Neos.Neos').source('Main')}-->
                     </div>
                 </div>
             </Neos.Fusion:Loop>
             <section class='mautic-list'>
-                <h2 class="text-xl font-bold mb-4">{Translation.translate('emails.headline', 'Newsletter: {0}', [props.title], 'Module', 'Garagist.Mautic')}</h2>
+                <h2 class="text-xl font-bold mb-4">
+                    {props.i18n.id('emails.headline').arguments([props.title]).translate()}
+                </h2>
                 <table class='neos-table'>
                     <thead>
                         <tr>
-                            <td>Erstellt am</td>
-                            <td>Identifier</td>
-                            <td>Gesendet am</td>
-                            <td class="!text-right">Aktionen</td>
+                            <td>{props.i18n.id('email.createdOn').translate()}</td>
+                            <td>{props.i18n.id('email.identifier').translate()}</td>
+                            <td>{props.i18n.id('email.sentOn').translate()}</td>
+                            <td class="!text-right">{props.i18n.id('email.actions').translate()}</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,7 +46,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                         <tr>
                             <td>{Date.format(item.dateCreated, 'd.m.Y h:m:s')}</td>
                             <td>{item.emailIdentifier}</td>
-                            <td>{item.dateSent ? Date.format(item.dateSent, 'd.m.Y h:m:s') : '-'}</td>
+                            <td>{item.dateSent ? Date.format(item.dateSent, 'd.m.Y h:m:s') : '–'}</td>
                             <td @if.idel={item.task == 'idle'}>
                                 <div class="neos-pull-right">
                                     <Neos.Fusion:Link.Action @if.unpublished={item.dateModified != null && item.dateSend == null && !item.published} class="neos-button neos-button-primary" href.action="publish" href.arguments.node={props.node} href.arguments.email={item} >
@@ -65,7 +68,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                             </td>
                             <td @if.running={item.task != 'idle' && item.task != 'failed'}>
                                 <div class="neos-pull-right">
-                                    The Task "{item.task}" is currently running... please wait!
+                                    {props.i18n.id('email.task.running').arguments([item.task]).translate()}
                                     <Neos.Fusion:Link.Action class="neos-button neos-button-primary" href.action="info" href.arguments.node={props.node} href.arguments.email={item} >
                                         <i class="fas fa-info icon-white"></i>
                                     </Neos.Fusion:Link.Action>
@@ -73,7 +76,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                             </td>
                             <td @if.running={item.task == 'failed'}>
                                 <div class="neos-pull-right">
-                                    The last task could not be executed! Please check the info log.
+                                    {props.i18n.id('email.task.failed').translate()}
                                     <Neos.Fusion:Link.Action class="neos-button neos-button-primary" href.action="info" href.arguments.node={props.node} href.arguments.email={item} >
                                         <i class="fas fa-info icon-white"></i>
                                     </Neos.Fusion:Link.Action>
@@ -87,10 +90,10 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
         </main>
         <div class="neos-footer">
             <Neos.Fusion:Link.Action class="neos-button neos-button-primary" href.action="create" href.arguments.node={props.node} href.arguments.email={item} >
-                Neue E-Mail erstellen
+                {props.i18n.id('email.action.create').translate()}
             </Neos.Fusion:Link.Action>
             <Neos.Fusion:Link.Action class="neos-button neos-button-secondary" href.action="email" href.arguments.node={props.node} href.arguments.email={item} >
-                Liste aktualisieren
+                {props.i18n.id('email.action.refresh')}
             </Neos.Fusion:Link.Action>
         </div>
     `

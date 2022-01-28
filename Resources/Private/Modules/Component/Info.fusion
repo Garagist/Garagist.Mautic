@@ -3,33 +3,35 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
     node = ${node}
     history = ${history}
     mauticRecord = ${mauticRecord}
+    i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
+
     renderer = afx`
         <main class="mautic neos-tab-content" style="height: 100vh;">
             <div class="neos-tab-pane neos-active" style="height: 100vh;">
                 <div class="neos-row-fluid">
                     <div class="neos-span6 neos-image-inputs">
                         <fieldset>
-                            <legend>Meta Daten</legend>
+                            <legend>{props.i18n.id('info.metadata').translate()}</legend>
                             <table class="neos-info-table">
                                 <tbody>
                                 <tr>
-                                    <th>Name</th>
+                                    <th>{props.i18n.id('info.name').translate()}</th>
                                     <td>{props.mauticRecord.name}</td>
                                 </tr>
                                 <tr>
-                                    <th>Subject</th>
+                                    <th>{props.i18n.id('info.subject').translate()}</th>
                                     <td>{props.mauticRecord.subject}</td>
                                 </tr>
                                 </tbody>
                             </table>
                         </fieldset>
                         <fieldset>
-                            <legend>Historie</legend>
+                            <legend>{props.i18n.id('info.history').translate()}</legend>
                             <table class="neos-info-table">
                                 <thead>
-                                <th>Datum</th>
-                                <th>Typ</th>
-                                <th>Message</th>
+                                <th>{props.i18n.id('info.date').translate()}</th>
+                                <th>{props.i18n.id('info.type').translate()}</th>
+                                <th>{props.i18n.id('info.message').translate()}</th>
                                 </thead>
                                 <tbody>
                                 <Neos.Fusion:Loop items={props.history}>
@@ -53,10 +55,10 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
         </main>
         <div class="neos-footer">
             <Neos.Fusion:Link.Action class="neos-button neos-button-primary" href.action="email" href.arguments.node={props.node} href.arguments.email={props.email}>
-                Zurück
+                {props.i18n.id('back').translate()}
             </Neos.Fusion:Link.Action>
             <Neos.Fusion:Link.Action @if.error={Array.last(props.history).error} class="neos-button neos-button-warning" href.action="unlock" href.arguments.node={props.node} href.arguments.email={props.email}>
-                Unlock Task
+                {props.i18n.id('info.action.unlock').translate()}
             </Neos.Fusion:Link.Action>
         </div>
     `

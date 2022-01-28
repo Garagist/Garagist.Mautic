@@ -1,93 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.2"
     xmlns="urn:oasis:names:tc:xliff:document:1.2">
-    <file original="" product-name="Garagist.Mautic" source-language="en" datatype="plaintext">
+    <file original="" product-name="Garagist.Mautic" source-language="en" target-language="de" datatype="plaintext">
         <body>
             <trans-unit id="back" xml:space="preserve">
                 <source>Back</source>
+                <target>Zurück</target>
             </trans-unit>
             <trans-unit id="module.mautic.label" xml:space="preserve">
                 <source>Newsletter</source>
+                <target>Newsletter</target>
             </trans-unit>
             <trans-unit id="module.mautic.description" xml:space="preserve">
                 <source>This module manages the newsletter with mautic. It shows the status and handle the actions.</source>
+                <target>Dieses Modul verwaltet den Newsletter mit Mautic. Es zeigt den Status an und verwaltet die Aktionen.</target>
             </trans-unit>
             <trans-unit id="emails.headline" xml:space="preserve">
                 <source>Newsletter: {0}</source>
+                <target>Newsletter: {0}</target>
             </trans-unit>
             <trans-unit id="newEmailcreated" xml:space="preserve">
                 <source>The new email for {0} has been created</source>
+                <target>Die neue E-Mail für {0} wurde erstellt</target>
             </trans-unit>
             <trans-unit id="list.emails.header" xml:space="preserve">
                 <source>Available newsletter</source>
+                <source>Verfügbare Newsletter</source>
             </trans-unit>
             <trans-unit id="list.emails.none" xml:space="preserve">
                 <source>No pages with newsletter were found</source>
+                <target>Es wurden keine Seiten mit Newslettern gefunden</target>
             </trans-unit>
             <group id="list.emails.count" restype="x-gettext-plurals">
                 <trans-unit id="list.emails.count[0]" xml:space="preserve">
                     <source>email</source>
+                    <target>E-Mail</target>
                 </trans-unit>
                 <trans-unit id="list.emails.count[1]" xml:space="preserve">
                     <source>emails</source>
+                    <target>E-Mails</target>
                 </trans-unit>
             </group>
             <trans-unit id="status.headline" xml:space="preserve">
                 <source>Mautic API Status</source>
+                <target>Mautic API Status</target>
             </trans-unit>
             <trans-unit id="status.active" xml:space="preserve">
                 <source>Active</source>
+                <target>Aktiv</target>
             </trans-unit>
             <trans-unit id="status.inactive" xml:space="preserve">
                 <source>Inactive</source>
+                <target>Inaktiv</target>
             </trans-unit>
             <trans-unit id="email.createdOn" xml:space="preserve">
                 <source>Created</source>
+                <target>Erstellt am</target>
             </trans-unit>
             <trans-unit id="email.identifier" xml:space="preserve">
                 <source>Identifier</source>
+                <target>Identifier</target>
             </trans-unit>
             <trans-unit id="email.sentOn" xml:space="preserve">
                 <source>Sent on</source>
+                <target>Gesendet am</target>
             </trans-unit>
             <trans-unit id="email.actions" xml:space="preserve">
                 <source>Actions</source>
+                <target>Aktionen</target>
             </trans-unit>
             <trans-unit id="email.task.running" xml:space="preserve">
                 <source>The Task "{0}" is currently running… please wait!</source>
+                <target>Die Aufgabe "{0}" wird gerade ausgeführt… bitte warten!</target>
             </trans-unit>
             <trans-unit id="email.task.failed" xml:space="preserve">
                 <source>The last task could not be executed! Please check the info log</source>
+                <target>Die letzte Aufgabe konnte nicht ausgeführt werden! Bitte prüfen Sie das Infoprotokoll</target>
             </trans-unit>
             <trans-unit id="email.action.create" xml:space="preserve">
                 <source>Create new email</source>
+                <target>Neue E-Mail erstellen</target>
             </trans-unit>
             <trans-unit id="email.action.refresh" xml:space="preserve">
                 <source>Refresh list</source>
+                <target>Liste aktualisieren</target>
             </trans-unit>
             <trans-unit id="info.metadata" xml:space="preserve">
                 <source>Metadata</source>
+                <target>Meta Daten</target>
             </trans-unit>
             <trans-unit id="info.name" xml:space="preserve">
                 <source>Name</source>
+                <target>Name</target>
             </trans-unit>
             <trans-unit id="info.subject" xml:space="preserve">
                 <source>Subject</source>
+                <source>Betreff</source>
             </trans-unit>
             <trans-unit id="info.history" xml:space="preserve">
                 <source>History</source>
+                <source>Historie</source>
             </trans-unit>
             <trans-unit id="info.date" xml:space="preserve">
                 <source>Date</source>
+                <target>Datum</target>
             </trans-unit>
             <trans-unit id="info.type" xml:space="preserve">
                 <source>Type</source>
+                <target>Typ</target>
             </trans-unit>
             <trans-unit id="info.message" xml:space="preserve">
                 <source>Message</source>
+                <target>Nachricht</target>
             </trans-unit>
             <trans-unit id="info.action.unlock" xml:space="preserve">
                 <source>Unlock Task</source>
+                <target>Task entsperren</target>
             </trans-unit>
         </body>
     </file>
