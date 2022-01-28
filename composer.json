@@ -6,7 +6,7 @@
         "neos/neos-ui": "^7.1",
         "neos/event-sourcing": "^2.0",
         "neos/neos": "^7.1",
-        "mautic/api-library": "^2.0.0",
+        "mautic/api-library": "^3.0.0",
         "carbon/eel": "^1.13.3 || ^2.0"
     },
     "autoload": {
