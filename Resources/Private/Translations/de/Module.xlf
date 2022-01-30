@@ -41,6 +41,27 @@
                     <target>E-Mails</target>
                 </trans-unit>
             </group>
+            <trans-unit id="list.emails.publish" xml:space="preserve">
+                <source>Publish email</source>
+                <target>E-Mail veröffentlichen</target>
+                <target></target>
+            </trans-unit>
+            <trans-unit id="list.emails.unpublish" xml:space="preserve">
+                <source>Un-publish email</source>
+                <target>E-Mail nicht mehr veröffentlichen</target>
+            </trans-unit>
+            <trans-unit id="list.emails.send" xml:space="preserve">
+                <source>Send email</source>
+                <target>E-Mail senden</target>
+            </trans-unit>
+            <trans-unit id="list.emails.update" xml:space="preserve">
+                <source>Update email</source>
+                <target>E-Mail aktualisieren</target>
+            </trans-unit>
+            <trans-unit id="list.emails.info" xml:space="preserve">
+                <source>Information about this email</source>
+                <target>Informationen über diese E-Mail</target>
+            </trans-unit>
             <trans-unit id="status.headline" xml:space="preserve">
                 <source>Mautic API Status</source>
                 <target>Mautic API Status</target>

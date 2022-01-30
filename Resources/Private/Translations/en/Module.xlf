@@ -32,6 +32,21 @@
                     <source>emails</source>
                 </trans-unit>
             </group>
+            <trans-unit id="list.emails.publish" xml:space="preserve">
+                <source>Publish email</source>
+            </trans-unit>
+            <trans-unit id="list.emails.unpublish" xml:space="preserve">
+                <source>Un-publish email</source>
+            </trans-unit>
+            <trans-unit id="list.emails.send" xml:space="preserve">
+                <source>Send email</source>
+            </trans-unit>
+            <trans-unit id="list.emails.update" xml:space="preserve">
+                <source>Update email</source>
+            </trans-unit>
+            <trans-unit id="list.emails.info" xml:space="preserve">
+                <source>Information about this email</source>
+            </trans-unit>
             <trans-unit id="status.headline" xml:space="preserve">
                 <source>Mautic API Status</source>
             </trans-unit>
