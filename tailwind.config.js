@@ -3,7 +3,6 @@ const colors = require("tailwindcss/colors");
 module.exports = {
     content: ["Resources/Private/{Assets,Fusion,Modules}/**/*.{js,fusion,pcss}"],
     important: ".mautic",
-    darkMode: false,
     theme: {
         colors: {
             transparent: "transparent",
