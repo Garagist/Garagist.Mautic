@@ -1,0 +1,41 @@
+prototype(Garagist.Mautic:Component.ToggleSwitch) < prototype(Neos.Fusion:Component) {
+    label = null
+    toggle = null
+    showLabel = true
+
+    @if.hasToggle = ${this.toggle && this.label}
+
+    // :class={props.toggle + "?'bg-neos-blue':'bg-neos-darker'"}
+
+    renderer = afx`
+        <label class="inline-flex items-center space-x-4 group mt-8 text-left cursor-pointer">
+            <input type="checkbox" x-model={props.toggle} class="sr-only peer" />
+            <span
+                class="peer-checked:bg-neos-blue bg-neos-darker pointer-events-none relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 peer-focus:outline-none peer-focus:ring-offset-neos peer-focus:ring-2 peer-focus:ring-offset-2 peer-focus:ring-neos-blue"
+            >
+                <span
+                    :class={props.toggle + "?'translate-x-5 bg-white':'translate-x-0 bg-neos-light'"}
+                    class="relative inline-block h-5 w-5 rounded-full  shadow transform ring-0 transition ease-in-out duration-200"
+                >
+                    <span
+                        :class={props.toggle + "?'opacity-0 ease-out duration-100':'opacity-100 ease-in duration-200'"}
+                        class="absolute inset-0 h-full w-full flex items-center justify-center transition-opacity"
+                        aria-hidden="true"
+                    >
+                        <i class="text-[0.75em] fas fa-times text-white"></i>
+                    </span>
+                    <span
+                        :class={props.toggle + "?'opacity-100 ease-in duration-200':'opacity-0 ease-out duration-100'"}
+                        class="absolute inset-0 h-full w-full flex items-center justify-center transition-opacity"
+                        aria-hidden="true"
+                    >
+                        <i class="text-[0.75em] fas fa-check text-neos-blue"></i>
+                    </span>
+                </span>
+            </span>
+            <span class={props.showLabel ? null : "sr-only"}>
+                {Translation.translate(props.label, props.label, [], 'Module', 'Garagist.Mautic')}
+            </span>
+        </label>
+    `
+}
