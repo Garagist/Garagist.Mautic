@@ -56,6 +56,9 @@
             <trans-unit id="email.createdOn" xml:space="preserve">
                 <source>Created</source>
             </trans-unit>
+            <trans-unit id="email.status" xml:space="preserve">
+                <source>Status</source>
+            </trans-unit>
             <trans-unit id="email.identifier" xml:space="preserve">
                 <source>Identifier</source>
             </trans-unit>

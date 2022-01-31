@@ -29,10 +29,10 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                 task = ${item.task}
 
                 isIdle = ${item.task == 'idle'}
-                canPublish = ${this.isIdle && (item.dateModified != null && item.dateSend == null && !item.published)}
-                canUnpublish = ${this.isIdle && (item.dateSent == null && item.published)}
-                canSend = ${this.isIdle && (item.dateSent == null && item.published)}
-                canUpdate = ${this.isIdle && (item.dateSent == null && !item.published)}
+                canPublish = ${true || this.isIdle && (item.dateModified != null && item.dateSend == null && !item.published)}
+                canUnpublish = ${true || this.isIdle && (item.dateSent == null && item.published)}
+                canSend = ${true || this.isIdle && (item.dateSent == null && item.published)}
+                canUpdate = ${true || this.isIdle && (item.dateSent == null && !item.published)}
 
                 isRunning = ${item.task != 'idle' && item.task != 'failed'}
                 isFailed = ${item.task == 'failed'}
@@ -49,8 +49,9 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                     <table class='neos-table'>
                         <thead>
                             <tr>
-                                <td>{props.i18n.id('email.createdOn').translate()}</td>
+                                <td>{props.i18n.id('email.status').translate()}</td>
                                 <td>{props.i18n.id('email.identifier').translate()}</td>
+                                <td>{props.i18n.id('email.createdOn').translate()}</td>
                                 <td>{props.i18n.id('email.sentOn').translate()}</td>
                                 <td class="!text-right">{props.i18n.id('email.actions').translate()}</td>
                             </tr>
@@ -58,8 +59,31 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                         <tbody>
                         <Neos.Fusion:Loop items={props._emails}>
                             <tr>
+                                <td width="1%" class="!text-center whitespace-nowrap">
+                                    <span
+                                        @if.set={item.isFailed}
+                                        class="inline-block"
+                                        aria-label={props.i18n.id('email.task.failed').translate()}
+                                        data-balloon-length="medium"
+                                        data-balloon-pos="up"
+                                    >
+                                        <i class="fas fa-exclamation-triangle text-red-500"></i>
+                                    </span>
+                                    <i @if.set={!item.isFailed} class="fas fa-check text-green-600"></i>
+                                </td>
+                                <td width="1%" class="whitespace-nowrap !p-0">
+                                    <Neos.Fusion:Link.Action
+                                        class="neos-button neos-button-primary block text-left"
+                                        href.action="info"
+                                        href.arguments={item.hrefArguments}
+                                        aria-label={props.i18n.id('list.emails.info').translate()}
+                                        data-balloon-length="medium"
+                                        data-balloon-pos="up"
+                                    >
+                                        {item.emailIdentifier}
+                                    </Neos.Fusion:Link.Action>
+                                </td>
                                 <td>{item.dateCreated}</td>
-                                <td>{item.emailIdentifier}</td>
                                 <td>{item.dateSent}</td>
                                 <td class="neos-action">
                                     <div class="neos-pull-right">
@@ -69,7 +93,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                                             href.action="publish"
                                             href.arguments={item.hrefArguments}
                                             aria-label={props.i18n.id('list.emails.publish').translate()}
-                                            data-balloon-pos="left"
+                                            data-balloon-pos="up"
                                         >
                                             <i class="fas fa-upload"></i>
                                         </Neos.Fusion:Link.Action>
@@ -79,7 +103,8 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                                             href.action="unPublish"
                                             href.arguments={item.hrefArguments}
                                             aria-label={props.i18n.id('list.emails.unpublish').translate()}
-                                            data-balloon-pos="left"
+                                            data-balloon-length="medium"
+                                            data-balloon-pos="up"
                                         >
                                             <i class="fas fa-download"></i>
                                         </Neos.Fusion:Link.Action>
@@ -89,7 +114,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                                             href.action="send"
                                             href.arguments={item.hrefArguments}
                                             aria-label={props.i18n.id('list.emails.send').translate()}
-                                            data-balloon-pos="left"
+                                            data-balloon-pos="up"
                                         >
                                             <i class="fas fa-paper-plane"></i>
                                         </Neos.Fusion:Link.Action>
@@ -99,26 +124,17 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                                             href.action="update"
                                             href.arguments={item.hrefArguments}
                                             aria-label={props.i18n.id('list.emails.update').translate()}
-                                            data-balloon-pos="left"
+                                            data-balloon-pos="up"
                                         >
                                             <i class="fas fa-sync icon-white"></i>
                                         </Neos.Fusion:Link.Action>
-                                        <span
-                                            @if.set={item.isFailed}
-                                            class="neos-button !bg-red-500"
-                                            aria-label={props.i18n.id('email.task.failed').translate()}
-                                            data-balloon-length="medium"
-                                            data-balloon-pos="left"
-                                        >
-                                            <i class="fas fa-exclamation-triangle icon-white"></i>
-                                        </span>
                                         <Neos.Fusion:Link.Action
                                             class="neos-button neos-button-primary"
                                             href.action="info"
                                             href.arguments={item.hrefArguments}
                                             aria-label={props.i18n.id('list.emails.info').translate()}
                                             data-balloon-length="medium"
-                                            data-balloon-pos="left"
+                                            data-balloon-pos="up"
                                         >
                                             <i class="fas fa-info icon-white"></i>
                                         </Neos.Fusion:Link.Action>

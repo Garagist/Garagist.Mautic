@@ -70,6 +70,10 @@
                 <source>Inactive</source>
                 <target>Inaktiv</target>
             </trans-unit>
+            <trans-unit id="email.status" xml:space="preserve">
+                <source>Status</source>
+                <target>Status</target>
+            </trans-unit>
             <trans-unit id="email.createdOn" xml:space="preserve">
                 <source>Created</source>
                 <target>Erstellt am</target>
