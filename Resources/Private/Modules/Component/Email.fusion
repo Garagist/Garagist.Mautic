@@ -29,10 +29,10 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                 task = ${item.task}
 
                 isIdle = ${item.task == 'idle'}
-                canPublish = ${true || this.isIdle && (item.dateModified != null && item.dateSend == null && !item.published)}
-                canUnpublish = ${true || this.isIdle && (item.dateSent == null && item.published)}
-                canSend = ${true || this.isIdle && (item.dateSent == null && item.published)}
-                canUpdate = ${true || this.isIdle && (item.dateSent == null && !item.published)}
+                canPublish = ${this.isIdle && (item.dateModified != null && item.dateSend == null && !item.published)}
+                canUnpublish = ${this.isIdle && (item.dateSent == null && item.published)}
+                canSend = ${this.isIdle && (item.dateSent == null && item.published)}
+                canUpdate = ${this.isIdle && (item.dateSent == null && !item.published)}
 
                 isRunning = ${item.task != 'idle' && item.task != 'failed'}
                 isFailed = ${item.task == 'failed'}
