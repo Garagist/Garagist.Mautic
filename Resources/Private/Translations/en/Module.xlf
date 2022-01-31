@@ -29,6 +29,9 @@
                     <source>emails</source>
                 </trans-unit>
             </group>
+            <trans-unit id="list.showPagesWithoutEmails" xml:space="preserve">
+                <source>Show pages without emails</source>
+            </trans-unit>
             <trans-unit id="list.emails.publish" xml:space="preserve">
                 <source>Publish email</source>
             </trans-unit>
@@ -44,14 +47,11 @@
             <trans-unit id="list.emails.info" xml:space="preserve">
                 <source>Information about this email</source>
             </trans-unit>
-            <trans-unit id="status.headline" xml:space="preserve">
-                <source>Mautic API Status</source>
-            </trans-unit>
             <trans-unit id="status.active" xml:space="preserve">
-                <source>Active</source>
+                <source>Mautic API Status: Active</source>
             </trans-unit>
             <trans-unit id="status.inactive" xml:space="preserve">
-                <source>Inactive</source>
+                <source>Mautic API Status: Inactive</source>
             </trans-unit>
             <trans-unit id="email.createdOn" xml:space="preserve">
                 <source>Created</source>

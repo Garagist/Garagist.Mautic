@@ -18,6 +18,7 @@ use Neos\Fusion\View\FusionView;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Service\LinkingService;
 use Neos\Neos\TypeConverter\NodeConverter;
+use Collator;
 
 /**
  * @Flow\Scope("singleton")
@@ -91,6 +92,21 @@ class BackendController extends AbstractModuleController
         }
     }
 
+    protected function localSort(array $array, ?string $key = null): array
+    {
+        // TODO: Make the locale dynamic
+        $collator = new Collator('de_DE');
+
+        uasort($array, function ($a, $b) use ($collator, $key) {
+            if (isset($key)) {
+                return $collator->compare($a[$key], $b[$key]);
+            }
+            return $collator->compare($a, $b);
+        });
+
+        return $array;
+    }
+
     /**
      * Render the overview of emails
      *
@@ -101,23 +117,58 @@ class BackendController extends AbstractModuleController
         $ping = $this->apiService->ping();
         $nodes = $this->nodeService->getNodesByType('Garagist.Mautic:Mixin.Editor');
         $pages = [];
+        $categoryList = [];
+        $hasCategories = false;
         foreach ($nodes as $node) {
-            $title = $node->getProperty('title');
             $parentNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Subtitle');
-            $subtitle = $parentNode ? $parentNode->getProperty('title') : null;
-            $pages[] = [
-                "count" => count(
-                    $this->mauticService->getEmailsNodeIdentifier(
-                        $node->getIdentifier()
-                    )
-                ),
+            $identifier = $node->getIdentifier();
+            $parentIdentifier = $parentNode ? $parentNode->getIdentifier() : null;
+            $title = $node->getProperty('title');
+            $parentTitle = $parentNode ? $parentNode->getProperty('title') : null;
+            $count = count($this->mauticService->getEmailsNodeIdentifier(
+                $node->getIdentifier()
+            ));
+            if ($parentNode) {
+                $categoryList[$parentIdentifier] = $parentTitle;
+                $hasCategories = true;
+            }
+            $pages[$identifier] = [
+                "count" => $count,
                 "node" => $node,
                 "title" => $title,
-                "subtitle" => $subtitle
+                "parentTitle" => $parentTitle,
+                "parentIdentifier" => $parentIdentifier,
             ];
         }
 
-        $this->view->assignMultiple(['pages' => $pages, 'ping' => $ping]);
+        $pages = $this->localSort($pages, 'title');
+
+        $categories = [];
+        if ($hasCategories) {
+            $categoryList = $this->localSort($categoryList);
+            foreach ($categoryList as $identifier => $title) {
+                $items = [];
+                foreach ($pages as $item) {
+                    if ($identifier == $item['parentIdentifier']) {
+                        $items[] = $item;
+                    }
+                }
+                $categories[$identifier] = [
+                    'title' => $title,
+                    'main' => isset($pages[$identifier]) ? $pages[$identifier] : null,
+                    'pages' =>  $items
+                ];
+            }
+        }
+
+
+        $this->view->assignMultiple(
+            [
+                'pages' => $pages,
+                'categories' => $categories,
+                'ping' => $ping,
+            ]
+        );
     }
 
     /**

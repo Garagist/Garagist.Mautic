@@ -21,7 +21,7 @@
             </trans-unit>
             <trans-unit id="list.emails.header" xml:space="preserve">
                 <source>Available newsletter</source>
-                <source>Verfügbare Newsletter</source>
+                <target>Verfügbare Newsletter</target>
             </trans-unit>
             <trans-unit id="list.emails.none" xml:space="preserve">
                 <source>No pages with newsletter were found</source>
@@ -37,6 +37,10 @@
                     <target>E-Mails</target>
                 </trans-unit>
             </group>
+            <trans-unit id="list.showPagesWithoutEmails" xml:space="preserve">
+                <source>Show pages without emails</source>
+                <target>Zeige Seiten ohne E-Mails</target>
+            </trans-unit>
             <trans-unit id="list.emails.publish" xml:space="preserve">
                 <source>Publish email</source>
                 <target>E-Mail veröffentlichen</target>
@@ -58,17 +62,13 @@
                 <source>Information about this email</source>
                 <target>Informationen über diese E-Mail</target>
             </trans-unit>
-            <trans-unit id="status.headline" xml:space="preserve">
-                <source>Mautic API Status</source>
-                <target>Mautic API Status</target>
-            </trans-unit>
             <trans-unit id="status.active" xml:space="preserve">
-                <source>Active</source>
-                <target>Aktiv</target>
+                <source>Mautic API Status: Active</source>
+                <target>Mautic API Status: Aktiv</target>
             </trans-unit>
             <trans-unit id="status.inactive" xml:space="preserve">
-                <source>Inactive</source>
-                <target>Inaktiv</target>
+                <source>Mautic API Status: Inactive</source>
+                <target>Mautic API Status: Inaktiv</target>
             </trans-unit>
             <trans-unit id="email.status" xml:space="preserve">
                 <source>Status</source>
