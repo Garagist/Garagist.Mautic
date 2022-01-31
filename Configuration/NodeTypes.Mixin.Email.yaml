@@ -1,4 +1,4 @@
-'Garagist.Mautic:Mixin.Editor':
+'Garagist.Mautic:Mixin.Email':
   abstract: true
   ui:
     inspector:

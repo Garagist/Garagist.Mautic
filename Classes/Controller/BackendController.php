@@ -122,7 +122,7 @@ class BackendController extends AbstractModuleController
     public function indexAction()
     {
         $ping = $this->apiService->ping();
-        $nodes = $this->nodeService->getNodesByType('Garagist.Mautic:Mixin.Editor');
+        $nodes = $this->nodeService->getNodesByType('Garagist.Mautic:Mixin.Email');
         $pages = [];
         $categoryList = [];
         $hasCategories = false;
