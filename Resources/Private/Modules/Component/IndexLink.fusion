@@ -1,0 +1,28 @@
+prototype(Garagist.Mautic:Component.IndexLink) < prototype(Neos.Fusion:Component) {
+    count = null
+    title = null
+    class = 'text-sm'
+    show = ${this.count ? null : 'showPagesWithoutEmails'}
+
+    renderer = afx`
+        <div x-show={props.show} x-transition={!!props.show} class={[props.class, "relative rounded bg-neos shadow-sm flex items-center space-x-3 hover:bg-neos-darker focus-within:bg-neos-darker"]}>
+            <div class={[props.count ? "bg-green-800" : "bg-red-800" ,"leading-none flex-shrink-0 h-16 w-16 rounded-l flex flex-col items-center justify-center"]}>
+                <span class="text-lg">{props.count}</span>
+                <span class="text-xs">
+                    {Translation.translate('list.emails.count', null, [], 'Module', 'Garagist.Mautic', props.count)}
+                </span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <Neos.Fusion:Link.Action
+                    class="focus:outline-none font-medium text-gray-200"
+                    href.action="email"
+                    href.controller="Backend"
+                    href.arguments.node={props.node}
+                >
+                    <span class="absolute inset-0" aria-hidden="true"></span>
+                    {props.title}
+                </Neos.Fusion:Link.Action>
+            </div>
+        </div>
+    `
+}
