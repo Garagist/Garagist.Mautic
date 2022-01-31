@@ -76,7 +76,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                                         class="neos-button neos-button-primary block text-left"
                                         href.action="info"
                                         href.arguments={item.hrefArguments}
-                                        aria-label={props.i18n.id('list.emails.info').translate()}
+                                        aria-label={props.i18n.id('list.email.info').translate()}
                                         data-balloon-length="medium"
                                         data-balloon-pos="up"
                                     >
@@ -92,7 +92,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                                             class="neos-button neos-button-primary"
                                             href.action="publish"
                                             href.arguments={item.hrefArguments}
-                                            aria-label={props.i18n.id('list.emails.publish').translate()}
+                                            aria-label={props.i18n.id('list.email.publish').translate()}
                                             data-balloon-pos="up"
                                         >
                                             <i class="fas fa-upload"></i>
@@ -102,7 +102,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                                             class="neos-button neos-button-primary"
                                             href.action="unPublish"
                                             href.arguments={item.hrefArguments}
-                                            aria-label={props.i18n.id('list.emails.unpublish').translate()}
+                                            aria-label={props.i18n.id('list.email.unpublish').translate()}
                                             data-balloon-length="medium"
                                             data-balloon-pos="up"
                                         >
@@ -113,7 +113,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                                             class="neos-button neos-button-danger"
                                             href.action="send"
                                             href.arguments={item.hrefArguments}
-                                            aria-label={props.i18n.id('list.emails.send').translate()}
+                                            aria-label={props.i18n.id('list.email.send').translate()}
                                             data-balloon-pos="up"
                                         >
                                             <i class="fas fa-paper-plane"></i>
@@ -123,7 +123,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                                             class="neos-button neos-button-primary"
                                             href.action="update"
                                             href.arguments={item.hrefArguments}
-                                            aria-label={props.i18n.id('list.emails.update').translate()}
+                                            aria-label={props.i18n.id('list.email.update').translate()}
                                             data-balloon-pos="up"
                                         >
                                             <i class="fas fa-sync icon-white"></i>
@@ -132,7 +132,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                                             class="neos-button neos-button-primary"
                                             href.action="info"
                                             href.arguments={item.hrefArguments}
-                                            aria-label={props.i18n.id('list.emails.info').translate()}
+                                            aria-label={props.i18n.id('list.email.info').translate()}
                                             data-balloon-length="medium"
                                             data-balloon-pos="up"
                                         >

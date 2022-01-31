@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Garagist\Mautic\Controller;
 
-use Neos\Flow\Annotations as Flow;
 use Garagist\Mautic\Domain\Model\MauticEmail;
-use Garagist\Mautic\Service\NodeService;
 use Garagist\Mautic\Service\ApiService;
 use Garagist\Mautic\Service\MauticService;
+use Garagist\Mautic\Service\NodeService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Error\Messages\Message;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Security\Context;
@@ -72,6 +73,12 @@ class BackendController extends AbstractModuleController
     protected $flashMessageService;
 
     /**
+     * @Flow\Inject
+     * @var TranslationHelper
+     */
+    protected $translationHelper;
+
+    /**
      * @var array
      */
     protected $viewFormatToObjectNameMap = [
@@ -120,7 +127,7 @@ class BackendController extends AbstractModuleController
         $categoryList = [];
         $hasCategories = false;
         foreach ($nodes as $node) {
-            $parentNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Subtitle');
+            $parentNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
             $identifier = $node->getIdentifier();
             $parentIdentifier = $parentNode ? $parentNode->getIdentifier() : null;
             $title = $node->getProperty('title');
@@ -143,8 +150,8 @@ class BackendController extends AbstractModuleController
 
         $pages = $this->localSort($pages, 'title');
 
-        $categories = [];
         if ($hasCategories) {
+            $categories = [];
             $categoryList = $this->localSort($categoryList);
             foreach ($categoryList as $identifier => $title) {
                 $items = [];
@@ -159,13 +166,33 @@ class BackendController extends AbstractModuleController
                     'pages' =>  $items
                 ];
             }
+
+            $noCategory = [];
+            foreach ($pages as $item) {
+                if (!$item['parentIdentifier']) {
+                    $noCategory[] = $item;
+                }
+            }
+
+            if (count($noCategory)) {
+                $categories['noCategory'] = [
+                    'title' => $this->translationHelper->translate(
+                        'list.emails.noCategory',
+                        'Pages without category',
+                        [],
+                        'Module',
+                        'Garagist.Mautic'
+                    ),
+                    'pages' =>  $noCategory
+                ];
+            }
         }
 
 
         $this->view->assignMultiple(
             [
                 'pages' => $pages,
-                'categories' => $categories,
+                'categories' => $categories ?? null,
                 'ping' => $ping,
             ]
         );

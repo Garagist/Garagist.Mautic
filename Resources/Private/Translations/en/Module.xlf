@@ -21,6 +21,9 @@
             <trans-unit id="list.emails.none" xml:space="preserve">
                 <source>No pages with newsletter were found</source>
             </trans-unit>
+            <trans-unit id="list.emails.noCategory" xml:space="preserve">
+                <source>Pages without category</source>
+            </trans-unit>
             <group id="list.emails.count" restype="x-gettext-plurals">
                 <trans-unit id="list.emails.count[0]" xml:space="preserve">
                     <source>email</source>
@@ -32,19 +35,19 @@
             <trans-unit id="list.showPagesWithoutEmails" xml:space="preserve">
                 <source>Show pages without emails</source>
             </trans-unit>
-            <trans-unit id="list.emails.publish" xml:space="preserve">
+            <trans-unit id="list.email.publish" xml:space="preserve">
                 <source>Publish email</source>
             </trans-unit>
-            <trans-unit id="list.emails.unpublish" xml:space="preserve">
+            <trans-unit id="list.email.unpublish" xml:space="preserve">
                 <source>Unpublish email</source>
             </trans-unit>
-            <trans-unit id="list.emails.send" xml:space="preserve">
+            <trans-unit id="list.email.send" xml:space="preserve">
                 <source>Send email</source>
             </trans-unit>
-            <trans-unit id="list.emails.update" xml:space="preserve">
+            <trans-unit id="list.email.update" xml:space="preserve">
                 <source>Update email</source>
             </trans-unit>
-            <trans-unit id="list.emails.info" xml:space="preserve">
+            <trans-unit id="list.email.info" xml:space="preserve">
                 <source>Information about this email</source>
             </trans-unit>
             <trans-unit id="status.active" xml:space="preserve">

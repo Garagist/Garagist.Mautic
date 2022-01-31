@@ -1,0 +1,4 @@
+# This Mixin is for getting the category in the overview
+
+'Garagist.Mautic:Mixin.Category':
+  abstract: true

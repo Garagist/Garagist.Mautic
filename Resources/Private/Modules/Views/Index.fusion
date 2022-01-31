@@ -28,7 +28,7 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
             />
 
             <p @if.set={!props.hasPages}>{props.i18n.id('list.emails.none').translate()}</p>
-
+            <Neos.Fusion:Debug.Console items={props.categories} />
             <Neos.Fusion:Loop @if.set={props.hasCategories} items={props.categories}>
                 <div
                     class={[iterator.isFirst ? null : "xl:mt-16", "mt-12"]}
