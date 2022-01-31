@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Garagist\Mautic\Controller;
 
+use Collator;
 use Garagist\Mautic\Domain\Model\MauticEmail;
 use Garagist\Mautic\Service\ApiService;
 use Garagist\Mautic\Service\MauticService;
@@ -18,8 +19,8 @@ use Neos\Flow\Security\Context;
 use Neos\Fusion\View\FusionView;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Service\LinkingService;
+use Neos\Neos\Service\UserService;
 use Neos\Neos\TypeConverter\NodeConverter;
-use Collator;
 
 /**
  * @Flow\Scope("singleton")
@@ -79,6 +80,12 @@ class BackendController extends AbstractModuleController
     protected $translationHelper;
 
     /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userService;
+
+    /**
      * @var array
      */
     protected $viewFormatToObjectNameMap = [
@@ -101,8 +108,7 @@ class BackendController extends AbstractModuleController
 
     protected function localSort(array $array, ?string $key = null): array
     {
-        // TODO: Make the locale dynamic
-        $collator = new Collator('de_DE');
+        $collator = new Collator($this->userService->getInterfaceLanguage());
 
         uasort($array, function ($a, $b) use ($collator, $key) {
             if (isset($key)) {
