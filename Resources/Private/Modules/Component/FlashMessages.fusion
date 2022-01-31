@@ -1,47 +1,49 @@
 prototype(Garagist.Mautic:Component.FlashMessages) < prototype(Neos.Fusion:Component) {
     flashMessages = ${[]}
 
-    renderer = afx`
-        <div id="neos-notification-container" class="neos-notification-top" @if.hasMessages={props.flashMessages}>
-            <Neos.Fusion:Loop items={props.flashMessages} itemName="message">
-                <Garagist.Mautic:Component.FlashMessages.Message message={message}/>
-            </Neos.Fusion:Loop>
-        </div>
-    `
-}
+    @if.hasMessages = ${Carbon.Array.check(this.flashMessages)}
 
-prototype(Garagist.Mautic:Component.FlashMessages.Message) < prototype(Neos.Fusion:Component) {
-    message = ${{}}
+    renderer = Neos.Fusion:Tag {
+        attributes {
+            id = 'neos-notification-container'
+            class = 'neos-notification-top'
+        }
+        content = Neos.Fusion:Loop {
+            items = ${props.flashMessages}
+            itemRenderer = Neos.Fusion:Component {
+                severity = ${String.toLowerCase(item.severity)}
+                severity.@process {
+                    replaceOKStatus = ${value == 'ok' ? 'success' : value}
+                    replaceNoticeStatus = ${value == 'notice' ? 'info' : value}
+                }
 
-    severity = ${String.toLowerCase(this.message.severity)}
-    severity.@process.replaceOKStatus = ${value == 'ok' ? 'success' : value}
-    severity.@process.replaceNoticeStatus = ${value == 'notice' ? 'info' : value}
-
-    heading = ${this.message.title ? Translation.translate(this.message.title, this.message.title, this.message.arguments, 'Module', 'Garagist.Mautic') : null}
-    content = ${this.message.message ? Translation.translate(this.message.message, this.message.message, this.message.arguments, 'Module', 'Garagist.Mautic') : null}
-
-    renderer = afx`
-        <div class={'neos-notification neos-notification-' + props.severity} x-data="{expanded:false}">
-            <div
-                class={['neos-notification-content', props.content ? 'expandable' : null]}
-                :class="expanded&&'expanded'"
-            >
-                <i class={'fas fa-' + props.severity}></i>
-                <div @if.set={props.heading && !props.content} class="neos-notification-heading">
-                    {props.heading}
-                </div>
-                <button
-                    @if.set={props.heading && props.content}
-                    x-on:click="expanded=!expanded"
-                    type="button"
-                    class="neos-notification-heading text-left"
-                >
-                    {props.heading}
-                </button>
-                <div @if.set={props.content} class="neos-expand-content">
-                    {props.content}
-                </div>
-            </div>
-        </div>
-    `
+                title = ${item.title ? Translation.translate(item.title, item.title, item.arguments, 'Module', 'Garagist.Mautic') : null}
+                message = ${item.message ? Translation.translate(item.message, item.message, item.arguments, 'Module', 'Garagist.Mautic') : null}
+                renderer = afx`
+                    <div class={'neos-notification neos-notification-' + props.severity} x-data="{expanded:false}">
+                        <div
+                            class={['neos-notification-content', props.message ? 'expandable' : null]}
+                            :class="expanded&&'expanded'"
+                        >
+                            <i class={'fas fa-' + props.severity}></i>
+                            <div @if.set={props.title && !props.message} class="neos-notification-heading">
+                                {props.title}
+                            </div>
+                            <button
+                                @if.set={props.title && props.message}
+                                x-on:click="expanded=!expanded"
+                                type="button"
+                                class="neos-notification-heading text-left"
+                            >
+                                {props.title}
+                            </button>
+                            <div @if.set={props.message} class="neos-expand-content">
+                                {props.message}
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
+        }
+    }
 }
