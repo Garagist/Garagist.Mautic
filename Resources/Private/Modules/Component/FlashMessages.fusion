@@ -1,0 +1,47 @@
+prototype(Garagist.Mautic:Component.FlashMessages) < prototype(Neos.Fusion:Component) {
+    flashMessages = ${[]}
+
+    renderer = afx`
+        <div id="neos-notification-container" class="neos-notification-top" @if.hasMessages={props.flashMessages}>
+            <Neos.Fusion:Loop items={props.flashMessages} itemName="message">
+                <Garagist.Mautic:Component.FlashMessages.Message message={message}/>
+            </Neos.Fusion:Loop>
+        </div>
+    `
+}
+
+prototype(Garagist.Mautic:Component.FlashMessages.Message) < prototype(Neos.Fusion:Component) {
+    message = ${{}}
+
+    severity = ${String.toLowerCase(this.message.severity)}
+    severity.@process.replaceOKStatus = ${value == 'ok' ? 'success' : value}
+    severity.@process.replaceNoticeStatus = ${value == 'notice' ? 'info' : value}
+
+    heading = ${this.message.title ? Translation.translate(this.message.title, this.message.title, this.message.arguments, 'Module', 'Garagist.Mautic') : null}
+    content = ${this.message.message ? Translation.translate(this.message.message, this.message.message, this.message.arguments, 'Module', 'Garagist.Mautic') : null}
+
+    renderer = afx`
+        <div class={'neos-notification neos-notification-' + props.severity} x-data="{expanded:false}">
+            <div
+                class={['neos-notification-content', props.content ? 'expandable' : null]}
+                :class="expanded&&'expanded'"
+            >
+                <i class={'fas fa-' + props.severity}></i>
+                <div @if.set={props.heading && !props.content} class="neos-notification-heading">
+                    {props.heading}
+                </div>
+                <button
+                    @if.set={props.heading && props.content}
+                    x-on:click="expanded=!expanded"
+                    type="button"
+                    class="neos-notification-heading"
+                >
+                    {props.heading}
+                </button>
+                <div @if.set={props.content} class="neos-expand-content">
+                    {props.content}
+                </div>
+            </div>
+        </div>
+    `
+}
