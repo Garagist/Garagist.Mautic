@@ -242,6 +242,7 @@ class BackendController extends AbstractModuleController
 
         $this->redirect('email', 'Backend', null, ['node' => $node]);
     }
+
     public function emailAction(NodeInterface $node): void
     {
         $emails = $this->mauticService->getEmailsNodeIdentifier($node->getIdentifier());
@@ -269,25 +270,15 @@ class BackendController extends AbstractModuleController
         ]);
     }
 
-    /**
-     * Renders the view
-     */
     public function createAction(NodeInterface $node): void
     {
-        $uriBuilder = $this->controllerContext->getUriBuilder();
-        $uriBuilder->setRequest($this->controllerContext->getRequest()->getMainRequest());
-        $uri = $uriBuilder->reset()
-            ->setFormat('html')
-            ->setCreateAbsoluteUri(true)
-            ->setArguments(['maizzle' => true])
-            ->uriFor('show', ['node' => $node], 'Frontend\Node', 'Neos.Neos');
+        $linkingService = $this->linkingService;
+        $controllerContext = $this->controllerContext;
+        $uri = $linkingService->createNodeUri($controllerContext, null, $node, 'html', true, ['maizzle' => true]);
+        $this->mauticService->createEmailEvent($node->getIdentifier(), (string)$uri);
 
-
-        $templateUrl = explode('@', $uri)[0] . '.maizzle';
-
-        $this->mauticService->createEmailEvent($node->getIdentifier(), $templateUrl);
-
-        $this->addFlashMessage('New E-mail as been created',  Message::SEVERITY_OK);
-        $this->view->assign('node', $node);
+        $title = $node->getProperty('title');
+        $this->addFlashMessage('', 'email.feedback.created', Message::SEVERITY_OK, [$title]);
+        $this->redirect('email', null, null, ['node' => $node], 1);
     }
 }
