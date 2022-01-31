@@ -91,6 +91,11 @@ class BackendController extends AbstractModuleController
         }
     }
 
+    /**
+     * Render the overview of emails
+     *
+     * @return void
+     */
     public function indexAction()
     {
         $ping = $this->apiService->ping();
@@ -116,7 +121,11 @@ class BackendController extends AbstractModuleController
     }
 
     /**
-     * Renders the view
+     * Update the mautic email
+     *
+     * @param NodeInterface $node
+     * @param MauticEmail $email
+     * @return void
      */
     public function updateAction(NodeInterface $node, MauticEmail $email): void
     {
@@ -142,7 +151,11 @@ class BackendController extends AbstractModuleController
     }
 
     /**
-     * Renders the view
+     * Publish the mautic email
+     *
+     * @param NodeInterface $node
+     * @param MauticEmail $email
+     * @return void
      */
     public function publishAction(NodeInterface $node, MauticEmail $email): void
     {
@@ -168,7 +181,11 @@ class BackendController extends AbstractModuleController
     }
 
     /**
-     * Renders the view
+     * Unpublish the mautic email
+     *
+     * @param NodeInterface $node
+     * @param MauticEmail $email
+     * @return void
      */
     public function unPublishAction(NodeInterface $node, MauticEmail $email): void
     {
@@ -194,7 +211,11 @@ class BackendController extends AbstractModuleController
     }
 
     /**
-     * Renders the view
+     * Send the mautic email
+     *
+     * @param NodeInterface $node
+     * @param MauticEmail $email
+     * @return void
      */
     public function sendAction(NodeInterface $node, MauticEmail $email): void
     {
@@ -219,7 +240,13 @@ class BackendController extends AbstractModuleController
         $this->redirect('email', null, null, ['node' => $node]);
     }
 
-
+    /**
+     * Unlock the mautic email
+     *
+     * @param NodeInterface $node
+     * @param MauticEmail $email
+     * @return void
+     */
     public function unlockAction(NodeInterface $node, MauticEmail $email)
     {
         $identifier = $email->getEmailIdentifier();
@@ -243,6 +270,12 @@ class BackendController extends AbstractModuleController
         $this->redirect('email', 'Backend', null, ['node' => $node]);
     }
 
+    /**
+     * Render the list of emails for a node
+     *
+     * @param NodeInterface $node
+     * @return void
+     */
     public function emailAction(NodeInterface $node): void
     {
         $emails = $this->mauticService->getEmailsNodeIdentifier($node->getIdentifier());
@@ -254,6 +287,13 @@ class BackendController extends AbstractModuleController
         ]);
     }
 
+    /**
+     * Render the information about a mautic email
+     *
+     * @param NodeInterface $node
+     * @param MauticEmail $email
+     * @return void
+     */
     public function infoAction(NodeInterface $node, MauticEmail $email): void
     {
         $mauticRecord = $this->apiService->findEmailByNeosIdentifier($email->getEmailIdentifier());
@@ -270,6 +310,12 @@ class BackendController extends AbstractModuleController
         ]);
     }
 
+    /**
+     * Create a new mautic email
+     *
+     * @param NodeInterface $node
+     * @return void
+     */
     public function createAction(NodeInterface $node): void
     {
         $linkingService = $this->linkingService;
