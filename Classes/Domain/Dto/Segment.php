@@ -1,9 +1,11 @@
 <?php
+
 namespace Garagist\Mautic\Domain\Dto;
 
 use Neos\Flow\Annotations as Flow;
 
-class Segment {
+class Segment
+{
 
     /**
      * @var int

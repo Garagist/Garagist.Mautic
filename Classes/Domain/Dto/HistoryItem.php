@@ -1,9 +1,11 @@
 <?php
+
 namespace Garagist\Mautic\Domain\Dto;
 
 use Neos\Flow\Annotations as Flow;
 
-class HistoryItem {
+class HistoryItem
+{
 
     /**
      * @var string,
@@ -96,5 +98,4 @@ class HistoryItem {
     {
         $this->error = $error;
     }
-
 }

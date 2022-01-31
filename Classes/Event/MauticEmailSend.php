@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Garagist\Mautic\Event;
 
 use Neos\EventSourcing\Event\DomainEventInterface;
@@ -53,6 +55,4 @@ final class MauticEmailSend implements DomainEventInterface
     {
         $this->mauticIdentifier = $mauticIdentifier;
     }
-
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Garagist\Mautic\Domain\Model;
 
 use Neos\Flow\Annotations as Flow;
@@ -8,7 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @Flow\Entity
  */
-class MauticEmail {
+class MauticEmail
+{
 
     /**
      * @var string

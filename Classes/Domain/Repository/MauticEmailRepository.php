@@ -1,4 +1,5 @@
 <?php
+
 namespace Garagist\Mautic\Domain\Repository;
 
 use Neos\Flow\Annotations as Flow;
@@ -9,5 +10,4 @@ use Neos\Flow\Persistence\Doctrine\Repository;
  */
 class MauticEmailRepository extends Repository
 {
-
 }

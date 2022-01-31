@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Garagist\Mautic\Provider;
@@ -9,7 +10,7 @@ use Neos\Flow\Annotations as Flow;
 
 interface DataProviderInterface
 {
-    public function getDataForSegmentSendOut(MauticEmail $email, array $segments) : array;
+    public function getDataForSegmentSendOut(MauticEmail $email, array $segments): array;
 
-    public function getSegmentsForSendOut(MauticEmail $email) : array;
+    public function getSegmentsForSendOut(MauticEmail $email): array;
 }

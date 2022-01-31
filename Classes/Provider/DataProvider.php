@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Garagist\Mautic\Provider;
@@ -66,7 +67,7 @@ class DataProvider implements DataProviderInterface
      * @param string $workspace
      * @param array $dimensions
      */
-    private function initContext(string $workspace = 'live', array $dimensions = [] ) : void
+    private function initContext(string $workspace = 'live', array $dimensions = []): void
     {
         $this->context = $this->contextFactory->create(
             [
@@ -84,7 +85,7 @@ class DataProvider implements DataProviderInterface
      * @throws \Neos\Eel\Exception
      * @throws \Neos\Flow\Http\Client\InfiniteRedirectionException
      */
-    public function getDataForSegmentSendOut(MauticEmail $email, array $segments) : array
+    public function getDataForSegmentSendOut(MauticEmail $email, array $segments): array
     {
         $this->mauticLogger->debug(sprintf('Using %s DataProvider', static::class));
         $node = $this->getNode($email->getNodeIdentifier());
@@ -92,7 +93,7 @@ class DataProvider implements DataProviderInterface
 
         $data = array(
             'title' => $node->getProperty('title'),
-            'name' => $node->getProperty('title'). ' | [' . $email->getEmailIdentifier() .']',
+            'name' => $node->getProperty('title') . ' | [' . $email->getEmailIdentifier() . ']',
             'subject' => $node->getProperty('title') . ' | subject',
             'description' => $node->getProperty('title') . ' | description',
             'template' => 'blank',
@@ -110,7 +111,7 @@ class DataProvider implements DataProviderInterface
      * @param MauticEmail $email
      * @return array
      */
-    public function getSegmentsForSendOut(MauticEmail $email) : array
+    public function getSegmentsForSendOut(MauticEmail $email): array
     {
         $segments = $this->apiService->getAllSegments();
 
@@ -123,7 +124,8 @@ class DataProvider implements DataProviderInterface
      * @param $nodeIdentifier
      * @return \Neos\ContentRepository\Domain\Model\NodeInterface|null
      */
-    protected function getNode($nodeIdentifier) {
+    protected function getNode($nodeIdentifier)
+    {
         return $this->context->getNodeByIdentifier($nodeIdentifier);
     }
 }

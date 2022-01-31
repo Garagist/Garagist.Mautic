@@ -120,7 +120,11 @@ class NodeService
         }
 
         if (!isset($this->options['dimensionValues']) || empty($this->options['dimensionValues'])) {
-            $dimensionValues = $this->contentDimensionPresetSource->getDefaultPreset($dimensionName)['values'];
+            $defaultPreset = $this->contentDimensionPresetSource->getDefaultPreset($dimensionName);
+            if (!isset($defaultPreset['values'])) {
+                return $this->createContentContext([], $workspaceName);
+            }
+            $dimensionValues = $defaultPreset['values'];
         }
         $dimensionArray[$dimensionName] = $dimensionValues;
 
