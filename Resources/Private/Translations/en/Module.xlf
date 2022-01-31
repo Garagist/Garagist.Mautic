@@ -15,9 +15,6 @@
             <trans-unit id="emails.headline" xml:space="preserve">
                 <source>Newsletter: {0}</source>
             </trans-unit>
-            <trans-unit id="newEmailcreated" xml:space="preserve">
-                <source>The new email for {0} has been created</source>
-            </trans-unit>
             <trans-unit id="list.emails.header" xml:space="preserve">
                 <source>Available newsletter</source>
             </trans-unit>
@@ -36,7 +33,7 @@
                 <source>Publish email</source>
             </trans-unit>
             <trans-unit id="list.emails.unpublish" xml:space="preserve">
-                <source>Un-publish email</source>
+                <source>Unpublish email</source>
             </trans-unit>
             <trans-unit id="list.emails.send" xml:space="preserve">
                 <source>Send email</source>
@@ -76,6 +73,42 @@
             </trans-unit>
             <trans-unit id="email.action.create" xml:space="preserve">
                 <source>Create new email</source>
+            </trans-unit>
+            <trans-unit id="email.feedback.created" xml:space="preserve">
+                <source>A new email for {0} has been created</source>
+            </trans-unit>
+            <trans-unit id="email.feedback.updated" xml:space="preserve">
+                <source>The email has been updated</source>
+            </trans-unit>
+            <trans-unit id="email.feedback.updated.failed" xml:space="preserve">
+                <source>The email could not be updated</source>
+            </trans-unit>
+            <trans-unit id="email.feedback.published" xml:space="preserve">
+                <source>The email has been published</source>
+            </trans-unit>
+            <trans-unit id="email.feedback.published.failed" xml:space="preserve">
+                <source>The email could not be published</source>
+            </trans-unit>
+            <trans-unit id="email.feedback.unpublished" xml:space="preserve">
+                <source>The email has been unpublished</source>
+            </trans-unit>
+            <trans-unit id="email.feedback.unpublished.failed" xml:space="preserve">
+                <source>The email could not be unpublished</source>
+            </trans-unit>
+            <trans-unit id="email.feedback.sent" xml:space="preserve">
+                <source>The email has been sent</source>
+            </trans-unit>
+            <trans-unit id="email.feedback.sent.failed" xml:space="preserve">
+                <source>The email could not be sent</source>
+            </trans-unit>
+            <trans-unit id="email.feedback.unlocked" xml:space="preserve">
+                <source>The email has been unlocked</source>
+            </trans-unit>
+            <trans-unit id="email.feedback.unlocked.failed" xml:space="preserve">
+                <source>The email could not be unlocked</source>
+            </trans-unit>
+            <trans-unit id="email.feedback.identifier" xml:space="preserve">
+                <source><![CDATA[Identifier of the email: <br/><code>{0}</code>]]></source>
             </trans-unit>
             <trans-unit id="email.action.refresh" xml:space="preserve">
                 <source>Refresh list</source>

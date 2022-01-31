@@ -34,7 +34,7 @@ prototype(Garagist.Mautic:Component.FlashMessages.Message) < prototype(Neos.Fusi
                     @if.set={props.heading && props.content}
                     x-on:click="expanded=!expanded"
                     type="button"
-                    class="neos-notification-heading"
+                    class="neos-notification-heading text-left"
                 >
                     {props.heading}
                 </button>

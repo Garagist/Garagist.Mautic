@@ -41,18 +41,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
 
         renderer = afx`
             <main class="mautic">
-                <Neos.Fusion:Loop items={props.flashMessages} itemName="flashMessage">
-                    <div class={'neos-tooltip neos-bottom neos-in neos-tooltip-' + props.severityMapping[flashMessage.severity]}>
-                        <script @if.error={flashMessage.severity == 'Error'}>
-                            {"document.querySelector('fieldset').classList.add('effect--shake');"}
-                        </script>
-                        <div class="neos-tooltip-arrow"></div>
-                        <div class="neos-tooltip-inner" role="alert">
-                            {flashMessage}
-                            <!-- {I18n.id('flashMessage.' + flashMessage.code).value(flashMessage).package('Neos.Neos').source('Main')}-->
-                        </div>
-                    </div>
-                </Neos.Fusion:Loop>
+                <Garagist.Mautic:Component.FlashMessages flashMessages={props.flashMessages} />
                 <section class='mautic-list'>
                     <h2 class="text-xl font-bold mb-4">
                         {props.i18n.id('emails.headline').arguments([props.title]).translate()}

@@ -19,7 +19,6 @@ use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Service\LinkingService;
 use Neos\Neos\TypeConverter\NodeConverter;
 
-
 /**
  * @Flow\Scope("singleton")
  */
@@ -121,9 +120,22 @@ class BackendController extends AbstractModuleController
      */
     public function updateAction(NodeInterface $node, MauticEmail $email): void
     {
+        $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::Idle) {
             $this->mauticService->updateEmailEvent($email);
-            $this->addFlashMessage('E-mail as been updated',  Message::SEVERITY_OK);
+            $this->addFlashMessage(
+                'email.feedback.identifier',
+                'email.feedback.updated',
+                Message::SEVERITY_OK,
+                [$identifier]
+            );
+        } else {
+            $this->addFlashMessage(
+                'email.feedback.identifier',
+                'email.feedback.updated.failed',
+                Message::SEVERITY_ERROR,
+                [$identifier]
+            );
         }
 
         $this->redirect('email', null, null, ['node' => $node]);
@@ -134,9 +146,22 @@ class BackendController extends AbstractModuleController
      */
     public function publishAction(NodeInterface $node, MauticEmail $email): void
     {
+        $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::Idle) {
             $this->mauticService->publishEmailEvent($email);
-            $this->addFlashMessage('E-mail as been published',  Message::SEVERITY_OK);
+            $this->addFlashMessage(
+                'email.feedback.identifier',
+                'email.feedback.published',
+                Message::SEVERITY_OK,
+                [$identifier]
+            );
+        } else {
+            $this->addFlashMessage(
+                'email.feedback.identifier',
+                'email.feedback.published.failed',
+                Message::SEVERITY_ERROR,
+                [$identifier]
+            );
         }
 
         $this->redirect('email', null, null, ['node' => $node]);
@@ -147,9 +172,22 @@ class BackendController extends AbstractModuleController
      */
     public function unPublishAction(NodeInterface $node, MauticEmail $email): void
     {
+        $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::Idle) {
             $this->mauticService->unPublishEmailEvent($email);
-            $this->addFlashMessage('E-mail as been unpublished',  Message::SEVERITY_OK);
+            $this->addFlashMessage(
+                'email.feedback.identifier',
+                'email.feedback.unpublished',
+                Message::SEVERITY_OK,
+                [$identifier]
+            );
+        } else {
+            $this->addFlashMessage(
+                'email.feedback.identifier',
+                'email.feedback.unpublished.failed',
+                Message::SEVERITY_ERROR,
+                [$identifier]
+            );
         }
 
         $this->redirect('email', null, null, ['node' => $node]);
@@ -160,14 +198,50 @@ class BackendController extends AbstractModuleController
      */
     public function sendAction(NodeInterface $node, MauticEmail $email): void
     {
+        $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::Idle) {
             $this->mauticService->sendEmailEvent($email);
-            $this->addFlashMessage('E-mail as been send',  Message::SEVERITY_OK);
+            $this->addFlashMessage(
+                'email.feedback.identifier',
+                'email.feedback.sent',
+                Message::SEVERITY_OK,
+                [$identifier]
+            );
+        } else {
+            $this->addFlashMessage(
+                'email.feedback.identifier',
+                'email.feedback.sent.failed',
+                Message::SEVERITY_ERROR,
+                [$identifier]
+            );
         }
 
         $this->redirect('email', null, null, ['node' => $node]);
     }
 
+
+    public function unlockAction(NodeInterface $node, MauticEmail $email)
+    {
+        $identifier = $email->getEmailIdentifier();
+        if ($email->getTask() == MauticEmail::TaskFailed) {
+            $this->mauticService->setTask($email, MauticEmail::Idle);
+            $this->addFlashMessage(
+                'email.feedback.identifier',
+                'email.feedback.unlocked',
+                Message::SEVERITY_OK,
+                [$identifier]
+            );
+        } else {
+            $this->addFlashMessage(
+                'email.feedback.identifier',
+                'email.feedback.unlocked.failed',
+                Message::SEVERITY_ERROR,
+                [$identifier]
+            );
+        }
+
+        $this->redirect('email', 'Backend', null, ['node' => $node]);
+    }
     public function emailAction(NodeInterface $node): void
     {
         $emails = $this->mauticService->getEmailsNodeIdentifier($node->getIdentifier());
@@ -215,16 +289,5 @@ class BackendController extends AbstractModuleController
 
         $this->addFlashMessage('New E-mail as been created',  Message::SEVERITY_OK);
         $this->view->assign('node', $node);
-    }
-
-    public function unlockAction(NodeInterface $node, MauticEmail $email)
-    {
-
-        if ($email->getTask() == MauticEmail::TaskFailed) {
-            $this->mauticService->setTask($email, MauticEmail::Idle);
-            $this->addFlashMessage('Email as been unlocked',  Message::SEVERITY_OK);
-        }
-
-        $this->redirect('email', 'Backend', null, ['node' => $node]);
     }
 }
