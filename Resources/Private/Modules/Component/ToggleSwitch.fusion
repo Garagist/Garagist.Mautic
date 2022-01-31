@@ -9,7 +9,7 @@ prototype(Garagist.Mautic:Component.ToggleSwitch) < prototype(Neos.Fusion:Compon
 
     renderer = afx`
         <label class="inline-flex items-center space-x-4 group mt-8 text-left cursor-pointer">
-            <input type="checkbox" x-model={props.toggle} class="sr-only peer" />
+            <input type="checkbox" x-model={props.toggle} class="sr-only peer !w-px" hidden />
             <span
                 class="peer-checked:bg-neos-blue bg-neos-darker pointer-events-none relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 peer-focus:outline-none peer-focus:ring-offset-neos peer-focus:ring-2 peer-focus:ring-offset-2 peer-focus:ring-neos-blue"
             >
