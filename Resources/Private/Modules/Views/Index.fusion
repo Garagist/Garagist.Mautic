@@ -28,7 +28,8 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
             />
 
             <p @if.set={!props.hasPages}>{props.i18n.id('list.emails.none').translate()}</p>
-            <Neos.Fusion:Debug.Console items={props.categories} />
+
+            <!-- There are pages with categories -->
             <Neos.Fusion:Loop @if.set={props.hasCategories} items={props.categories}>
                 <div
                     class={[iterator.isFirst ? null : "xl:mt-16", "mt-12"]}
@@ -50,12 +51,13 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
                 </div>
             </Neos.Fusion:Loop>
 
+            <!-- There aren't pages with categories -->
             <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" @if.set={!props.hasCategories && props.hasPages}>
                 <Neos.Fusion:Loop items={props.pages}>
                     <Garagist.Mautic:Component.IndexLink {...item} />
                 </Neos.Fusion:Loop>
             </div>
-            
+
         </main>
     `
 }
