@@ -174,8 +174,8 @@ class BackendController extends AbstractModuleController
             }
 
             $noCategory = [];
-            foreach ($pages as $item) {
-                if (!$item['parentIdentifier']) {
+            foreach ($pages as $identifier => $item) {
+                if (!$item['parentIdentifier'] && !array_key_exists($identifier, $categoryList)) {
                     $noCategory[] = $item;
                 }
             }
