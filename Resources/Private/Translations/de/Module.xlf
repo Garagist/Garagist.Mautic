@@ -168,11 +168,11 @@
             </trans-unit>
             <trans-unit id="info.subject" xml:space="preserve">
                 <source>Subject</source>
-                <source>Betreff</source>
+                <target>Betreff</target>
             </trans-unit>
             <trans-unit id="info.history" xml:space="preserve">
                 <source>History</source>
-                <source>Historie</source>
+                <target>Historie</target>
             </trans-unit>
             <trans-unit id="info.date" xml:space="preserve">
                 <source>Date</source>
@@ -185,6 +185,10 @@
             <trans-unit id="info.message" xml:space="preserve">
                 <source>Message</source>
                 <target>Nachricht</target>
+            </trans-unit>
+            <trans-unit id="info.action.refresh" xml:space="preserve">
+                <source>Refresh view</source>
+                <target>Ansicht aktualisieren</target>
             </trans-unit>
             <trans-unit id="info.action.unlock" xml:space="preserve">
                 <source>Unlock Task</source>

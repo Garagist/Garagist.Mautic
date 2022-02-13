@@ -6,14 +6,13 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
     i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
 
     renderer = afx`
-        <main class="mautic neos-tab-content" style="height: 100vh;">
-            <div class="neos-tab-pane neos-active" style="height: 100vh;">
-                <div class="neos-row-fluid">
-                    <div class="neos-span6 neos-image-inputs">
-                        <fieldset>
-                            <legend>{props.i18n.id('info.metadata').translate()}</legend>
-                            <table class="neos-info-table">
-                                <tbody>
+        <main class="mautic">
+            <div class="grid gap-8 grid-flow-row auto-rows-auto lg:grid-cols-2">
+                <div class="space-y-4 lg:min-h-[calc(100vh-270px)]">
+                    <section>
+                        <h1 class="text-xl">{props.i18n.id('info.metadata').translate()}</h1>
+                        <table class="neos-info-table">
+                            <tbody>
                                 <tr>
                                     <th>{props.i18n.id('info.name').translate()}</th>
                                     <td>{props.mauticRecord.name}</td>
@@ -22,18 +21,18 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
                                     <th>{props.i18n.id('info.subject').translate()}</th>
                                     <td>{props.mauticRecord.subject}</td>
                                 </tr>
-                                </tbody>
-                            </table>
-                        </fieldset>
-                        <fieldset>
-                            <legend>{props.i18n.id('info.history').translate()}</legend>
-                            <table class="neos-info-table">
-                                <thead>
+                            </tbody>
+                        </table>
+                    </section>
+                    <section>
+                        <h1 class="text-xl">{props.i18n.id('info.history').translate()}</h1>
+                        <table class="neos-info-table">
+                            <thead>
                                 <th>{props.i18n.id('info.date').translate()}</th>
                                 <th>{props.i18n.id('info.type').translate()}</th>
                                 <th>{props.i18n.id('info.message').translate()}</th>
-                                </thead>
-                                <tbody>
+                            </thead>
+                            <tbody>
                                 <Neos.Fusion:Loop items={props.history}>
                                     <tr @if.render={item.type != 'Garagist.Mautic:MauticEmailTaskFinished' || item.error}>
                                         <td>{Date.format(item.date, 'd.m.Y h:m:s')}</td>
@@ -41,21 +40,34 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
                                         <td>{item.message}</td>
                                     </tr>
                                 </Neos.Fusion:Loop>
-                                </tbody>
-                            </table>
-                        </fieldset>
-                    </div>
-                    <div class="neos-span6 neos-image-example" style="height: 100vh;">
-                        <div class="neos-preview-image" style="height: 100vh;">
-                            <iframe srcdoc={props.mauticRecord.customHtml} width="100%" height="100%"></iframe>
-                        </div>
-                    </div>
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+                <div>
+                    <iframe
+                        srcdoc={props.mauticRecord.customHtml}
+                        class="bg-white border-x-[30px] border-solid border-neos-dark min-h-[calc(100vh-80px)] w-full lg:min-h-0 lg:z-[150] lg:h-[calc(100vh-150px)] lg:w-[calc(50%-4rem)] lg:fixed lg:top-[50px] lg:right-0"
+                    ></iframe>
                 </div>
             </div>
         </main>
         <div class="neos-footer">
-            <Neos.Fusion:Link.Action class="neos-button neos-button-primary" href.action="email" href.arguments.node={props.node} href.arguments.email={props.email}>
+            <Neos.Fusion:Link.Action
+                class="neos-button neos-button-primary"
+                href.action="email"
+                href.arguments.node={props.node}
+                href.arguments.email={props.email}
+            >
                 {props.i18n.id('back').translate()}
+            </Neos.Fusion:Link.Action>
+            <Neos.Fusion:Link.Action
+                class="neos-button neos-button-secondary"
+                href.action="info"
+                href.arguments.node={props.node}
+                href.arguments.email={props.email}
+            >
+                {props.i18n.id('info.action.refresh')}
             </Neos.Fusion:Link.Action>
             <Neos.Fusion:Link.Action @if.error={Array.last(props.history).error} class="neos-button neos-button-warning" href.action="unlock" href.arguments.node={props.node} href.arguments.email={props.email}>
                 {props.i18n.id('info.action.unlock').translate()}

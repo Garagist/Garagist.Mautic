@@ -140,6 +140,9 @@
             <trans-unit id="info.message" xml:space="preserve">
                 <source>Message</source>
             </trans-unit>
+            <trans-unit id="info.action.refresh" xml:space="preserve">
+                <source>Refresh view</source>
+            </trans-unit>
             <trans-unit id="info.action.unlock" xml:space="preserve">
                 <source>Unlock Task</source>
             </trans-unit>
