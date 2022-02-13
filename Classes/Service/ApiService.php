@@ -15,6 +15,9 @@ use Mautic\MauticApi;
 use Mautic\Auth\ApiAuth;
 use Neos\Flow\Exception;
 use Psr\Log\LoggerInterface;
+use Throwable;
+use function array_pop;
+use function sprintf;
 
 /**
  * @Flow\Scope("singleton")
@@ -116,7 +119,8 @@ class ApiService
      */
     public function findEmailByNeosIdentifier(string $neosIdentifier)
     {
-        $match = $this->emailApi->getList($neosIdentifier);
+        $match
+            = $this->validateResponse($this->emailApi->getList($neosIdentifier));
 
         if ($match['total'] === 1) { //match found
             return array_pop($match['emails']);
@@ -141,11 +145,7 @@ class ApiService
             // string "sentCount" (9) => integer 0
             // string "failedRecipients" (16) => integer 0
 
-            $response = $this->emailApi->send($mauticIdentifier);
-
-            if (isset($response['error'])) {
-                throw new Exception($response['error']['message']);
-            }
+            $response = $this->validateResponse($this->emailApi->send($mauticIdentifier));
 
             return $response;
         }
@@ -159,7 +159,7 @@ class ApiService
     public function getAllSegments(): array
     {
         $data = [];
-        $segments = $this->contactApi->getSegments();
+        $segments = $this->validateResponse($this->contactApi->getSegments());
         foreach ($segments as $segment) {
             $data[] = new Segment($segment['id'], $segment['name'], $segment['alias']);
         }
@@ -167,15 +167,45 @@ class ApiService
         return $data;
     }
 
-    public function ping()
+    /**
+     * Ping the mautic service
+     *
+     * @return bool
+     */
+    public function ping(): bool
     {
-        $response = $this->emailApi->getList('', 0, 1);
-
-        if (isset($response['error'])) {
-            $this->mauticLogger->alert('Could not ping mauitc api. Reason:' . json_encode($response['error']));
+        try {
+            $this->validateResponse($this->emailApi->getList('', 0, 1));
+            return true;
+        } catch (Throwable $th) {
             return false;
         }
+    }
 
-        return true;
+    /**
+     * Validate the response from mautic
+     *
+     * @param array $response
+     * @param string|null $additionalText
+     * @return array
+     */
+    protected function validateResponse(array $response, ?string $additionalText = null): array
+    {
+        if (!isset($additionalText)) {
+            $additionalText = '';
+        }
+
+        if (isset($response['error'])) {
+            $json = json_encode($response['error']);
+            $this->mauticLogger->error($additionalText . $json);
+            throw new Exception($response['error']);
+        }
+        if (isset($response['errors'])) {
+            $json = json_encode($response['errors']);
+            $this->mauticLogger->error($additionalText . $json);
+            throw new Exception($response['errors']);
+        }
+
+        return $response;
     }
 }
