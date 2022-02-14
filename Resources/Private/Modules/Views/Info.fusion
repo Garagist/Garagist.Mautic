@@ -55,7 +55,7 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
                 </div>
                 <div>
                     <h2 class="text-md mb-4">{props.i18n.id('info.content.plaintext').translate()}</h2>
-                    <pre class="block bg-slate-200 text-neos-dark p-8 overflow-auto h-[calc(100vh-150px)]">
+                    <pre class="block bg-slate-200 text-neos-dark px-8 py-12 overflow-auto h-[calc(100vh-150px)] text-xs md:text-sm lg:text-xs xl:text-sm">
                         {props.mauticRecord.plainText}
                     </pre>
                 </div>
