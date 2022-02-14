@@ -150,7 +150,7 @@ class MauticService
     }
 
     /**
-     * @param string $emailIdentifier
+     * @param MauticEmail $email
      * @throws Exception
      * @throws ExceptionInterface
      */
@@ -215,7 +215,7 @@ class MauticService
     }
 
     /**
-     * @param string $nodeIdentifier
+     * @param string $emailIdentifier
      * @return MauticEmail
      */
     public function getByEmailIdentifier(string $emailIdentifier)
@@ -253,7 +253,7 @@ class MauticService
     public function publishEmail(MauticEmail $email, DateTime $datePublish = null, DateTime $dateUnPublish = null)
     {
         if ($this->apiService->isEmailPublished($email->getEmailIdentifier()) && ($datePublish !== null || $dateUnPublish !== null)) {
-            throw new Exception(sprintf("The Email with node identifier %s is already published and can therefore not be rescheduled for publising. ", $email->getEmailIdentifier()));
+            throw new Exception(sprintf("The email with node identifier %s is already published and can therefore not be rescheduled for publishing. ", $email->getEmailIdentifier()));
         } else {
             $data = $datePublish === null ? ['isPublished' => true] : ['publishUp' => $datePublish]; // publish right away or at a sustain date.
             $this->apiService->alterEmail($email->getEmailIdentifier(), $data);
@@ -269,10 +269,9 @@ class MauticService
     }
 
     /**
-     * @param string $emailIdentifier
+     * @param MauticEmail $email
      * @return bool
      * @throws \Neos\ContentRepository\Exception\NodeException
-     *
      * @throws Exception
      */
     public function unPublishEmail(MauticEmail $email)
@@ -288,13 +287,13 @@ class MauticService
     }
 
     /**
-     * @param string $emailIdentifier
-     * @return bool
+     * @param MauticEmail $email
+     * @param $mauticIdentifier
+     * @return void
      * @throws \Neos\ContentRepository\Exception\NodeException
-     *
      * @throws Exception
      */
-    public function sendEmail(MauticEmail $email, $mauticIdentifier)
+    public function sendEmail(MauticEmail $email, $mauticIdentifier): void
     {
         try {
             $stats = $this->apiService->sendEmail($email->getEmailIdentifier(), $mauticIdentifier);
@@ -349,9 +348,7 @@ class MauticService
 
     public function getSegmentsForEmail(MauticEmail $email)
     {
-        $data = $this->dataProvider->getSegmentsForSendOut($email);
-
-        return $data;
+        return $this->dataProvider->getSegmentsForSendOut($email);
     }
 
     /**
