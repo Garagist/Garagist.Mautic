@@ -49,7 +49,7 @@ class NodeService
     /**
      * @var array
      */
-    protected $options = array();
+    protected array $options = [];
 
 
     /**
@@ -69,9 +69,10 @@ class NodeService
      * Get nodes by type
      *
      * @param string $nodeTypeName The name of the node type
-     * @param Context|null  $context 
+     * @param Context|null $context
      *
      * @return array
+     * @throws Exception
      */
     public function getNodesByType(string $nodeTypeName, ?Context $context = null): array
     {
@@ -90,7 +91,7 @@ class NodeService
      *
      * @param NodeInterface $node
      * @param string $nodeTypeName
-     * 
+     *
      * @return NodeInterface|null
      */
     public function getParentByType(NodeInterface $node, string $nodeTypeName): ?NodeInterface
@@ -107,17 +108,8 @@ class NodeService
     public function getContentContextDimension(): Context
     {
 
-        if (isset($this->options['dimensionName'])) {
-            $dimensionName = $this->options['dimensionName'];
-        } else {
-            $dimensionName = 'language';
-        }
-
-        if (isset($this->options['workspaceName'])) {
-            $workspaceName = $this->options['workspaceName'];
-        } else {
-            $workspaceName = 'live';
-        }
+        $dimensionName = $this->options['dimensionName'] ?? 'language';
+        $workspaceName = $this->options['workspaceName'] ?? 'live';
 
         if (!isset($this->options['dimensionValues']) || empty($this->options['dimensionValues'])) {
             $defaultPreset = $this->contentDimensionPresetSource->getDefaultPreset($dimensionName);
@@ -140,7 +132,7 @@ class NodeService
      * 
      * @return Context
      */
-    protected function createContentContext(array $dimensions = array(), string $workspaceName): Context
+    protected function createContentContext(array $dimensions = [], string $workspaceName = 'live'): Context
     {
         $contextProperties = array(
             'workspaceName' => $workspaceName,
