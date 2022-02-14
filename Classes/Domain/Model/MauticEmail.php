@@ -4,6 +4,7 @@ namespace Garagist\Mautic\Domain\Model;
 
 use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
+use DateTime;
 
 /**
  *
@@ -68,19 +69,19 @@ class MauticEmail
     protected $published;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $dateCreated;
 
     /**
      * @ORM\Column(nullable=true)
-     * @var \DateTime
+     * @var DateTime
      */
     protected $dateModified;
 
 
     /**
-     * @var \DateTime
+     * @var DateTime
      * @ORM\Column(nullable=true)
      */
     protected $dateSent;
@@ -123,33 +124,33 @@ class MauticEmail
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getDateCreated(): \DateTime
+    public function getDateCreated(): DateTime
     {
         return $this->dateCreated;
     }
 
     /**
-     * @param \DateTime $dateCreated
+     * @param DateTime $dateCreated
      */
-    public function setDateCreated(\DateTime $dateCreated): void
+    public function setDateCreated(DateTime $dateCreated): void
     {
         $this->dateCreated = $dateCreated;
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getDateSent(): ?\DateTime
+    public function getDateSent(): ?DateTime
     {
         return $this->dateSent ?? null;
     }
 
     /**
-     * @param \DateTime $dateSent
+     * @param DateTime $dateSent
      */
-    public function setDateSent(\DateTime $dateSent): void
+    public function setDateSent(DateTime $dateSent): void
     {
         $this->dateSent = $dateSent;
     }
@@ -203,17 +204,17 @@ class MauticEmail
     }
 
     /**
-     * @return ?\DateTime
+     * @return ?DateTime
      */
-    public function getDateModified(): ?\DateTime
+    public function getDateModified(): ?DateTime
     {
         return $this->dateModified;
     }
 
     /**
-     * @param \DateTime $dateModified
+     * @param DateTime $dateModified
      */
-    public function setDateModified(\DateTime $dateModified): void
+    public function setDateModified(DateTime $dateModified): void
     {
         $this->dateModified = $dateModified;
     }

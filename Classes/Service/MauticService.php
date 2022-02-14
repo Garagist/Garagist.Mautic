@@ -30,6 +30,7 @@ use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Utility\Algorithms;
 use ProxyManager\Exception\ExceptionInterface;
 use Psr\Log\LoggerInterface;
+use DateTime;
 
 /**
  * @Flow\Scope("singleton")
@@ -175,7 +176,7 @@ class MauticService
         $email->setEmailIdentifier($emailIdentifier);
         $email->setTemplateUrl($templateUrl);
         $email->setNodeIdentifier($nodeIdentifier);
-        $email->setDateCreated(new \DateTime());
+        $email->setDateCreated(new DateTime());
         $email->setPublished(false);
         $email->setTask(MauticEmail::IDLE);
 
@@ -232,7 +233,7 @@ class MauticService
             $segments = $this->dataProvider->getSegmentsForSendOut($email);
             $data = $this->dataProvider->getDataForSegmentSendOut($email, $segments);
             $this->apiService->alterEmail($email->getEmailIdentifier(), $data);
-            $email->setDateModified(new \DateTime());
+            $email->setDateModified(new DateTime());
             $this->taskFinishedEvent($email);
         } catch (Exception $e) {
             $this->taskFinishedEvent($email, sprintf('Update email with identifier:%s failed! Reason: %s', $email->getEmailIdentifier(), $e->getMessage()));
@@ -241,13 +242,13 @@ class MauticService
 
     /**
      * @param MauticEmail $email
-     * @param \DateTime|null $datePublish
-     * @param \DateTime|null $dateUnPublish
+     * @param DateTime|null $datePublish
+     * @param DateTime|null $dateUnPublish
      * @return bool
      * @throws Exception
      * @throws \Neos\ContentRepository\Exception\NodeException
      */
-    public function publishEmail(MauticEmail $email, \DateTime $datePublish = null, \DateTime $dateUnPublish = null)
+    public function publishEmail(MauticEmail $email, DateTime $datePublish = null, DateTime $dateUnPublish = null)
     {
         if ($this->apiService->isEmailPublished($email->getEmailIdentifier()) && ($datePublish !== null || $dateUnPublish !== null)) {
             throw new Exception(sprintf("The Email with node identifier %s is already published and can therefore not be rescheduled for publising. ", $email->getEmailIdentifier()));
@@ -301,7 +302,7 @@ class MauticService
             $sentCount = (int) $stats['sentCount'];
             $failedRecipients = (int) $stats['failedRecipients'];
 
-            $email->setDateSent(new \DateTime());
+            $email->setDateSent(new DateTime());
             $this->mauticEmailRepository->update($email);
 
             $eventSuccess = new MauticEmailSent($email->getEmailIdentifier(), $mauticIdentifier, $success, $sentCount, $failedRecipients);
@@ -366,7 +367,7 @@ class MauticService
             $message = '';
             $error = false;
             $type = $stream->current()->getRawEvent()->getType();
-            $date = new \DateTime();
+            $date = new DateTime();
             $date->setTimestamp($rawEvent->getRecordedAt()->getTimestamp());
 
             switch (true) {

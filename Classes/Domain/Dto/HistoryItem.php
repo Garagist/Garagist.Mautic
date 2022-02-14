@@ -3,6 +3,7 @@
 namespace Garagist\Mautic\Domain\Dto;
 
 use Neos\Flow\Annotations as Flow;
+use DateTime;
 
 class HistoryItem
 {
@@ -13,7 +14,7 @@ class HistoryItem
     private $type;
 
     /**
-     * @var \DateTime,
+     * @var DateTime,
      */
     private $date;
 
@@ -52,17 +53,17 @@ class HistoryItem
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getDate(): \DateTime
+    public function getDate(): DateTime
     {
         return $this->date;
     }
 
     /**
-     * @param \DateTime $date
+     * @param DateTime $date
      */
-    public function setDate(\DateTime $date): void
+    public function setDate(DateTime $date): void
     {
         $this->date = $date;
     }
