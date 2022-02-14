@@ -21,13 +21,19 @@ final class MauticEmailCreate implements DomainEventInterface
     /**
      * @var string
      */
-    private $templateUrl;
+    private $htmlTemplateUrl;
 
-    public function __construct(string $emailIdentifier, string $nodeIdentifier, string $templateUrl)
+    /**
+     * @var string
+     */
+    private $plaintextTemplateUrl;
+
+    public function __construct(string $emailIdentifier, string $nodeIdentifier, string $htmlTemplateUrl, ?string $plaintextTemplateUrl = null)
     {
         $this->emailIdentifier = $emailIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
-        $this->templateUrl = $templateUrl;
+        $this->htmlTemplateUrl = $htmlTemplateUrl;
+        $this->plaintextTemplateUrl = $plaintextTemplateUrl ?? '';
     }
 
     /**
@@ -49,17 +55,33 @@ final class MauticEmailCreate implements DomainEventInterface
     /**
      * @return string
      */
-    public function getTemplateUrl(): string
+    public function getHtmlTemplateUrl(): string
     {
-        return $this->templateUrl;
+        return $this->htmlTemplateUrl;
     }
 
     /**
-     * @param string $templateUrl
+     * @param string $htmlTemplateUrl
      */
-    public function setTemplateUrl(string $templateUrl): void
+    public function setHtmlTemplateUrl(string $htmlTemplateUrl): void
     {
-        $this->templateUrl = $templateUrl;
+        $this->htmlTemplateUrl = $htmlTemplateUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPlaintextTemplateUrl(): string
+    {
+        return $this->plaintextTemplateUrl;
+    }
+
+    /**
+     * @param string $plaintextTemplateUrl
+     */
+    public function setPlaintextTemplateUrl(string $plaintextTemplateUrl): void
+    {
+        $this->plaintextTemplateUrl = $plaintextTemplateUrl;
     }
 
     /**

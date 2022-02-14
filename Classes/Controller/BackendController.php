@@ -87,6 +87,12 @@ class BackendController extends AbstractModuleController
 
     /**
      * @var array
+     * @Flow\InjectConfiguration(path="routeArgument", package="Garagist.Mautic")
+     */
+    protected $routeArgument;
+
+    /**
+     * @var array
      */
     protected $viewFormatToObjectNameMap = [
         'html' => FusionView::class,
@@ -168,7 +174,7 @@ class BackendController extends AbstractModuleController
                 }
                 $categories[$identifier] = [
                     'title' => $title,
-                    'main' => isset($pages[$identifier]) ? $pages[$identifier] : null,
+                    'main' => $pages[$identifier] ?? null,
                     'pages' =>  $items
                 ];
             }
@@ -404,8 +410,23 @@ class BackendController extends AbstractModuleController
     {
         $linkingService = $this->linkingService;
         $controllerContext = $this->controllerContext;
-        $uri = $linkingService->createNodeUri($controllerContext, null, $node, 'html', true, ['maizzle' => true]);
-        $this->mauticService->createEmailEvent($node->getIdentifier(), (string)$uri);
+        $htmlUrl = $linkingService->createNodeUri(
+            $controllerContext,
+            null,
+            $node,
+            'html',
+            true,
+            [$this->routeArgument['htmlTemplate'] => true]
+        );
+        $plaintextUrl = $linkingService->createNodeUri(
+            $controllerContext,
+            null,
+            $node,
+            'html',
+            true,
+            [$this->routeArgument['plaintextTemplate'] => true]
+        );
+        $this->mauticService->createEmailEvent($node->getIdentifier(), $htmlUrl, $plaintextUrl);
 
         $title = $node->getProperty('title');
         $this->addFlashMessage('', 'email.feedback.created', Message::SEVERITY_OK, [$title]);

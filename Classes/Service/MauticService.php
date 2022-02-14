@@ -164,17 +164,19 @@ class MauticService
     /**
      * @param string $emailIdentifier
      * @param string $nodeIdentifier
-     * @param string $templateUrl
+     * @param string $htmlTemplateUrl
+     * @param string $plaintextTemplateUrl
      * @return MauticEmail
      * @throws \Doctrine\ORM\ORMException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
-    public function saveEmail(string $emailIdentifier, string $nodeIdentifier, string $templateUrl)
+    public function saveEmail(string $emailIdentifier, string $nodeIdentifier, string $htmlTemplateUrl, string $plaintextTemplateUrl): MauticEmail
     {
 
         $email = new MauticEmail();
         $email->setEmailIdentifier($emailIdentifier);
-        $email->setTemplateUrl($templateUrl);
+        $email->setHtmlTemplateUrl($htmlTemplateUrl);
+        $email->setPlaintextTemplateUrl($plaintextTemplateUrl);
         $email->setNodeIdentifier($nodeIdentifier);
         $email->setDateCreated(new DateTime());
         $email->setPublished(false);

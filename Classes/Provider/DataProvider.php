@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Garagist\Mautic\Provider;
 
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Garagist\Mautic\Service\ApiService;
 use Garagist\Mautic\Service\MauticService;
@@ -89,22 +90,33 @@ class DataProvider implements DataProviderInterface
     {
         $this->mauticLogger->debug(sprintf('Using %s DataProvider', static::class));
         $node = $this->getNode($email->getNodeIdentifier());
-        $nlTemplate = $this->mauticService->getNewsletterTemplate($email->getTemplateUrl());
+        $html = $this->mauticService->getNewsletterTemplate($email->getHtmlTemplateUrl());
+        $plaintext = $this->mauticService->getNewsletterTemplate($email->getPlaintextTemplateUrl());
+        $title = $node->getProperty('title');
+        $newsletterTitle = $node->getProperty('newsletterTitle');
+        $titleOverride = $node->getProperty('titleOverride');
+        $newsletterDescription = $node->getProperty('newsletterDescription');
 
-        $data = array(
-            'title' => $node->getProperty('title'),
-            'name' => $node->getProperty('title') . ' | [' . $email->getEmailIdentifier() . ']',
-            'subject' => $node->getProperty('title') . ' | subject',
-            'description' => $node->getProperty('title') . ' | description',
+        $subject = $title;
+        if ($titleOverride && !$newsletterTitle) {
+            $subject = $titleOverride;
+        }
+        if ($newsletterTitle) {
+            $subject = $newsletterTitle;
+        }
+
+        return [
+            'title' => $title,
+            'name' => $title . ' | [' . $email->getEmailIdentifier() . ']',
+            'subject' => $subject,
+            'description' => $newsletterDescription,
             'template' => 'blank',
             'isPublished' => 0,
-            'customHtml' => $nlTemplate,
-            'plainText' => $node->getProperty('title'),
+            'customHtml' => $html,
+            'plainText' => $plaintext,
             'emailType' => 'list',
             'lists' => $segments,
-        );
-
-        return $data;
+        ];
     }
 
     /**
@@ -122,7 +134,7 @@ class DataProvider implements DataProviderInterface
 
     /**
      * @param $nodeIdentifier
-     * @return \Neos\ContentRepository\Domain\Model\NodeInterface|null
+     * @return NodeInterface|null
      */
     protected function getNode($nodeIdentifier)
     {

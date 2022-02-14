@@ -51,7 +51,12 @@ class MauticEmail
     /**
      * @var string
      */
-    protected $templateUrl;
+    protected $htmlTemplateUrl;
+
+    /**
+     * @var string
+     */
+    protected $plaintextTemplateUrl;
 
     /**
      * @var string
@@ -110,17 +115,33 @@ class MauticEmail
     /**
      * @return string
      */
-    public function getTemplateUrl(): string
+    public function getHtmlTemplateUrl(): string
     {
-        return $this->templateUrl;
+        return $this->htmlTemplateUrl;
     }
 
     /**
-     * @param string $templateUrl
+     * @param string $htmlTemplateUrl
      */
-    public function setTemplateUrl(string $templateUrl): void
+    public function setHtmlTemplateUrl(string $htmlTemplateUrl): void
     {
-        $this->templateUrl = $templateUrl;
+        $this->htmlTemplateUrl = $htmlTemplateUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPlaintextTemplateUrl(): string
+    {
+        return $this->plaintextTemplateUrl;
+    }
+
+    /**
+     * @param string $plaintextTemplateUrl
+     */
+    public function setPlaintextTemplateUrl(string $plaintextTemplateUrl): void
+    {
+        $this->plaintextTemplateUrl = $plaintextTemplateUrl;
     }
 
     /**

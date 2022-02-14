@@ -1,5 +1,8 @@
 Garagist:
   Mautic:
+    routeArgument:
+      htmlTemplate: maizzle
+      plaintextTemplate: plaintext
     api:
       baseUrl: null
       userName: null
