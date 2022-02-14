@@ -92,24 +92,27 @@ class DataProvider implements DataProviderInterface
         $node = $this->getNode($email->getNodeIdentifier());
         $html = $this->mauticService->getNewsletterTemplate($email->getHtmlTemplateUrl());
         $plaintext = $this->mauticService->getNewsletterTemplate($email->getPlaintextTemplateUrl());
-        $title = $node->getProperty('title');
-        $newsletterTitle = $node->getProperty('newsletterTitle');
-        $titleOverride = $node->getProperty('titleOverride');
-        $newsletterDescription = $node->getProperty('newsletterDescription');
 
+        $title = $node->getProperty('title');
+        $titleOverride = $node->getProperty('titleOverride');
+        $newsletterTitle = $node->getProperty('newsletterTitle');
         $subject = $title;
-        if ($titleOverride && !$newsletterTitle) {
-            $subject = $titleOverride;
-        }
         if ($newsletterTitle) {
             $subject = $newsletterTitle;
+        } elseif ($titleOverride) {
+            $subject = $titleOverride;
+        }
+
+        $description = $node->getProperty('newsletterDescription');
+        if (!$description) {
+            $description = $node->getProperty('metaDescription');
         }
 
         return [
             'title' => $title,
             'name' => $title . ' | [' . $email->getEmailIdentifier() . ']',
             'subject' => $subject,
-            'description' => $newsletterDescription,
+            'description' => $description,
             'template' => 'blank',
             'isPublished' => 0,
             'customHtml' => $html,
