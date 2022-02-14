@@ -86,13 +86,14 @@ class MauticService
 
     /**
      * @param string $nodeIdentifier
-     * @param string $templateUrl
+     * @param string $htmlUrl
+     * @param string $plaintextUrl
      * @throws \Doctrine\ORM\ORMException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
-    public function createEmailEvent(string $nodeIdentifier, string $templateUrl)
+    public function createEmailEvent(string $nodeIdentifier, string $htmlUrl, string $plaintextUrl)
     {
-        $event = new MauticEmailCreate(Algorithms::generateUUID(), $nodeIdentifier, $templateUrl);
+        $event = new MauticEmailCreate(Algorithms::generateUUID(), $nodeIdentifier, $htmlUrl, $plaintextUrl);
         $streamName = StreamName::fromString('email-' . $event->getEmailIdentifier());
 
         $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
