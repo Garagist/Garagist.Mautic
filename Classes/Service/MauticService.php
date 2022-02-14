@@ -374,20 +374,20 @@ class MauticService
 
             switch (true) {
                 case $type === 'Garagist.Mautic:MauticEmailTaskFinished':
-                    /** @var MauticEmailTaskFinished $domianEvent */
-                    $domianEvent = $stream->current()->getDomainEvent();
-                    $message = $domianEvent->getError() ?? '';
-                    $error = $domianEvent->getError() !== '';
+                    /** @var MauticEmailTaskFinished $domainEvent */
+                    $domainEvent = $stream->current()->getDomainEvent();
+                    $message = $domainEvent->getError() ?? '';
+                    $error = $domainEvent->getError() !== '';
                     break;
 
                 case $type === 'Garagist.Mautic:MauticEmailSent':
-                    /** @var MauticEmailSent $domianEvent */
-                    $domianEvent = $stream->current()->getDomainEvent();
-                    $message = sprintf('Send: %s | Success: %s | Failed: %s', $domianEvent->getSentCount(), $domianEvent->getSuccess(), $domianEvent->getFailedRecipients());
+                    /** @var MauticEmailSent $domainEvent */
+                    $domainEvent = $stream->current()->getDomainEvent();
+                    $message = sprintf('Send: %s | Success: %s | Failed: %s', $domainEvent->getSentCount(), $domainEvent->getSuccess(), $domainEvent->getFailedRecipients());
                     break;
                 default:
                     /** @var DomainEventInterface $event */
-                    $domianEvent = $stream->current()->getDomainEvent();
+                    $domainEvent = $stream->current()->getDomainEvent();
             }
 
             $history[] = new HistoryItem($type, $date, $message, $error);
