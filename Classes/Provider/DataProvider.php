@@ -27,6 +27,12 @@ class DataProvider implements DataProviderInterface
     protected $segmentMapping;
 
     /**
+     * @var int|null
+     * @Flow\InjectConfiguration(path="unconfirmedSegment", package="Garagist.Mautic")
+     */
+    protected $unconfirmedSegment;
+
+    /**
      * @Flow\Inject
      * @var MauticService
      */
@@ -129,10 +135,17 @@ class DataProvider implements DataProviderInterface
     public function getSegmentsForSendOut(MauticEmail $email): array
     {
         $segments = $this->apiService->getAllSegments();
-
-        return array_map(function ($n) {
+        $data = array_map(function ($n) {
             return $n->getId();
         }, $segments);
+
+        if (!isset($this->unconfirmedSegment)) {
+            return $data;
+        }
+
+        return array_filter($data, function ($n) {
+            return $n !== $this->unconfirmedSegment;
+        });
     }
 
     /**

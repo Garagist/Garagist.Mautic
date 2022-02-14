@@ -8,3 +8,5 @@ Garagist:
       userName: null
       password: null
     segmentMapping: []
+    # Add here the segment ID of the Mautic segment who contains not confirmed contacts
+    unconfirmedSegment: null
