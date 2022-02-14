@@ -214,7 +214,7 @@ class BackendController extends AbstractModuleController
     public function updateAction(NodeInterface $node, MauticEmail $email): void
     {
         $identifier = $email->getEmailIdentifier();
-        if ($email->getTask() == MauticEmail::Idle) {
+        if ($email->getTask() == MauticEmail::IDLE) {
             $this->mauticService->updateEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
@@ -244,7 +244,7 @@ class BackendController extends AbstractModuleController
     public function publishAction(NodeInterface $node, MauticEmail $email): void
     {
         $identifier = $email->getEmailIdentifier();
-        if ($email->getTask() == MauticEmail::Idle) {
+        if ($email->getTask() == MauticEmail::IDLE) {
             $this->mauticService->publishEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
@@ -274,7 +274,7 @@ class BackendController extends AbstractModuleController
     public function unPublishAction(NodeInterface $node, MauticEmail $email): void
     {
         $identifier = $email->getEmailIdentifier();
-        if ($email->getTask() == MauticEmail::Idle) {
+        if ($email->getTask() == MauticEmail::IDLE) {
             $this->mauticService->unPublishEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
@@ -304,7 +304,7 @@ class BackendController extends AbstractModuleController
     public function sendAction(NodeInterface $node, MauticEmail $email): void
     {
         $identifier = $email->getEmailIdentifier();
-        if ($email->getTask() == MauticEmail::Idle) {
+        if ($email->getTask() == MauticEmail::IDLE) {
             $this->mauticService->sendEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
@@ -334,8 +334,8 @@ class BackendController extends AbstractModuleController
     public function unlockAction(NodeInterface $node, MauticEmail $email)
     {
         $identifier = $email->getEmailIdentifier();
-        if ($email->getTask() == MauticEmail::TaskFailed) {
-            $this->mauticService->setTask($email, MauticEmail::Idle);
+        if ($email->getTask() == MauticEmail::TASK_FAILED) {
+            $this->mauticService->setTask($email, MauticEmail::IDLE);
             $this->addFlashMessage(
                 'email.feedback.identifier',
                 'email.feedback.unlocked',

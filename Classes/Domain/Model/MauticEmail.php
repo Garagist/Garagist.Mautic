@@ -15,37 +15,37 @@ class MauticEmail
     /**
      * @var string
      */
-    const Idle = 'idle';
+    const IDLE = 'idle';
 
     /**
      * @var string
      */
-    const TaskPublish = 'publish';
+    const TASK_PUBLISH = 'publish';
 
     /**
      * @var string
      */
-    const TaskUnPublish = 'unPublish';
+    const TASK_UN_PUBLISH = 'unPublish';
 
     /**
      * @var string
      */
-    const TaskUpdate = 'update';
+    const TASK_UPDATE = 'update';
 
     /**
      * @var string
      */
-    const TaskCreate = 'create';
+    const TASK_CREATE = 'create';
 
     /**
      * @var string
      */
-    const TaskSend = 'send';
+    const TASK_SEND = 'send';
 
     /**
      * @var string
      */
-    const TaskFailed = 'failed';
+    const TASK_FAILED = 'failed';
 
     /**
      * @var string

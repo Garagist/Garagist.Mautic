@@ -112,7 +112,7 @@ class MauticService
      */
     public function sendEmailEvent(MauticEmail $email): void
     {
-        $this->setTask($email, MauticEmail::TaskSend);
+        $this->setTask($email, MauticEmail::TASK_SEND);
         $mauticIdentifier = $this->apiService->isEmailPublished($email->getEmailIdentifier());
         if ($mauticIdentifier) {
             $event = new MauticEmailSend($email->getEmailIdentifier(), $mauticIdentifier);
@@ -126,7 +126,7 @@ class MauticService
 
     public function updateEmailEvent(MauticEmail $email)
     {
-        $this->setTask($email, MauticEmail::TaskUpdate);
+        $this->setTask($email, MauticEmail::TASK_UPDATE);
         $event = new MauticEmailUpdate($email->getEmailIdentifier(), $email->getNodeIdentifier());
         $streamName = StreamName::fromString('email-' . $email->getEmailIdentifier());
         $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
@@ -134,7 +134,7 @@ class MauticService
 
     public function publishEmailEvent(MauticEmail $email)
     {
-        $this->setTask($email, MauticEmail::TaskPublish);
+        $this->setTask($email, MauticEmail::TASK_PUBLISH);
         $event = new MauticEmailPublish($email->getEmailIdentifier(), $email->getNodeIdentifier());
         $streamName = StreamName::fromString('email-' . $email->getEmailIdentifier());
         $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
@@ -142,7 +142,7 @@ class MauticService
 
     public function unPublishEmailEvent(MauticEmail $email)
     {
-        $this->setTask($email, MauticEmail::TaskUnPublish);
+        $this->setTask($email, MauticEmail::TASK_UN_PUBLISH);
         $event = new MauticEmailUnPublish($email->getEmailIdentifier(), $email->getNodeIdentifier());
         $streamName = StreamName::fromString('email-' . $email->getEmailIdentifier());
         $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
@@ -177,7 +177,7 @@ class MauticService
         $email->setNodeIdentifier($nodeIdentifier);
         $email->setDateCreated(new \DateTime());
         $email->setPublished(false);
-        $email->setTask(MauticEmail::Idle);
+        $email->setTask(MauticEmail::IDLE);
 
         $this->mauticEmailRepository->add($email);
         $this->persistenceManager->persistAll();
@@ -190,7 +190,7 @@ class MauticService
         if (!$failed) {
             $this->syncEmail($email);
         }
-        $this->setTask($email, $failed ? MauticEmail::TaskFailed : MauticEmail::Idle);
+        $this->setTask($email, $failed ? MauticEmail::TASK_FAILED : MauticEmail::IDLE);
     }
 
     public function setTask(MauticEmail $email, string $task): void
