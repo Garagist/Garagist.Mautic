@@ -7,49 +7,59 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
 
     renderer = afx`
         <main class="mautic">
+            <div class="space-y-4">
+                <section>
+                    <h1 class="text-xl">{props.i18n.id('info.metadata').translate()}</h1>
+                    <table class="neos-info-table">
+                        <tbody>
+                            <tr>
+                                <th>{props.i18n.id('info.name').translate()}</th>
+                                <td>{props.mauticRecord.name}</td>
+                            </tr>
+                            <tr>
+                                <th>{props.i18n.id('info.subject').translate()}</th>
+                                <td>{props.mauticRecord.subject}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                <section>
+                    <h1 class="text-xl">{props.i18n.id('info.history').translate()}</h1>
+                    <table class="neos-info-table">
+                        <thead>
+                            <th>{props.i18n.id('info.date').translate()}</th>
+                            <th>{props.i18n.id('info.type').translate()}</th>
+                            <th>{props.i18n.id('info.message').translate()}</th>
+                        </thead>
+                        <tbody>
+                            <Neos.Fusion:Loop items={props.history}>
+                                <tr @if.render={item.type != 'Garagist.Mautic:MauticEmailTaskFinished' || item.error}>
+                                    <td>{Date.format(item.date, 'd.m.Y h:m:s')}</td>
+                                    <td>{item.type}</td>
+                                    <td>{item.message}</td>
+                                </tr>
+                            </Neos.Fusion:Loop>
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+
+            <h1 class="text-xl mt-8 mb-4">{props.i18n.id('info.content').translate()}</h1>
             <div class="grid gap-8 grid-flow-row auto-rows-auto lg:grid-cols-2">
-                <div class="space-y-4 lg:min-h-[calc(100vh-270px)]">
-                    <section>
-                        <h1 class="text-xl">{props.i18n.id('info.metadata').translate()}</h1>
-                        <table class="neos-info-table">
-                            <tbody>
-                                <tr>
-                                    <th>{props.i18n.id('info.name').translate()}</th>
-                                    <td>{props.mauticRecord.name}</td>
-                                </tr>
-                                <tr>
-                                    <th>{props.i18n.id('info.subject').translate()}</th>
-                                    <td>{props.mauticRecord.subject}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </section>
-                    <section>
-                        <h1 class="text-xl">{props.i18n.id('info.history').translate()}</h1>
-                        <table class="neos-info-table">
-                            <thead>
-                                <th>{props.i18n.id('info.date').translate()}</th>
-                                <th>{props.i18n.id('info.type').translate()}</th>
-                                <th>{props.i18n.id('info.message').translate()}</th>
-                            </thead>
-                            <tbody>
-                                <Neos.Fusion:Loop items={props.history}>
-                                    <tr @if.render={item.type != 'Garagist.Mautic:MauticEmailTaskFinished' || item.error}>
-                                        <td>{Date.format(item.date, 'd.m.Y h:m:s')}</td>
-                                        <td>{item.type}</td>
-                                        <td>{item.message}</td>
-                                    </tr>
-                                </Neos.Fusion:Loop>
-                            </tbody>
-                        </table>
-                    </section>
-                </div>
                 <div>
+                    <h2 class="text-md mb-4">{props.i18n.id('info.content.html').translate()}</h2>
                     <iframe
                         srcdoc={props.mauticRecord.customHtml}
-                        class="bg-white border-x-[30px] border-solid border-neos-dark min-h-[calc(100vh-80px)] w-full lg:min-h-0 lg:z-[150] lg:h-[calc(100vh-150px)] lg:w-[calc(50%-4rem)] lg:fixed lg:top-[50px] lg:right-0"
+                        class="bg-white w-full h-[calc(100vh-150px)]"
                     ></iframe>
                 </div>
+                <div>
+                    <h2 class="text-md mb-4">{props.i18n.id('info.content.plaintext').translate()}</h2>
+                    <pre class="block bg-slate-200 text-neos-dark p-8 overflow-auto h-[calc(100vh-150px)]">
+                        {props.mauticRecord.plainText}
+                    </pre>
+                </div>
+                <Neos.Fusion:Debug.Console value={props.mauticRecord} />
             </div>
         </main>
         <div class="neos-footer">

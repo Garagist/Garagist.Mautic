@@ -140,6 +140,15 @@
             <trans-unit id="info.message" xml:space="preserve">
                 <source>Message</source>
             </trans-unit>
+            <trans-unit id="info.content" xml:space="preserve">
+                <source>Content of the email</source>
+            </trans-unit>
+            <trans-unit id="info.content.html" xml:space="preserve">
+                <source>HTML email</source>
+            </trans-unit>
+            <trans-unit id="info.content.plaintext" xml:space="preserve">
+                <source>Plaintext email</source>
+            </trans-unit>
             <trans-unit id="info.action.refresh" xml:space="preserve">
                 <source>Refresh view</source>
             </trans-unit>

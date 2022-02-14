@@ -186,6 +186,22 @@
                 <source>Message</source>
                 <target>Nachricht</target>
             </trans-unit>
+            <trans-unit id="info.content" xml:space="preserve">
+                <source>Content of the email</source>
+                <target>Inhalt der E-Mail</target>
+            </trans-unit>
+            <trans-unit id="info.content.html" xml:space="preserve">
+                <source>HTML email</source>
+                <target>HTML E-Mail</target>
+            </trans-unit>
+            <trans-unit id="info.content.plaintext" xml:space="preserve">
+                <source>Plaintext email</source>
+                <target>Plaintext E-Mail</target>
+            </trans-unit>
+            <trans-unit id="info.content" xml:space="preserve">
+                <source>Content of the email</source>
+                <target>Inhalt der E-Mail</target>
+            </trans-unit>
             <trans-unit id="info.action.refresh" xml:space="preserve">
                 <source>Refresh view</source>
                 <target>Ansicht aktualisieren</target>
