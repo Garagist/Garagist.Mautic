@@ -109,6 +109,10 @@ class DataProvider implements DataProviderInterface
             $subject = $titleOverride;
         }
 
+        // Get langauge from html template
+        preg_match('/<html.+?lang="([^"]+)"/im', $html, $languageMatch);
+        $language = $languageMatch[1] ?? 'en';
+
         return [
             'title' => $title,
             'name' => $title . ' | [' . $email->getEmailIdentifier() . ']',
@@ -119,6 +123,7 @@ class DataProvider implements DataProviderInterface
             'plainText' => $plaintext,
             'emailType' => 'list',
             'lists' => $segments,
+            'language' => $language,
         ];
     }
 
