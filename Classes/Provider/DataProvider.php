@@ -109,16 +109,10 @@ class DataProvider implements DataProviderInterface
             $subject = $titleOverride;
         }
 
-        $description = $node->getProperty('newsletterDescription');
-        if (!$description) {
-            $description = $node->getProperty('metaDescription');
-        }
-
         return [
             'title' => $title,
             'name' => $title . ' | [' . $email->getEmailIdentifier() . ']',
             'subject' => $subject,
-            'description' => $description,
             'template' => 'blank',
             'isPublished' => 0,
             'customHtml' => $html,
