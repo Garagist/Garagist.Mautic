@@ -113,6 +113,10 @@ class DataProvider implements DataProviderInterface
         preg_match('/<html.+?lang="([^"]+)"/im', $html, $languageMatch);
         $language = $languageMatch[1] ?? 'en';
 
+        // TODO
+        // * category (object/null)
+        // * dynamicContent
+
         return [
             'title' => $title,
             'name' => $title . ' | [' . $email->getEmailIdentifier() . ']',
