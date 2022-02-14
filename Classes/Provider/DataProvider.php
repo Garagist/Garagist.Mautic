@@ -119,7 +119,7 @@ class DataProvider implements DataProviderInterface
 
         return [
             'title' => $title,
-            'name' => $title . ' | [' . $email->getEmailIdentifier() . ']',
+            'name' => $email->getEmailIdentifier() . ' ❯ ' . $title,
             'subject' => $subject,
             'template' => 'blank',
             'isPublished' => 0,
