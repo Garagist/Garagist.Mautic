@@ -115,11 +115,11 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                             </div>
                             
                             <fieldset class="mx-4">
-                                <label for="title">Titel</label>
+                                <label for="subject">{props.i18n.id('email.subject').translate()}</label>
                                 <input
                                     type="text"
                                     x-model="subject"
-                                    id="title"
+                                    id="subject"
                                     placeholder={props.placeholder}
                                     class="block w-full"
                                 />
