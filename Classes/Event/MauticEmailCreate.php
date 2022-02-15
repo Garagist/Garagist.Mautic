@@ -28,12 +28,23 @@ final class MauticEmailCreate implements DomainEventInterface
      */
     private $plaintextTemplateUrl;
 
-    public function __construct(string $emailIdentifier, string $nodeIdentifier, string $htmlTemplateUrl, ?string $plaintextTemplateUrl = null)
-    {
+    /**
+     * @var string
+     */
+    private $subject;
+
+    public function __construct(
+        string $emailIdentifier,
+        string $nodeIdentifier,
+        string $htmlTemplateUrl,
+        ?string $plaintextTemplateUrl = null,
+        ?string $subject = null
+    ) {
         $this->emailIdentifier = $emailIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->htmlTemplateUrl = $htmlTemplateUrl;
         $this->plaintextTemplateUrl = $plaintextTemplateUrl ?? '';
+        $this->subject = $subject ?? '';
     }
 
     /**
@@ -82,6 +93,22 @@ final class MauticEmailCreate implements DomainEventInterface
     public function setPlaintextTemplateUrl(string $plaintextTemplateUrl): void
     {
         $this->plaintextTemplateUrl = $plaintextTemplateUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSubject(): string
+    {
+        return $this->subject;
+    }
+
+    /**
+     * @param string $subject
+     */
+    public function setSubject(string $subject): void
+    {
+        $this->subject = $subject;
     }
 
     /**

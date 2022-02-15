@@ -88,12 +88,17 @@ class MauticService
      * @param string $nodeIdentifier
      * @param string $htmlUrl
      * @param string $plaintextUrl
+     * @param string|null $subject
      * @throws \Doctrine\ORM\ORMException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
-    public function createEmailEvent(string $nodeIdentifier, string $htmlUrl, string $plaintextUrl)
-    {
-        $event = new MauticEmailCreate(Algorithms::generateUUID(), $nodeIdentifier, $htmlUrl, $plaintextUrl);
+    public function createEmailEvent(
+        string $nodeIdentifier,
+        string $htmlUrl,
+        string $plaintextUrl,
+        ?string $subject = null
+    ) {
+        $event = new MauticEmailCreate(Algorithms::generateUUID(), $nodeIdentifier, $htmlUrl, $plaintextUrl, $subject);
         $streamName = StreamName::fromString('email-' . $event->getEmailIdentifier());
 
         $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
@@ -167,17 +172,24 @@ class MauticService
      * @param string $nodeIdentifier
      * @param string $htmlTemplateUrl
      * @param string $plaintextTemplateUrl
+     * @param string $subject
      * @return MauticEmail
      * @throws \Doctrine\ORM\ORMException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
-    public function saveEmail(string $emailIdentifier, string $nodeIdentifier, string $htmlTemplateUrl, string $plaintextTemplateUrl): MauticEmail
-    {
+    public function saveEmail(
+        string $emailIdentifier,
+        string $nodeIdentifier,
+        string $htmlTemplateUrl,
+        string $plaintextTemplateUrl,
+        string $subject
+    ): MauticEmail {
 
         $email = new MauticEmail();
         $email->setEmailIdentifier($emailIdentifier);
         $email->setHtmlTemplateUrl($htmlTemplateUrl);
         $email->setPlaintextTemplateUrl($plaintextTemplateUrl);
+        $email->setSubject($subject);
         $email->setNodeIdentifier($nodeIdentifier);
         $email->setDateCreated(new DateTime());
         $email->setPublished(false);

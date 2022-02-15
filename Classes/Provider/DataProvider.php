@@ -98,15 +98,20 @@ class DataProvider implements DataProviderInterface
         $node = $this->getNode($email->getNodeIdentifier());
         $html = $this->mauticService->getNewsletterTemplate($email->getHtmlTemplateUrl());
         $plaintext = $this->mauticService->getNewsletterTemplate($email->getPlaintextTemplateUrl());
+        $subject = $email->getSubject();
 
         $title = $node->getProperty('title');
-        $titleOverride = $node->getProperty('titleOverride');
-        $newsletterTitle = $node->getProperty('newsletterTitle');
-        $subject = $title;
-        if ($newsletterTitle) {
-            $subject = $newsletterTitle;
-        } elseif ($titleOverride) {
-            $subject = $titleOverride;
+
+        if (!$subject) {
+            // Fallback handling for old entries
+            $titleOverride = $node->getProperty('titleOverride');
+            $newsletterTitle = $node->getProperty('newsletterTitle');
+            $subject = $title;
+            if ($newsletterTitle) {
+                $subject = $newsletterTitle;
+            } elseif ($titleOverride) {
+                $subject = $titleOverride;
+            }
         }
 
         // Get langauge from html template

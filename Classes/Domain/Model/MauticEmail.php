@@ -61,6 +61,11 @@ class MauticEmail
     /**
      * @var string
      */
+    protected $subject;
+
+    /**
+     * @var string
+     */
     protected $emailIdentifier;
 
     /**
@@ -142,6 +147,22 @@ class MauticEmail
     public function setPlaintextTemplateUrl(string $plaintextTemplateUrl): void
     {
         $this->plaintextTemplateUrl = $plaintextTemplateUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSubject(): string
+    {
+        return $this->subject;
+    }
+
+    /**
+     * @param string $subject
+     */
+    public function setSubject(string $subject): void
+    {
+        $this->subject = $subject;
     }
 
     /**

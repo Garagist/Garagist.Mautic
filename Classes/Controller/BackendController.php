@@ -390,7 +390,6 @@ class BackendController extends AbstractModuleController
         $history = $this->mauticService->getAuditLog($email);
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
 
-
         $this->view->assignMultiple([
             'email' => $email,
             'node' => $node,
@@ -404,9 +403,10 @@ class BackendController extends AbstractModuleController
      * Create a new mautic email
      *
      * @param NodeInterface $node
+     * @param string|null $subject
      * @return void
      */
-    public function createAction(NodeInterface $node): void
+    public function createAction(NodeInterface $node, ?string $subject = null): void
     {
         $linkingService = $this->linkingService;
         $controllerContext = $this->controllerContext;
@@ -426,9 +426,23 @@ class BackendController extends AbstractModuleController
             true,
             [$this->routeArgument['plaintextTemplate'] => true]
         );
-        $this->mauticService->createEmailEvent($node->getIdentifier(), $htmlUrl, $plaintextUrl);
 
         $title = $node->getProperty('title');
+
+        if (!$subject) {
+            $titleOverride = $node->getProperty('titleOverride');
+            $newsletterTitle = $node->getProperty('newsletterTitle');
+            if ($newsletterTitle) {
+                $subject = $newsletterTitle;
+            } elseif ($titleOverride) {
+                $subject = $titleOverride;
+            } else {
+                $subject = $title;
+            }
+        }
+
+        $this->mauticService->createEmailEvent($node->getIdentifier(), $htmlUrl, $plaintextUrl, $subject);
+
         $this->addFlashMessage('', 'email.feedback.created', Message::SEVERITY_OK, [$title]);
         $this->redirect('email', null, null, ['node' => $node], 1);
     }
