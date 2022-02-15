@@ -456,14 +456,7 @@ class BackendController extends AbstractModuleController
 
         if (!$subject) {
             $titleOverride = $node->getProperty('titleOverride');
-            $newsletterTitle = $node->getProperty('newsletterTitle');
-            if ($newsletterTitle) {
-                $subject = $newsletterTitle;
-            } elseif ($titleOverride) {
-                $subject = $titleOverride;
-            } else {
-                $subject = $title;
-            }
+            $subject = $titleOverride ? $titleOverride : $title;
         }
 
         $this->mauticService->createEmailEvent($node->getIdentifier(), $htmlUrl, $plaintextUrl, $subject);

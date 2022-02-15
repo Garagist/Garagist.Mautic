@@ -13,7 +13,6 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
 
     title = ${q(node).property('title')}
     titleOverride = ${q(node).property('titleOverride')}
-    newsletterTitle = ${q(node).property('newsletterTitle')}
     i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
 
     createAction = Neos.Fusion:UriBuilder {
@@ -21,7 +20,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
         arguments.node = ${node}
     }
 
-    placeholder = ${this.newsletterTitle || this.titleOverride || this.title}
+    placeholder = ${this.titleOverride || this.title}
 
     renderer = Neos.Fusion:Component {
         @apply.props = ${props}

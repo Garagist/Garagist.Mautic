@@ -105,13 +105,7 @@ class DataProvider implements DataProviderInterface
         if (!$subject) {
             // Fallback handling for old entries
             $titleOverride = $node->getProperty('titleOverride');
-            $newsletterTitle = $node->getProperty('newsletterTitle');
-            $subject = $title;
-            if ($newsletterTitle) {
-                $subject = $newsletterTitle;
-            } elseif ($titleOverride) {
-                $subject = $titleOverride;
-            }
+            $subject = $titleOverride ? $titleOverride : $title;
         }
 
         // Get langauge from html template
