@@ -38,4 +38,27 @@ Alpine.directive("tooltips", (el, { expression }) => {
         moveTransition: "transform 0.2s ease-out",
     });
 });
+
+const dateNow = Date.now;
+const raf = window.requestAnimationFrame;
+const rafTimeOut = (callback, delay) => {
+    let start = dateNow();
+    let stop = false;
+    const timeoutFunc = () => {
+        dateNow() - start < delay ? stop || raf(timeoutFunc) : callback();
+    };
+    raf(timeoutFunc);
+};
+
+Alpine.data("actions", (minItems) => ({
+    init() {
+        const items = this.$root.querySelectorAll("a,button").length;
+        console.log(items, minItems, items <= minItems);
+
+        if (items <= minItems) {
+            rafTimeOut(() => window.location.reload(), 5000);
+        }
+    },
+}));
+
 docReady(() => Alpine.start());
