@@ -215,9 +215,10 @@ class BackendController extends AbstractModuleController
      *
      * @param NodeInterface $node
      * @param MauticEmail $email
+     * @param string|null $redirect
      * @return void
      */
-    public function updateAction(NodeInterface $node, MauticEmail $email): void
+    public function updateAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
     {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
@@ -237,7 +238,11 @@ class BackendController extends AbstractModuleController
             );
         }
 
-        $this->redirect('email', null, null, ['node' => $node]);
+        if (!isset($redirect)) {
+            $redirect = 'email';
+        }
+
+        $this->redirect($redirect, null, null, ['node' => $node, 'email' => $email]);
     }
 
     /**
@@ -245,9 +250,10 @@ class BackendController extends AbstractModuleController
      *
      * @param NodeInterface $node
      * @param MauticEmail $email
+     * @param string|null $redirect
      * @return void
      */
-    public function publishAction(NodeInterface $node, MauticEmail $email): void
+    public function publishAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
     {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
@@ -267,7 +273,11 @@ class BackendController extends AbstractModuleController
             );
         }
 
-        $this->redirect('email', null, null, ['node' => $node]);
+        if (!isset($redirect)) {
+            $redirect = 'email';
+        }
+
+        $this->redirect($redirect, null, null, ['node' => $node, 'email' => $email]);
     }
 
     /**
@@ -275,9 +285,10 @@ class BackendController extends AbstractModuleController
      *
      * @param NodeInterface $node
      * @param MauticEmail $email
+     * @param string|null $redirect
      * @return void
      */
-    public function unPublishAction(NodeInterface $node, MauticEmail $email): void
+    public function unPublishAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
     {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
@@ -297,7 +308,11 @@ class BackendController extends AbstractModuleController
             );
         }
 
-        $this->redirect('email', null, null, ['node' => $node]);
+        if (!isset($redirect)) {
+            $redirect = 'email';
+        }
+
+        $this->redirect($redirect, null, null, ['node' => $node, 'email' => $email]);
     }
 
     /**
@@ -305,9 +320,10 @@ class BackendController extends AbstractModuleController
      *
      * @param NodeInterface $node
      * @param MauticEmail $email
+     * @param string|null $redirect
      * @return void
      */
-    public function sendAction(NodeInterface $node, MauticEmail $email): void
+    public function sendAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
     {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
@@ -327,7 +343,11 @@ class BackendController extends AbstractModuleController
             );
         }
 
-        $this->redirect('email', null, null, ['node' => $node]);
+        if (!isset($redirect)) {
+            $redirect = 'email';
+        }
+
+        $this->redirect($redirect, null, null, ['node' => $node, 'email' => $email]);
     }
 
     /**
@@ -335,9 +355,10 @@ class BackendController extends AbstractModuleController
      *
      * @param NodeInterface $node
      * @param MauticEmail $email
+     * @param string|null $redirect
      * @return void
      */
-    public function unlockAction(NodeInterface $node, MauticEmail $email)
+    public function unlockAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null)
     {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::TASK_FAILED) {
@@ -357,7 +378,11 @@ class BackendController extends AbstractModuleController
             );
         }
 
-        $this->redirect('email', 'Backend', null, ['node' => $node]);
+        if (!isset($redirect)) {
+            $redirect = 'email';
+        }
+
+        $this->redirect($redirect, 'Backend', null, ['node' => $node, 'email' => $email]);
     }
 
     /**

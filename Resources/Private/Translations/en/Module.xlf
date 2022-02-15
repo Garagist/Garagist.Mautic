@@ -62,11 +62,14 @@
             <trans-unit id="email.status" xml:space="preserve">
                 <source>Status</source>
             </trans-unit>
-            <trans-unit id="email.identifier" xml:space="preserve">
-                <source>Identifier</source>
-            </trans-unit>
             <trans-unit id="email.sentOn" xml:space="preserve">
                 <source>Sent on</source>
+            </trans-unit>
+            <trans-unit id="email.subject" xml:space="preserve">
+                <source>Subject</source>
+            </trans-unit>
+            <trans-unit id="email.identifier" xml:space="preserve">
+                <source>Identifier</source>
             </trans-unit>
             <trans-unit id="email.actions" xml:space="preserve">
                 <source>Actions</source>
@@ -136,6 +139,9 @@
             </trans-unit>
             <trans-unit id="info.type" xml:space="preserve">
                 <source>Type</source>
+            </trans-unit>
+            <trans-unit id="info.isPublished" xml:space="preserve">
+                <source>Published</source>
             </trans-unit>
             <trans-unit id="info.message" xml:space="preserve">
                 <source>Message</source>

@@ -48,7 +48,6 @@
             <trans-unit id="list.email.publish" xml:space="preserve">
                 <source>Publish email</source>
                 <target>E-Mail veröffentlichen</target>
-                <target></target>
             </trans-unit>
             <trans-unit id="list.email.unpublish" xml:space="preserve">
                 <source>Unpublish email</source>
@@ -81,6 +80,10 @@
             <trans-unit id="email.createdOn" xml:space="preserve">
                 <source>Created</source>
                 <target>Erstellt am</target>
+            </trans-unit>
+            <trans-unit id="email.subject" xml:space="preserve">
+                <source>Subject</source>
+                <target>Betreff</target>
             </trans-unit>
             <trans-unit id="email.identifier" xml:space="preserve">
                 <source>Identifier</source>
@@ -181,6 +184,10 @@
             <trans-unit id="info.type" xml:space="preserve">
                 <source>Type</source>
                 <target>Typ</target>
+            </trans-unit>
+            <trans-unit id="info.isPublished" xml:space="preserve">
+                <source>Published</source>
+                <target>Publiziert</target>
             </trans-unit>
             <trans-unit id="info.message" xml:space="preserve">
                 <source>Message</source>

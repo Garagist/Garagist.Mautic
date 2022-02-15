@@ -4,27 +4,48 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
     history = ${history}
     mauticRecord = ${mauticRecord}
     i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
+    flashMessages = ${flashMessages}
+
+    emailData = Garagist.Mautic:Component.EmailData {
+        node = ${node}
+        email = ${email}
+        redirect = 'info'
+    }
+
+    title = ${q(node).property('title')}
 
     renderer = afx`
-        <main class="mautic">
+        <main class="mautic" x-data x-tooltips>
+            <Garagist.Mautic:Component.FlashMessages flashMessages={props.flashMessages} />
             <div class="space-y-4">
+                <h1 class="text-2xl">
+                    <Neos.Fusion:Link.Action href.action="email" href.arguments.node={props.node}>
+                        {props.i18n.id('emails.headline').arguments([props.title]).translate()}
+                    </Neos.Fusion:Link.Action>
+                </h1>
                 <section>
-                    <h1 class="text-xl">{props.i18n.id('info.metadata').translate()}</h1>
-                    <table class="neos-info-table">
+                    <h2 class="text-xl">{props.i18n.id('info.metadata').translate()}</h2>
+                    <table class="neos-table">
                         <tbody>
                             <tr>
-                                <th>{props.i18n.id('info.name').translate()}</th>
-                                <td>{props.mauticRecord.name}</td>
+                                <td>{props.i18n.id('email.identifier').translate()}</td>
+                                <td>{props.emailData.emailIdentifier}</td>
                             </tr>
                             <tr>
-                                <th>{props.i18n.id('info.subject').translate()}</th>
-                                <td>{props.mauticRecord.subject}</td>
+                                <td>{props.i18n.id('info.subject').translate()}</td>
+                                <td>{props.emailData.subject}</td>
+                            </tr>
+                            <tr>
+                                <td>{props.i18n.id('email.actions').translate()}</td>
+                                <td class="!p-0" x-data="actions(1)">
+                                    <Garagist.Mautic:Component.EmailActionButtons infoView={true} {...props.emailData}/>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                 </section>
                 <section>
-                    <h1 class="text-xl">{props.i18n.id('info.history').translate()}</h1>
+                    <h2 class="text-xl">{props.i18n.id('info.history').translate()}</h2>
                     <table class="neos-info-table">
                         <thead>
                             <th>{props.i18n.id('info.date').translate()}</th>
@@ -34,7 +55,7 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
                         <tbody>
                             <Neos.Fusion:Loop items={props.history}>
                                 <tr @if.render={item.type != 'Garagist.Mautic:MauticEmailTaskFinished' || item.error}>
-                                    <td>{Date.format(item.date, 'd.m.Y h:m:s')}</td>
+                                    <td>{Date.format(item.date, 'd.m.Y H:m:s')}</td>
                                     <td>{item.type}</td>
                                     <td>{item.message}</td>
                                 </tr>
@@ -44,22 +65,21 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
                 </section>
             </div>
 
-            <h1 class="text-xl mt-8 mb-4">{props.i18n.id('info.content').translate()}</h1>
+            <h2 class="text-xl mt-8 mb-4">{props.i18n.id('info.content').translate()}</h2>
             <div class="grid gap-8 grid-flow-row auto-rows-auto lg:grid-cols-2">
                 <div>
-                    <h2 class="text-md mb-4">{props.i18n.id('info.content.html').translate()}</h2>
+                    <h3 class="text-md mb-4">{props.i18n.id('info.content.html').translate()}</h3>
                     <iframe
                         srcdoc={props.mauticRecord.customHtml}
                         class="bg-white w-full h-[calc(100vh-150px)]"
                     ></iframe>
                 </div>
                 <div>
-                    <h2 class="text-md mb-4">{props.i18n.id('info.content.plaintext').translate()}</h2>
+                    <h3 class="text-md mb-4">{props.i18n.id('info.content.plaintext').translate()}</h3>
                     <pre class="block bg-slate-200 text-neos-dark px-8 py-12 overflow-auto h-[calc(100vh-150px)] text-xs md:text-sm lg:text-xs xl:text-sm">
                         {props.mauticRecord.plainText}
                     </pre>
                 </div>
-                <Neos.Fusion:Debug.Console value={props.mauticRecord} />
             </div>
         </main>
         <div class="neos-footer">
@@ -67,7 +87,6 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
                 class="neos-button neos-button-primary"
                 href.action="email"
                 href.arguments.node={props.node}
-                href.arguments.email={props.email}
             >
                 {props.i18n.id('back').translate()}
             </Neos.Fusion:Link.Action>
