@@ -4,21 +4,26 @@
   "scripts": {
     "build": "concurrently -r yarn:build:*",
     "build:js": "esbuild Resources/Private/Assets/Backend.js --bundle --minify --outfile=Resources/Public/Scripts/Backend.js",
-    "build:css": "tailwindcss -i Resources/Private/Assets/Backend.pcss -m -o Resources/Public/Styles/Backend.css",
+    "build:css": "postcss Resources/Private/Assets/*.pcss --no-map --ext css --dir Resources/Public/Styles/",
     "build:editor": "yarn --cwd Resources/Private/Editor/ build",
     "watch": "concurrently -r yarn:watch:*",
     "watch:js": "esbuild Resources/Private/Assets/Backend.js --bundle --watch --outfile=Resources/Public/Scripts/Backend.js",
-    "watch:css": "tailwindcss -i Resources/Private/Assets/Backend.pcss -w -o Resources/Public/Styles/Backend.css",
+    "watch:css": "postcss Resources/Private/Assets/*.pcss --no-map --ext css --dir Resources/Public/Styles/ -w",
     "watch:editor": "yarn --cwd Resources/Private/Editor/ watch",
     "pipeline:editor": "yarn --cwd Resources/Private/Editor/ install",
     "pipeline": "yarn install --silent --non-interactive;concurrently -r yarn:pipeline:*;yarn build"
   },
   "dependencies": {
+    "@tailwindcss/nesting": "^0.0.0-insiders.565cd3e",
     "alpinejs": "^3.9.0",
     "autoprefixer": "^10.4.2",
     "concurrently": "^7.0.0",
+    "cssnano": "^5.0.17",
     "esbuild": "^0.14.21",
     "postcss": "^8.4.6",
-    "tailwindcss": "^3.0.22"
+    "postcss-cli": "^9.1.0",
+    "postcss-import": "^14.0.2",
+    "tailwindcss": "^3.0.22",
+    "tippy.js": "^6.3.7"
   }
 }

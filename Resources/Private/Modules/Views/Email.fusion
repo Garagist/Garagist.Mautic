@@ -45,8 +45,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                 <section class='mautic-list'>
                     <h2 class="text-xl font-bold mb-4">
                         {props.i18n.id('emails.headline').arguments([props.title]).translate()}
-                    </h2>
-                    <table class='neos-table'>
+                    <table class='neos-table' x-data x-tooltips>
                         <thead>
                             <tr>
                                 <td>{props.i18n.id('email.status').translate()}</td>
@@ -64,8 +63,6 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                                         @if.set={item.isFailed}
                                         class="inline-block"
                                         aria-label={props.i18n.id('email.task.failed').translate()}
-                                        data-balloon-length="medium"
-                                        data-balloon-pos="up"
                                     >
                                         <i class="fas fa-exclamation-triangle text-red-500"></i>
                                     </span>
@@ -133,8 +130,6 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                                             href.action="info"
                                             href.arguments={item.hrefArguments}
                                             aria-label={props.i18n.id('list.email.info').translate()}
-                                            data-balloon-length="medium"
-                                            data-balloon-pos="up"
                                         >
                                             <i class="fas fa-info icon-white"></i>
                                         </Neos.Fusion:Link.Action>
