@@ -53,8 +53,6 @@ const rafTimeOut = (callback, delay) => {
 Alpine.data("actions", (minItems) => ({
     init() {
         const items = this.$root.querySelectorAll("a,button").length;
-        console.log(items, minItems, items <= minItems);
-
         if (items <= minItems) {
             rafTimeOut(() => window.location.reload(), 5000);
         }
