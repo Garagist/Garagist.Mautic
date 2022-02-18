@@ -435,23 +435,6 @@ class BackendController extends AbstractModuleController
     {
         $linkingService = $this->linkingService;
         $controllerContext = $this->controllerContext;
-        $htmlUrl = $linkingService->createNodeUri(
-            $controllerContext,
-            null,
-            $node,
-            'html',
-            true,
-            [$this->routeArgument['htmlTemplate'] => true]
-        );
-        $plaintextUrl = $linkingService->createNodeUri(
-            $controllerContext,
-            null,
-            $node,
-            'html',
-            true,
-            [$this->routeArgument['plaintextTemplate'] => true]
-        );
-
         $title = $node->getProperty('title');
 
         if (!$subject) {
@@ -459,7 +442,27 @@ class BackendController extends AbstractModuleController
             $subject = $titleOverride ? $titleOverride : $title;
         }
 
-        $this->mauticService->createEmailEvent($node->getIdentifier(), $htmlUrl, $plaintextUrl, $subject);
+        $properties = [
+            "subject" => $subject,
+            "htmlUrl" => $linkingService->createNodeUri(
+                $controllerContext,
+                null,
+                $node,
+                'html',
+                true,
+                [$this->routeArgument['htmlTemplate'] => true]
+            ),
+            "plaintextUrl" => $linkingService->createNodeUri(
+                $controllerContext,
+                null,
+                $node,
+                'html',
+                true,
+                [$this->routeArgument['plaintextTemplate'] => true]
+            )
+        ];
+
+        $this->mauticService->createEmailEvent($node->getIdentifier(), $properties);
 
         $this->addFlashMessage('', 'email.feedback.created', Message::SEVERITY_OK, [$title]);
         $this->redirect('email', null, null, ['node' => $node], 1);

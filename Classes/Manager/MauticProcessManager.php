@@ -71,9 +71,7 @@ final class MauticProcessManager implements EventListenerInterface
             $email = $this->mauticService->saveEmail(
                 $event->getEmailIdentifier(),
                 $event->getNodeIdentifier(),
-                $event->getHtmlTemplateUrl(),
-                $event->getPlaintextTemplateUrl(),
-                $event->getSubject()
+                $event->getProperties()
             );
             $this->mauticService->updateEmailEvent($email);
         } catch (Exception $e) {

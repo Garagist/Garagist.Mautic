@@ -96,13 +96,13 @@ class DataProvider implements DataProviderInterface
     {
         $this->mauticLogger->debug(sprintf('Using %s DataProvider', static::class));
         $node = $this->getNode($email->getNodeIdentifier());
-        $html = $this->mauticService->getNewsletterTemplate($email->getHtmlTemplateUrl());
-        $plaintext = $this->mauticService->getNewsletterTemplate($email->getPlaintextTemplateUrl());
-        $subject = $email->getSubject();
 
+        $html = $this->mauticService->getNewsletterTemplate($email->getProperty('htmlUrl'));
+        $plaintext = $this->mauticService->getNewsletterTemplate($email->getProperty('plaintextUrl'));
+        $subject = $email->getProperty('subject');
         $title = $node->getProperty('title');
 
-        if (!$subject) {
+        if ($subject) {
             // Fallback handling for old entries
             $titleOverride = $node->getProperty('titleOverride');
             $subject = $titleOverride ? $titleOverride : $title;

@@ -49,19 +49,12 @@ class MauticEmail
     const TASK_FAILED = 'failed';
 
     /**
-     * @var string
+     * Properties of this Email
+     *
+     * @ORM\Column(type="flow_json_array")
+     * @var array<mixed>
      */
-    protected $htmlTemplateUrl;
-
-    /**
-     * @var string
-     */
-    protected $plaintextTemplateUrl;
-
-    /**
-     * @var string
-     */
-    protected $subject;
+    protected $properties = [];
 
     /**
      * @var string
@@ -118,52 +111,93 @@ class MauticEmail
     }
 
     /**
-     * @return string
+     * Make sure the properties are always an array.
+     *
+     * If the JSON in the DB is corrupted, decoding it can fail, leading to
+     * a null value. This may lead to errors later, when the value is used with
+     * functions that expect an array.
+     *
+     * @return void
+     * @ORM\PostLoad
      */
-    public function getHtmlTemplateUrl(): string
+    public function ensurePropertiesIsNeverNull()
     {
-        return $this->htmlTemplateUrl;
+        if (!is_array($this->properties)) {
+            $this->properties = [];
+        }
     }
 
     /**
-     * @param string $htmlTemplateUrl
+     * Sets the specified property.
+     *
+     * @param string $propertyName Name of the property
+     * @param mixed $value Value of the property
+     * @return void
      */
-    public function setHtmlTemplateUrl(string $htmlTemplateUrl): void
+    public function setProperty($propertyName, $value): void
     {
-        $this->htmlTemplateUrl = $htmlTemplateUrl;
+        if (array_key_exists($propertyName, $this->properties) && $this->properties[$propertyName] === $value) {
+            return;
+        }
+
+        $this->properties[$propertyName] = $value;
     }
 
     /**
-     * @return string
+     * If this email has a property with the given name.
+     *
+     * @param string $propertyName Name of the property to test for
+     * @return boolean
      */
-    public function getPlaintextTemplateUrl(): string
+    public function hasProperty($propertyName): bool
     {
-        return $this->plaintextTemplateUrl;
+        return array_key_exists($propertyName, $this->properties);
     }
 
     /**
-     * @param string $plaintextTemplateUrl
+     * Returns the specified property.
+     *
+     * @param string $propertyName Name of the property
+     * @return mixed value of the property
      */
-    public function setPlaintextTemplateUrl(string $plaintextTemplateUrl): void
+    public function getProperty($propertyName)
     {
-        $this->plaintextTemplateUrl = $plaintextTemplateUrl;
+        return isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : null;
     }
 
     /**
-     * @return string
+     * Removes the specified property.
+     *
+     * @param string $propertyName Name of the property
+     * @return void
      */
-    public function getSubject(): string
+    public function removeProperty($propertyName): void
     {
-        return $this->subject;
+        if (array_key_exists($propertyName, $this->properties)) {
+            unset($this->properties[$propertyName]);
+        }
     }
 
     /**
-     * @param string $subject
+     * Returns all properties of this email.
+     * 
+     * @return array Property values, indexed by their name
      */
-    public function setSubject(string $subject): void
+    public function getProperties(): array
     {
-        $this->subject = $subject;
+        return $this->properties;
     }
+
+    /**
+     * Returns the names of all properties of this email.
+     *
+     * @return array Property names
+     */
+    public function getPropertyNames(): array
+    {
+        return array_keys($this->properties);
+    }
+
 
     /**
      * @return DateTime

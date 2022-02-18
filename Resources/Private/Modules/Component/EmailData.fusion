@@ -9,7 +9,8 @@ prototype(Garagist.Mautic:Component.EmailData) < prototype(Neos.Fusion:Component
         name = ${props.email.name}
         dateCreated = ${Date.format(props.email.dateCreated, 'd.m.Y H:m:s')}
         emailIdentifier = ${props.email.emailIdentifier}
-        subject = ${props.email.subject}
+        properties = ${props.email.properties}
+        subject = ${this.properties.subject}
         dateSent = ${props.email.dateSent ? Date.format(props.email.dateSent, 'd.m.Y H:m:s') : '–'}
         hrefArguments = Neos.Fusion:DataStructure {
             node = ${props.node}

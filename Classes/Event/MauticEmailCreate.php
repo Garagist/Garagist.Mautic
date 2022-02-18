@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Garagist\Mautic\Event;
 
 use Neos\EventSourcing\Event\DomainEventInterface;
+use Doctrine\ORM\Mapping as ORM;
 
 final class MauticEmailCreate implements DomainEventInterface
 {
@@ -19,32 +20,48 @@ final class MauticEmailCreate implements DomainEventInterface
     private $emailIdentifier;
 
     /**
-     * @var string
+     * @ORM\Column(type="flow_json_array")
+     * @var array<mixed>
      */
-    private $htmlTemplateUrl;
+    protected $properties = [];
 
     /**
-     * @var string
+     * @param string $emailIdentifier
+     * @param string $nodeIdentifier
+     * @param array $properties
      */
-    private $plaintextTemplateUrl;
-
-    /**
-     * @var string
-     */
-    private $subject;
-
-    public function __construct(
-        string $emailIdentifier,
-        string $nodeIdentifier,
-        string $htmlTemplateUrl,
-        ?string $plaintextTemplateUrl = null,
-        ?string $subject = null
-    ) {
+    public function __construct(string $emailIdentifier, string $nodeIdentifier, array $properties)
+    {
         $this->emailIdentifier = $emailIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
-        $this->htmlTemplateUrl = $htmlTemplateUrl;
-        $this->plaintextTemplateUrl = $plaintextTemplateUrl ?? '';
-        $this->subject = $subject ?? '';
+        $this->properties = $properties;
+    }
+
+    /* @return void
+     * @ORM\PostLoad
+     */
+    public function ensurePropertiesIsNeverNull()
+    {
+        if (!is_array($this->properties)) {
+            $this->properties = [];
+        }
+    }
+
+    /**
+     * @return array Property values, indexed by their name
+     */
+    public function getProperties(): array
+    {
+        return $this->properties;
+    }
+
+    /**
+     * @param array $properties
+     * @return void
+     */
+    public function setProperties(array $properties): void
+    {
+        $this->properties = $properties;
     }
 
     /**
@@ -61,54 +78,6 @@ final class MauticEmailCreate implements DomainEventInterface
     public function setNodeIdentifier(string $nodeIdentifier): void
     {
         $this->nodeIdentifier = $nodeIdentifier;
-    }
-
-    /**
-     * @return string
-     */
-    public function getHtmlTemplateUrl(): string
-    {
-        return $this->htmlTemplateUrl;
-    }
-
-    /**
-     * @param string $htmlTemplateUrl
-     */
-    public function setHtmlTemplateUrl(string $htmlTemplateUrl): void
-    {
-        $this->htmlTemplateUrl = $htmlTemplateUrl;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPlaintextTemplateUrl(): string
-    {
-        return $this->plaintextTemplateUrl;
-    }
-
-    /**
-     * @param string $plaintextTemplateUrl
-     */
-    public function setPlaintextTemplateUrl(string $plaintextTemplateUrl): void
-    {
-        $this->plaintextTemplateUrl = $plaintextTemplateUrl;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSubject(): string
-    {
-        return $this->subject;
-    }
-
-    /**
-     * @param string $subject
-     */
-    public function setSubject(string $subject): void
-    {
-        $this->subject = $subject;
     }
 
     /**
