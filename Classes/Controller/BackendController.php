@@ -458,7 +458,9 @@ class BackendController extends AbstractModuleController
      */
     public function publishAndSendAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
     {
-        $this->publishAction($node, $email, 'none');
+        if (!$email->isPublished()) {
+            $this->publishAction($node, $email, 'none');
+        }
         $this->sendAction($node, $email, $redirect);
     }
 
@@ -472,7 +474,9 @@ class BackendController extends AbstractModuleController
      */
     public function unpublishAndUpdateAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
     {
-        $this->unPublishAction($node, $email, 'none');
+        if ($email->isPublished()) {
+            $this->unPublishAction($node, $email, 'none');
+        }
         $this->updateAction($node, $email, $redirect);
     }
 
@@ -484,7 +488,7 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    public function delelteAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
+    public function deleteAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
     {
         // TODO
         $this->redirectCommand($node, $email, $redirect);
