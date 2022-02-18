@@ -131,7 +131,7 @@ class BackendController extends AbstractModuleController
      *
      * @return void
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $ping = $this->apiService->ping();
         $nodes = $this->nodeService->getNodesByType('Garagist.Mautic:Mixin.Email');
@@ -358,7 +358,7 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    public function unlockAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null)
+    public function unlockAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
     {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::TASK_FAILED) {

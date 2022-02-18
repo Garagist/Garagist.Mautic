@@ -97,14 +97,19 @@ class MauticService
         string $htmlUrl,
         string $plaintextUrl,
         ?string $subject = null
-    ) {
+    ): void {
         $event = new MauticEmailCreate(Algorithms::generateUUID(), $nodeIdentifier, $htmlUrl, $plaintextUrl, $subject);
         $streamName = StreamName::fromString('email-' . $event->getEmailIdentifier());
 
         $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
     }
 
-    public function taskFinishedEvent(MauticEmail $email, string $error = '')
+    /**
+     * @param MauticEmail $email
+     * @param string $error
+     * @return void
+     */
+    public function taskFinishedEvent(MauticEmail $email, string $error = ''): void
     {
         $event = new MauticEmailTaskFinished($email->getEmailIdentifier(), $email->getNodeIdentifier(), $email->getTask(), $error);
         $streamName = StreamName::fromString('email-' . $email->getEmailIdentifier());
