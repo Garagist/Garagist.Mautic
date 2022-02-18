@@ -238,11 +238,7 @@ class BackendController extends AbstractModuleController
             );
         }
 
-        if (!isset($redirect)) {
-            $redirect = 'email';
-        }
-
-        $this->redirect($redirect, null, null, ['node' => $node, 'email' => $email]);
+        $this->redirectCommand($node, $email, $redirect);
     }
 
     /**
@@ -273,11 +269,7 @@ class BackendController extends AbstractModuleController
             );
         }
 
-        if (!isset($redirect)) {
-            $redirect = 'email';
-        }
-
-        $this->redirect($redirect, null, null, ['node' => $node, 'email' => $email]);
+        $this->redirectCommand($node, $email, $redirect);
     }
 
     /**
@@ -308,11 +300,7 @@ class BackendController extends AbstractModuleController
             );
         }
 
-        if (!isset($redirect)) {
-            $redirect = 'email';
-        }
-
-        $this->redirect($redirect, null, null, ['node' => $node, 'email' => $email]);
+        $this->redirectCommand($node, $email, $redirect);
     }
 
     /**
@@ -343,11 +331,7 @@ class BackendController extends AbstractModuleController
             );
         }
 
-        if (!isset($redirect)) {
-            $redirect = 'email';
-        }
-
-        $this->redirect($redirect, null, null, ['node' => $node, 'email' => $email]);
+        $this->redirectCommand($node, $email, $redirect);
     }
 
     /**
@@ -378,11 +362,7 @@ class BackendController extends AbstractModuleController
             );
         }
 
-        if (!isset($redirect)) {
-            $redirect = 'email';
-        }
-
-        $this->redirect($redirect, 'Backend', null, ['node' => $node, 'email' => $email]);
+        $this->redirectCommand($node, $email, $redirect);
     }
 
     /**
@@ -466,5 +446,68 @@ class BackendController extends AbstractModuleController
 
         $this->addFlashMessage('', 'email.feedback.created', Message::SEVERITY_OK, [$title]);
         $this->redirect('email', null, null, ['node' => $node], 1);
+    }
+
+    /**
+     * Publish (if needed) and sends email
+     *
+     * @param NodeInterface $node
+     * @param MauticEmail $email
+     * @param string|null $redirect
+     * @return void
+     */
+    public function publishAndSendAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
+    {
+        $this->publishAction($node, $email, 'none');
+        $this->sendAction($node, $email, $redirect);
+    }
+
+    /**
+     * Unpublish (if needed) and update email
+     *
+     * @param NodeInterface $node
+     * @param MauticEmail $email
+     * @param string|null $redirect
+     * @return void
+     */
+    public function unpublishAndUpdateAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
+    {
+        $this->unPublishAction($node, $email, 'none');
+        $this->updateAction($node, $email, $redirect);
+    }
+
+    /**
+     * Delete email
+     *
+     * @param NodeInterface $node
+     * @param MauticEmail $email
+     * @param string|null $redirect
+     * @return void
+     */
+    public function delelteAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
+    {
+        // TODO
+        $this->redirectCommand($node, $email, $redirect);
+    }
+
+
+    /**
+     * Handles redirects
+     *
+     * @param NodeInterface $node
+     * @param MauticEmail $email
+     * @param string|null $redirect
+     * @return void
+     */
+    private function redirectCommand(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
+    {
+        if (!isset($redirect)) {
+            $redirect = 'email';
+        }
+        if ($redirect === 'none') {
+            return;
+        }
+
+        $this->redirect($redirect, null, null, ['node' => $node, 'email' => $email]);
     }
 }

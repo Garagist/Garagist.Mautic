@@ -47,6 +47,15 @@
             <trans-unit id="list.email.update" xml:space="preserve">
                 <source>Update email</source>
             </trans-unit>
+            <trans-unit id="list.email.publishAndSend" xml:space="preserve">
+                <source>Publish and send email</source>
+            </trans-unit>
+            <trans-unit id="list.email.unpublishAndUpdate" xml:space="preserve">
+                <source>Update email</source>
+            </trans-unit>
+            <trans-unit id="list.email.delete" xml:space="preserve">
+                <source>Delete email</source>
+            </trans-unit>
             <trans-unit id="list.email.info" xml:space="preserve">
                 <source>Information about this email</source>
             </trans-unit>

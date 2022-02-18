@@ -10,3 +10,13 @@ Garagist:
     segmentMapping: []
     # Add here the segment ID of the Mautic segment who contains not confirmed contacts
     unconfirmedSegment: null
+    # Make actions configurable
+    actions:
+      publishAndSend: true
+      unpublishAndUpdate: true
+      delete: true
+
+      publish: false
+      unpublish: false
+      send: false
+      update: false

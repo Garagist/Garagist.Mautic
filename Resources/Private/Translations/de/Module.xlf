@@ -61,6 +61,18 @@
                 <source>Update email</source>
                 <target>E-Mail aktualisieren</target>
             </trans-unit>
+            <trans-unit id="list.email.publishAndSend" xml:space="preserve">
+                <source>Publish and send email</source>
+                <target>E-Mail publizieren und senden</target>
+            </trans-unit>
+            <trans-unit id="list.email.unpublishAndUpdate" xml:space="preserve">
+                <source>Update email</source>
+                <target>E-Mail aktualisieren</target>
+            </trans-unit>
+            <trans-unit id="list.email.delete" xml:space="preserve">
+                <source>Delete email</source>
+                <target>E-Mail löschen</target>
+            </trans-unit>
             <trans-unit id="list.email.info" xml:space="preserve">
                 <source>Information about this email</source>
                 <target>Informationen über diese E-Mail</target>
