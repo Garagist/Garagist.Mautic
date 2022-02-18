@@ -19,7 +19,7 @@ prototype(Garagist.Mautic:Component.IndexLink) < prototype(Neos.Fusion:Component
             </div>
             <div class="flex-1 min-w-0 px-3">
                 <Neos.Fusion:Link.Action
-                    class="focus:outline-none font-medium text-gray-200"
+                    class="focus:outline-none font-medium text-slate-200"
                     href.action="email"
                     href.controller="Backend"
                     href.arguments.node={props.node}

@@ -1,0 +1,32 @@
+prototype(Garagist.Mautic:Component.EmailData) < prototype(Neos.Fusion:Component) {
+    email = null
+    node = null
+    redirect = 'email'
+
+    @if.hasEmail = ${this.email}
+
+    renderer = Neos.Fusion:DataStructure {
+        name = ${props.email.name}
+        dateCreated = ${Date.format(props.email.dateCreated, 'd.m.Y H:m:s')}
+        emailIdentifier = ${props.email.emailIdentifier}
+        properties = ${props.email.properties}
+        subject = ${this.properties.subject}
+        dateSent = ${props.email.dateSent ? Date.format(props.email.dateSent, 'd.m.Y H:m:s') : '–'}
+        hrefArguments = Neos.Fusion:DataStructure {
+            node = ${props.node}
+            email = ${props.email}
+            redirect = ${props.redirect}
+        }
+        task = ${props.email.task}
+
+        isIdle = ${props.email.task == 'idle'}
+        canPublish = ${this.isIdle && (props.email.dateModified != null && props.email.dateSend == null && !props.email.published)}
+        canUnpublish = ${this.isIdle && (props.email.dateSent == null && props.email.published)}
+        canSend = ${this.isIdle && (props.email.dateSent == null && props.email.published)}
+        canUpdate = ${this.isIdle && (props.email.dateSent == null && !props.email.published)}
+
+        isRunning = ${props.email.task != 'idle' && props.email.task != 'failed'}
+        isFailed = ${props.email.task == 'failed'}
+    }
+}
+

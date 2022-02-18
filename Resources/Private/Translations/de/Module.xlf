@@ -48,7 +48,6 @@
             <trans-unit id="list.email.publish" xml:space="preserve">
                 <source>Publish email</source>
                 <target>E-Mail veröffentlichen</target>
-                <target></target>
             </trans-unit>
             <trans-unit id="list.email.unpublish" xml:space="preserve">
                 <source>Unpublish email</source>
@@ -81,6 +80,10 @@
             <trans-unit id="email.createdOn" xml:space="preserve">
                 <source>Created</source>
                 <target>Erstellt am</target>
+            </trans-unit>
+            <trans-unit id="email.subject" xml:space="preserve">
+                <source>Subject</source>
+                <target>Betreff</target>
             </trans-unit>
             <trans-unit id="email.identifier" xml:space="preserve">
                 <source>Identifier</source>
@@ -182,9 +185,29 @@
                 <source>Type</source>
                 <target>Typ</target>
             </trans-unit>
+            <trans-unit id="info.isPublished" xml:space="preserve">
+                <source>Published</source>
+                <target>Publiziert</target>
+            </trans-unit>
             <trans-unit id="info.message" xml:space="preserve">
                 <source>Message</source>
                 <target>Nachricht</target>
+            </trans-unit>
+            <trans-unit id="info.content" xml:space="preserve">
+                <source>Content of the email</source>
+                <target>Inhalt der E-Mail</target>
+            </trans-unit>
+            <trans-unit id="info.content.html" xml:space="preserve">
+                <source>HTML email</source>
+                <target>HTML E-Mail</target>
+            </trans-unit>
+            <trans-unit id="info.content.plaintext" xml:space="preserve">
+                <source>Plaintext email</source>
+                <target>Plaintext E-Mail</target>
+            </trans-unit>
+            <trans-unit id="info.content" xml:space="preserve">
+                <source>Content of the email</source>
+                <target>Inhalt der E-Mail</target>
             </trans-unit>
             <trans-unit id="info.action.refresh" xml:space="preserve">
                 <source>Refresh view</source>

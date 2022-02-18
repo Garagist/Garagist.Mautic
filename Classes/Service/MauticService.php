@@ -30,6 +30,7 @@ use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Utility\Algorithms;
 use ProxyManager\Exception\ExceptionInterface;
 use Psr\Log\LoggerInterface;
+use DateTime;
 
 /**
  * @Flow\Scope("singleton")
@@ -85,19 +86,24 @@ class MauticService
 
     /**
      * @param string $nodeIdentifier
-     * @param string $templateUrl
+     * @param array $properties
      * @throws \Doctrine\ORM\ORMException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
-    public function createEmailEvent(string $nodeIdentifier, string $templateUrl)
+    public function createEmailEvent(string $nodeIdentifier, array $properties): void
     {
-        $event = new MauticEmailCreate(Algorithms::generateUUID(), $nodeIdentifier, $templateUrl);
+        $event = new MauticEmailCreate(Algorithms::generateUUID(), $nodeIdentifier, $properties);
         $streamName = StreamName::fromString('email-' . $event->getEmailIdentifier());
 
         $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
     }
 
-    public function taskFinishedEvent(MauticEmail $email, string $error = '')
+    /**
+     * @param MauticEmail $email
+     * @param string $error
+     * @return void
+     */
+    public function taskFinishedEvent(MauticEmail $email, string $error = ''): void
     {
         $event = new MauticEmailTaskFinished($email->getEmailIdentifier(), $email->getNodeIdentifier(), $email->getTask(), $error);
         $streamName = StreamName::fromString('email-' . $email->getEmailIdentifier());
@@ -112,7 +118,7 @@ class MauticService
      */
     public function sendEmailEvent(MauticEmail $email): void
     {
-        $this->setTask($email, MauticEmail::TaskSend);
+        $this->setTask($email, MauticEmail::TASK_SEND);
         $mauticIdentifier = $this->apiService->isEmailPublished($email->getEmailIdentifier());
         if ($mauticIdentifier) {
             $event = new MauticEmailSend($email->getEmailIdentifier(), $mauticIdentifier);
@@ -124,32 +130,44 @@ class MauticService
         }
     }
 
-    public function updateEmailEvent(MauticEmail $email)
+    /**
+     * @param MauticEmail $email
+     * @return void
+     */
+    public function updateEmailEvent(MauticEmail $email): void
     {
-        $this->setTask($email, MauticEmail::TaskUpdate);
+        $this->setTask($email, MauticEmail::TASK_UPDATE);
         $event = new MauticEmailUpdate($email->getEmailIdentifier(), $email->getNodeIdentifier());
         $streamName = StreamName::fromString('email-' . $email->getEmailIdentifier());
         $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
     }
 
-    public function publishEmailEvent(MauticEmail $email)
+    /**
+     * @param MauticEmail $email
+     * @return void
+     */
+    public function publishEmailEvent(MauticEmail $email): void
     {
-        $this->setTask($email, MauticEmail::TaskPublish);
+        $this->setTask($email, MauticEmail::TASK_PUBLISH);
         $event = new MauticEmailPublish($email->getEmailIdentifier(), $email->getNodeIdentifier());
         $streamName = StreamName::fromString('email-' . $email->getEmailIdentifier());
         $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
     }
 
-    public function unPublishEmailEvent(MauticEmail $email)
+    /**
+     * @param MauticEmail $email
+     * @return void
+     */
+    public function unPublishEmailEvent(MauticEmail $email): void
     {
-        $this->setTask($email, MauticEmail::TaskUnPublish);
+        $this->setTask($email, MauticEmail::TASK_UN_PUBLISH);
         $event = new MauticEmailUnPublish($email->getEmailIdentifier(), $email->getNodeIdentifier());
         $streamName = StreamName::fromString('email-' . $email->getEmailIdentifier());
         $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
     }
 
     /**
-     * @param string $emailIdentifier
+     * @param MauticEmail $email
      * @throws Exception
      * @throws ExceptionInterface
      */
@@ -163,21 +181,26 @@ class MauticService
     /**
      * @param string $emailIdentifier
      * @param string $nodeIdentifier
-     * @param string $templateUrl
+     * @param array $properties
      * @return MauticEmail
      * @throws \Doctrine\ORM\ORMException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
-    public function saveEmail(string $emailIdentifier, string $nodeIdentifier, string $templateUrl)
-    {
+    public function saveEmail(
+        string $emailIdentifier,
+        string $nodeIdentifier,
+        array $properties
+    ): MauticEmail {
 
         $email = new MauticEmail();
+        foreach ($properties as $property => $value) {
+            $email->setProperty($property, $value);
+        }
         $email->setEmailIdentifier($emailIdentifier);
-        $email->setTemplateUrl($templateUrl);
         $email->setNodeIdentifier($nodeIdentifier);
-        $email->setDateCreated(new \DateTime());
+        $email->setDateCreated(new DateTime());
         $email->setPublished(false);
-        $email->setTask(MauticEmail::Idle);
+        $email->setTask(MauticEmail::IDLE);
 
         $this->mauticEmailRepository->add($email);
         $this->persistenceManager->persistAll();
@@ -185,14 +208,24 @@ class MauticService
         return $email;
     }
 
-    public function finishTask(MauticEmail $email, bool $failed = false)
+    /**
+     * @param MauticEmail $email
+     * @param boolean $failed
+     * @return void
+     */
+    public function finishTask(MauticEmail $email, bool $failed = false): void
     {
         if (!$failed) {
             $this->syncEmail($email);
         }
-        $this->setTask($email, $failed ? MauticEmail::TaskFailed : MauticEmail::Idle);
+        $this->setTask($email, $failed ? MauticEmail::TASK_FAILED : MauticEmail::IDLE);
     }
 
+    /**
+     * @param MauticEmail $email
+     * @param string $task
+     * @return void
+     */
     public function setTask(MauticEmail $email, string $task): void
     {
         $email->setTask($task);
@@ -212,10 +245,10 @@ class MauticService
     }
 
     /**
-     * @param string $nodeIdentifier
+     * @param string $emailIdentifier
      * @return MauticEmail
      */
-    public function getByEmailIdentifier(string $emailIdentifier)
+    public function getByEmailIdentifier(string $emailIdentifier): MauticEmail
     {
         return $this->mauticEmailRepository->findOneByEmailIdentifier($emailIdentifier);
     }
@@ -232,7 +265,7 @@ class MauticService
             $segments = $this->dataProvider->getSegmentsForSendOut($email);
             $data = $this->dataProvider->getDataForSegmentSendOut($email, $segments);
             $this->apiService->alterEmail($email->getEmailIdentifier(), $data);
-            $email->setDateModified(new \DateTime());
+            $email->setDateModified(new DateTime());
             $this->taskFinishedEvent($email);
         } catch (Exception $e) {
             $this->taskFinishedEvent($email, sprintf('Update email with identifier:%s failed! Reason: %s', $email->getEmailIdentifier(), $e->getMessage()));
@@ -241,16 +274,16 @@ class MauticService
 
     /**
      * @param MauticEmail $email
-     * @param \DateTime|null $datePublish
-     * @param \DateTime|null $dateUnPublish
+     * @param DateTime|null $datePublish
+     * @param DateTime|null $dateUnPublish
      * @return bool
      * @throws Exception
      * @throws \Neos\ContentRepository\Exception\NodeException
      */
-    public function publishEmail(MauticEmail $email, \DateTime $datePublish = null, \DateTime $dateUnPublish = null)
+    public function publishEmail(MauticEmail $email, DateTime $datePublish = null, DateTime $dateUnPublish = null): bool
     {
         if ($this->apiService->isEmailPublished($email->getEmailIdentifier()) && ($datePublish !== null || $dateUnPublish !== null)) {
-            throw new Exception(sprintf("The Email with node identifier %s is already published and can therefore not be rescheduled for publising. ", $email->getEmailIdentifier()));
+            throw new Exception(sprintf("The email with node identifier %s is already published and can therefore not be rescheduled for publishing. ", $email->getEmailIdentifier()));
         } else {
             $data = $datePublish === null ? ['isPublished' => true] : ['publishUp' => $datePublish]; // publish right away or at a sustain date.
             $this->apiService->alterEmail($email->getEmailIdentifier(), $data);
@@ -266,13 +299,12 @@ class MauticService
     }
 
     /**
-     * @param string $emailIdentifier
+     * @param MauticEmail $email
      * @return bool
      * @throws \Neos\ContentRepository\Exception\NodeException
-     *
      * @throws Exception
      */
-    public function unPublishEmail(MauticEmail $email)
+    public function unPublishEmail(MauticEmail $email): bool
     {
         $data = ['isPublished' => false, 'publishUp' => null, 'publishDown' => null]; // remove all publishing settings
         $this->apiService->alterEmail($email->getEmailIdentifier(), $data);
@@ -285,13 +317,13 @@ class MauticService
     }
 
     /**
-     * @param string $emailIdentifier
-     * @return bool
+     * @param MauticEmail $email
+     * @param $mauticIdentifier
+     * @return void
      * @throws \Neos\ContentRepository\Exception\NodeException
-     *
      * @throws Exception
      */
-    public function sendEmail(MauticEmail $email, $mauticIdentifier)
+    public function sendEmail(MauticEmail $email, $mauticIdentifier): void
     {
         try {
             $stats = $this->apiService->sendEmail($email->getEmailIdentifier(), $mauticIdentifier);
@@ -301,7 +333,7 @@ class MauticService
             $sentCount = (int) $stats['sentCount'];
             $failedRecipients = (int) $stats['failedRecipients'];
 
-            $email->setDateSent(new \DateTime());
+            $email->setDateSent(new DateTime());
             $this->mauticEmailRepository->update($email);
 
             $eventSuccess = new MauticEmailSent($email->getEmailIdentifier(), $mauticIdentifier, $success, $sentCount, $failedRecipients);
@@ -346,9 +378,7 @@ class MauticService
 
     public function getSegmentsForEmail(MauticEmail $email)
     {
-        $data = $this->dataProvider->getSegmentsForSendOut($email);
-
-        return $data;
+        return $this->dataProvider->getSegmentsForSendOut($email);
     }
 
     /**
@@ -356,7 +386,7 @@ class MauticService
      * @return array
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function getAuditLog(MauticEmail $email)
+    public function getAuditLog(MauticEmail $email): array
     {
         $stream = $this->eventStore->load(StreamName::fromString('email-' . $email->getEmailIdentifier()));
 
@@ -366,25 +396,25 @@ class MauticService
             $message = '';
             $error = false;
             $type = $stream->current()->getRawEvent()->getType();
-            $date = new \DateTime();
+            $date = new DateTime();
             $date->setTimestamp($rawEvent->getRecordedAt()->getTimestamp());
 
             switch (true) {
                 case $type === 'Garagist.Mautic:MauticEmailTaskFinished':
-                    /** @var MauticEmailTaskFinished $domianEvent */
-                    $domianEvent = $stream->current()->getDomainEvent();
-                    $message = $domianEvent->getError() ?? '';
-                    $error = $domianEvent->getError() !== '';
+                    /** @var MauticEmailTaskFinished $domainEvent */
+                    $domainEvent = $stream->current()->getDomainEvent();
+                    $message = $domainEvent->getError() ?? '';
+                    $error = $domainEvent->getError() !== '';
                     break;
 
                 case $type === 'Garagist.Mautic:MauticEmailSent':
-                    /** @var MauticEmailSent $domianEvent */
-                    $domianEvent = $stream->current()->getDomainEvent();
-                    $message = sprintf('Send: %s | Success: %s | Failed: %s', $domianEvent->getSentCount(), $domianEvent->getSuccess(), $domianEvent->getFailedRecipients());
+                    /** @var MauticEmailSent $domainEvent */
+                    $domainEvent = $stream->current()->getDomainEvent();
+                    $message = sprintf('Send: %s | Success: %s | Failed: %s', $domainEvent->getSentCount(), $domainEvent->getSuccess(), $domainEvent->getFailedRecipients());
                     break;
                 default:
                     /** @var DomainEventInterface $event */
-                    $domianEvent = $stream->current()->getDomainEvent();
+                    $domainEvent = $stream->current()->getDomainEvent();
             }
 
             $history[] = new HistoryItem($type, $date, $message, $error);

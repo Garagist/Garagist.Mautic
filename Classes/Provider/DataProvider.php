@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Garagist\Mautic\Provider;
 
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Garagist\Mautic\Service\ApiService;
 use Garagist\Mautic\Service\MauticService;
@@ -24,6 +25,12 @@ class DataProvider implements DataProviderInterface
      * @Flow\InjectConfiguration(path="segmentMapping", package="Garagist.Mautic")
      */
     protected $segmentMapping;
+
+    /**
+     * @var int|null
+     * @Flow\InjectConfiguration(path="unconfirmedSegment", package="Garagist.Mautic")
+     */
+    protected $unconfirmedSegment;
 
     /**
      * @Flow\Inject
@@ -89,22 +96,38 @@ class DataProvider implements DataProviderInterface
     {
         $this->mauticLogger->debug(sprintf('Using %s DataProvider', static::class));
         $node = $this->getNode($email->getNodeIdentifier());
-        $nlTemplate = $this->mauticService->getNewsletterTemplate($email->getTemplateUrl());
 
-        $data = array(
-            'title' => $node->getProperty('title'),
-            'name' => $node->getProperty('title') . ' | [' . $email->getEmailIdentifier() . ']',
-            'subject' => $node->getProperty('title') . ' | subject',
-            'description' => $node->getProperty('title') . ' | description',
+        $html = $this->mauticService->getNewsletterTemplate($email->getProperty('htmlUrl'));
+        $plaintext = $this->mauticService->getNewsletterTemplate($email->getProperty('plaintextUrl'));
+        $subject = $email->getProperty('subject');
+        $title = $node->getProperty('title');
+
+        if ($subject) {
+            // Fallback handling for old entries
+            $titleOverride = $node->getProperty('titleOverride');
+            $subject = $titleOverride ? $titleOverride : $title;
+        }
+
+        // Get langauge from html template
+        preg_match('/<html.+?lang="([^"]+)"/im', $html, $languageMatch);
+        $language = $languageMatch[1] ?? 'en';
+
+        // TODO
+        // * category (object/null)
+        // * dynamicContent
+
+        return [
+            'title' => $title,
+            'name' => $email->getEmailIdentifier() . ' ❯ ' . $title,
+            'subject' => $subject,
             'template' => 'blank',
             'isPublished' => 0,
-            'customHtml' => $nlTemplate,
-            'plainText' => $node->getProperty('title'),
+            'customHtml' => $html,
+            'plainText' => $plaintext,
             'emailType' => 'list',
             'lists' => $segments,
-        );
-
-        return $data;
+            'language' => $language,
+        ];
     }
 
     /**
@@ -114,15 +137,22 @@ class DataProvider implements DataProviderInterface
     public function getSegmentsForSendOut(MauticEmail $email): array
     {
         $segments = $this->apiService->getAllSegments();
-
-        return array_map(function ($n) {
+        $data = array_map(function ($n) {
             return $n->getId();
         }, $segments);
+
+        if (!isset($this->unconfirmedSegment)) {
+            return $data;
+        }
+
+        return array_filter($data, function ($n) {
+            return $n !== $this->unconfirmedSegment;
+        });
     }
 
     /**
      * @param $nodeIdentifier
-     * @return \Neos\ContentRepository\Domain\Model\NodeInterface|null
+     * @return NodeInterface|null
      */
     protected function getNode($nodeIdentifier)
     {

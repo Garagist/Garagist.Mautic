@@ -19,4 +19,4 @@
               ClientEval:
               "/neos/management/mautic/email?"
               + encodeURIComponent("moduleArguments[node]")
-              + "=" + encodeURIComponent(node.contextPath)
+              + "=" + encodeURIComponent(node.contextPath.split('@')[0] + '@live')

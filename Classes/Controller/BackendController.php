@@ -87,6 +87,12 @@ class BackendController extends AbstractModuleController
 
     /**
      * @var array
+     * @Flow\InjectConfiguration(path="routeArgument", package="Garagist.Mautic")
+     */
+    protected $routeArgument;
+
+    /**
+     * @var array
      */
     protected $viewFormatToObjectNameMap = [
         'html' => FusionView::class,
@@ -125,7 +131,7 @@ class BackendController extends AbstractModuleController
      *
      * @return void
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $ping = $this->apiService->ping();
         $nodes = $this->nodeService->getNodesByType('Garagist.Mautic:Mixin.Email');
@@ -168,7 +174,7 @@ class BackendController extends AbstractModuleController
                 }
                 $categories[$identifier] = [
                     'title' => $title,
-                    'main' => isset($pages[$identifier]) ? $pages[$identifier] : null,
+                    'main' => $pages[$identifier] ?? null,
                     'pages' =>  $items
                 ];
             }
@@ -209,12 +215,13 @@ class BackendController extends AbstractModuleController
      *
      * @param NodeInterface $node
      * @param MauticEmail $email
+     * @param string|null $redirect
      * @return void
      */
-    public function updateAction(NodeInterface $node, MauticEmail $email): void
+    public function updateAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
     {
         $identifier = $email->getEmailIdentifier();
-        if ($email->getTask() == MauticEmail::Idle) {
+        if ($email->getTask() == MauticEmail::IDLE) {
             $this->mauticService->updateEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
@@ -231,7 +238,11 @@ class BackendController extends AbstractModuleController
             );
         }
 
-        $this->redirect('email', null, null, ['node' => $node]);
+        if (!isset($redirect)) {
+            $redirect = 'email';
+        }
+
+        $this->redirect($redirect, null, null, ['node' => $node, 'email' => $email]);
     }
 
     /**
@@ -239,12 +250,13 @@ class BackendController extends AbstractModuleController
      *
      * @param NodeInterface $node
      * @param MauticEmail $email
+     * @param string|null $redirect
      * @return void
      */
-    public function publishAction(NodeInterface $node, MauticEmail $email): void
+    public function publishAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
     {
         $identifier = $email->getEmailIdentifier();
-        if ($email->getTask() == MauticEmail::Idle) {
+        if ($email->getTask() == MauticEmail::IDLE) {
             $this->mauticService->publishEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
@@ -261,7 +273,11 @@ class BackendController extends AbstractModuleController
             );
         }
 
-        $this->redirect('email', null, null, ['node' => $node]);
+        if (!isset($redirect)) {
+            $redirect = 'email';
+        }
+
+        $this->redirect($redirect, null, null, ['node' => $node, 'email' => $email]);
     }
 
     /**
@@ -269,12 +285,13 @@ class BackendController extends AbstractModuleController
      *
      * @param NodeInterface $node
      * @param MauticEmail $email
+     * @param string|null $redirect
      * @return void
      */
-    public function unPublishAction(NodeInterface $node, MauticEmail $email): void
+    public function unPublishAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
     {
         $identifier = $email->getEmailIdentifier();
-        if ($email->getTask() == MauticEmail::Idle) {
+        if ($email->getTask() == MauticEmail::IDLE) {
             $this->mauticService->unPublishEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
@@ -291,7 +308,11 @@ class BackendController extends AbstractModuleController
             );
         }
 
-        $this->redirect('email', null, null, ['node' => $node]);
+        if (!isset($redirect)) {
+            $redirect = 'email';
+        }
+
+        $this->redirect($redirect, null, null, ['node' => $node, 'email' => $email]);
     }
 
     /**
@@ -299,12 +320,13 @@ class BackendController extends AbstractModuleController
      *
      * @param NodeInterface $node
      * @param MauticEmail $email
+     * @param string|null $redirect
      * @return void
      */
-    public function sendAction(NodeInterface $node, MauticEmail $email): void
+    public function sendAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
     {
         $identifier = $email->getEmailIdentifier();
-        if ($email->getTask() == MauticEmail::Idle) {
+        if ($email->getTask() == MauticEmail::IDLE) {
             $this->mauticService->sendEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
@@ -321,7 +343,11 @@ class BackendController extends AbstractModuleController
             );
         }
 
-        $this->redirect('email', null, null, ['node' => $node]);
+        if (!isset($redirect)) {
+            $redirect = 'email';
+        }
+
+        $this->redirect($redirect, null, null, ['node' => $node, 'email' => $email]);
     }
 
     /**
@@ -329,13 +355,14 @@ class BackendController extends AbstractModuleController
      *
      * @param NodeInterface $node
      * @param MauticEmail $email
+     * @param string|null $redirect
      * @return void
      */
-    public function unlockAction(NodeInterface $node, MauticEmail $email)
+    public function unlockAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
     {
         $identifier = $email->getEmailIdentifier();
-        if ($email->getTask() == MauticEmail::TaskFailed) {
-            $this->mauticService->setTask($email, MauticEmail::Idle);
+        if ($email->getTask() == MauticEmail::TASK_FAILED) {
+            $this->mauticService->setTask($email, MauticEmail::IDLE);
             $this->addFlashMessage(
                 'email.feedback.identifier',
                 'email.feedback.unlocked',
@@ -351,7 +378,11 @@ class BackendController extends AbstractModuleController
             );
         }
 
-        $this->redirect('email', 'Backend', null, ['node' => $node]);
+        if (!isset($redirect)) {
+            $redirect = 'email';
+        }
+
+        $this->redirect($redirect, 'Backend', null, ['node' => $node, 'email' => $email]);
     }
 
     /**
@@ -384,7 +415,6 @@ class BackendController extends AbstractModuleController
         $history = $this->mauticService->getAuditLog($email);
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
 
-
         $this->view->assignMultiple([
             'email' => $email,
             'node' => $node,
@@ -398,16 +428,42 @@ class BackendController extends AbstractModuleController
      * Create a new mautic email
      *
      * @param NodeInterface $node
+     * @param string|null $subject
      * @return void
      */
-    public function createAction(NodeInterface $node): void
+    public function createAction(NodeInterface $node, ?string $subject = null): void
     {
         $linkingService = $this->linkingService;
         $controllerContext = $this->controllerContext;
-        $uri = $linkingService->createNodeUri($controllerContext, null, $node, 'html', true, ['maizzle' => true]);
-        $this->mauticService->createEmailEvent($node->getIdentifier(), (string)$uri);
-
         $title = $node->getProperty('title');
+
+        if (!$subject) {
+            $titleOverride = $node->getProperty('titleOverride');
+            $subject = $titleOverride ? $titleOverride : $title;
+        }
+
+        $properties = [
+            "subject" => $subject,
+            "htmlUrl" => $linkingService->createNodeUri(
+                $controllerContext,
+                null,
+                $node,
+                'html',
+                true,
+                [$this->routeArgument['htmlTemplate'] => true]
+            ),
+            "plaintextUrl" => $linkingService->createNodeUri(
+                $controllerContext,
+                null,
+                $node,
+                'html',
+                true,
+                [$this->routeArgument['plaintextTemplate'] => true]
+            )
+        ];
+
+        $this->mauticService->createEmailEvent($node->getIdentifier(), $properties);
+
         $this->addFlashMessage('', 'email.feedback.created', Message::SEVERITY_OK, [$title]);
         $this->redirect('email', null, null, ['node' => $node], 1);
     }

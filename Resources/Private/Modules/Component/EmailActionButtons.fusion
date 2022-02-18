@@ -1,0 +1,66 @@
+prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:Component) {
+
+
+    i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
+    infoView = false
+
+    showDisabled = ${this.infoView}
+
+    buttonClass = 'neos-button neos-button-primary'
+    disabledClass = 'neos-button opacity-60 cursor-not-allowed !bg-transparent'
+
+    renderer = afx`
+        <span @if.set={props.showDisabled && !props.canPublish} class={props.disabledClass} aria-label={props.i18n.id('list.email.publish').translate()}>
+            <i class="fas fa-upload"></i>
+        </span>
+        <Neos.Fusion:Link.Action
+            @if.set={props.canPublish}
+            class={props.buttonClass}
+            href.action="publish"
+            href.arguments={props.hrefArguments}
+            aria-label={props.i18n.id('list.email.publish').translate()}
+        >
+            <i class="fas fa-upload"></i>
+        </Neos.Fusion:Link.Action>
+
+         <span @if.set={props.showDisabled && !props.canUnpublish} class={props.disabledClass} aria-label={props.i18n.id('list.email.unpublish').translate()}>
+            <i class="fas fa-download"></i>
+        </span>
+        <Neos.Fusion:Link.Action
+            @if.set={props.canUnpublish}
+            class={props.buttonClass}
+            href.action="unPublish"
+            href.arguments={props.hrefArguments}
+            aria-label={props.i18n.id('list.email.unpublish').translate()}
+        >
+            <i class="fas fa-download"></i>
+        </Neos.Fusion:Link.Action>
+
+        <span @if.set={props.showDisabled && !props.canSend} class={props.disabledClass} aria-label={props.i18n.id('list.email.send').translate()}>
+            <i class="fas fa-paper-plane"></i>
+        </span>
+        <Neos.Fusion:Link.Action
+            @if.set={props.canSend}
+            class="neos-button neos-button-danger"
+            href.action="send"
+            href.arguments={props.hrefArguments}
+            aria-label={props.i18n.id('list.email.send').translate()}
+        >
+            <i class="fas fa-paper-plane"></i>
+        </Neos.Fusion:Link.Action>
+
+        <span @if.set={props.showDisabled && !props.canUpdate} class={props.disabledClass} aria-label={props.i18n.id('list.email.update').translate()}>
+            <i class="fas fa-sync icon-white"></i>
+        </span>
+        <Neos.Fusion:Link.Action
+            @if.set={props.canUpdate}
+            class={props.buttonClass}
+            href.action="update"
+            href.arguments={props.hrefArguments}
+            aria-label={props.i18n.id('list.email.update').translate()}
+        >
+            <i class="fas fa-sync icon-white"></i>
+        </Neos.Fusion:Link.Action>
+    `
+}
+

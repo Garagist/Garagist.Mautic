@@ -12,30 +12,23 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
     }
 
     title = ${q(node).property('title')}
+    titleOverride = ${q(node).property('titleOverride')}
     i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
+
+    createAction = Neos.Fusion:UriBuilder {
+        action = 'create'
+        arguments.node = ${node}
+    }
+
+    placeholder = ${this.titleOverride || this.title}
 
     renderer = Neos.Fusion:Component {
         @apply.props = ${props}
         _emails = Neos.Fusion:Map {
             items = ${props.emails}
-            itemRenderer = Neos.Fusion:DataStructure {
-                dateCreated = ${Date.format(item.dateCreated, 'd.m.Y h:m:s')}
-                emailIdentifier = ${item.emailIdentifier}
-                dateSent = ${item.dateSent ? Date.format(item.dateSent, 'd.m.Y h:m:s') : '–'}
-                hrefArguments = Neos.Fusion:DataStructure {
-                    node = ${props.node}
-                    email = ${item}
-                }
-                task = ${item.task}
-
-                isIdle = ${item.task == 'idle'}
-                canPublish = ${this.isIdle && (item.dateModified != null && item.dateSend == null && !item.published)}
-                canUnpublish = ${this.isIdle && (item.dateSent == null && item.published)}
-                canSend = ${this.isIdle && (item.dateSent == null && item.published)}
-                canUpdate = ${this.isIdle && (item.dateSent == null && !item.published)}
-
-                isRunning = ${item.task != 'idle' && item.task != 'failed'}
-                isFailed = ${item.task == 'failed'}
+            itemRenderer = Garagist.Mautic:Component.EmailData {
+                node = ${props.node}
+                email = ${item}
             }
         }
 
@@ -43,14 +36,14 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
             <main class="mautic">
                 <Garagist.Mautic:Component.FlashMessages flashMessages={props.flashMessages} />
                 <section class='mautic-list'>
-                    <h2 class="text-xl font-bold mb-4">
+                    <h1 class="text-xl font-bold mb-4">
                         {props.i18n.id('emails.headline').arguments([props.title]).translate()}
-                    </h2>
-                    <table class='neos-table'>
+                    </h1>
+                    <table class='neos-table' x-data x-tooltips>
                         <thead>
                             <tr>
                                 <td>{props.i18n.id('email.status').translate()}</td>
-                                <td>{props.i18n.id('email.identifier').translate()}</td>
+                                <td>{props.i18n.id('email.subject').translate()}</td>
                                 <td>{props.i18n.id('email.createdOn').translate()}</td>
                                 <td>{props.i18n.id('email.sentOn').translate()}</td>
                                 <td class="!text-right">{props.i18n.id('email.actions').translate()}</td>
@@ -64,8 +57,6 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                                         @if.set={item.isFailed}
                                         class="inline-block"
                                         aria-label={props.i18n.id('email.task.failed').translate()}
-                                        data-balloon-length="medium"
-                                        data-balloon-pos="up"
                                     >
                                         <i class="fas fa-exclamation-triangle text-red-500"></i>
                                     </span>
@@ -76,65 +67,21 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                                         class="neos-button neos-button-primary block text-left"
                                         href.action="info"
                                         href.arguments={item.hrefArguments}
-                                        aria-label={props.i18n.id('list.email.info').translate()}
-                                        data-balloon-length="medium"
-                                        data-balloon-pos="up"
+                                        aria-label={'ID: ' + item.emailIdentifier}
                                     >
-                                        {item.emailIdentifier}
+                                        {item.subject}
                                     </Neos.Fusion:Link.Action>
                                 </td>
                                 <td>{item.dateCreated}</td>
                                 <td>{item.dateSent}</td>
                                 <td class="neos-action">
-                                    <div class="neos-pull-right">
-                                        <Neos.Fusion:Link.Action
-                                            @if.set={item.canPublish}
-                                            class="neos-button neos-button-primary"
-                                            href.action="publish"
-                                            href.arguments={item.hrefArguments}
-                                            aria-label={props.i18n.id('list.email.publish').translate()}
-                                            data-balloon-pos="up"
-                                        >
-                                            <i class="fas fa-upload"></i>
-                                        </Neos.Fusion:Link.Action>
-                                        <Neos.Fusion:Link.Action
-                                            @if.set={item.canUnpublish}
-                                            class="neos-button neos-button-primary"
-                                            href.action="unPublish"
-                                            href.arguments={item.hrefArguments}
-                                            aria-label={props.i18n.id('list.email.unpublish').translate()}
-                                            data-balloon-length="medium"
-                                            data-balloon-pos="up"
-                                        >
-                                            <i class="fas fa-download"></i>
-                                        </Neos.Fusion:Link.Action>
-                                        <Neos.Fusion:Link.Action
-                                            @if.set={item.canSend}
-                                            class="neos-button neos-button-danger"
-                                            href.action="send"
-                                            href.arguments={item.hrefArguments}
-                                            aria-label={props.i18n.id('list.email.send').translate()}
-                                            data-balloon-pos="up"
-                                        >
-                                            <i class="fas fa-paper-plane"></i>
-                                        </Neos.Fusion:Link.Action>
-                                        <Neos.Fusion:Link.Action
-                                            @if.set={item.canUpdate}
-                                            class="neos-button neos-button-primary"
-                                            href.action="update"
-                                            href.arguments={item.hrefArguments}
-                                            aria-label={props.i18n.id('list.email.update').translate()}
-                                            data-balloon-pos="up"
-                                        >
-                                            <i class="fas fa-sync icon-white"></i>
-                                        </Neos.Fusion:Link.Action>
+                                    <div class="neos-pull-right" x-data="actions(2)">
+                                        <Garagist.Mautic:Component.EmailActionButtons {...item} />
                                         <Neos.Fusion:Link.Action
                                             class="neos-button neos-button-primary"
                                             href.action="info"
                                             href.arguments={item.hrefArguments}
                                             aria-label={props.i18n.id('list.email.info').translate()}
-                                            data-balloon-length="medium"
-                                            data-balloon-pos="up"
                                         >
                                             <i class="fas fa-info icon-white"></i>
                                         </Neos.Fusion:Link.Action>
@@ -147,13 +94,9 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                 </section>
             </main>
             <div class="neos-footer">
-                <Neos.Fusion:Link.Action
-                    class="neos-button neos-button-primary"
-                    href.action="create"
-                    href.arguments.node={props.node}
-                >
+                <button class="neos-button neos-button-primary" data-toggle="modal" href="#create">
                     {props.i18n.id('email.action.create').translate()}
-                </Neos.Fusion:Link.Action>
+                </button>
                 <Neos.Fusion:Link.Action
                     class="neos-button neos-button-secondary"
                     href.action="email"
@@ -161,6 +104,38 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                 >
                     {props.i18n.id('email.action.refresh')}
                 </Neos.Fusion:Link.Action>
+            </div>
+            <div class="neos-hide mautic" id="create">
+                <div class="neos-modal-centered">
+                    <div class="neos-modal-content" x-data={"{action:'" + props.createAction + "', subject:''}"}>
+                        <div class="neos-modal-header">
+                            <button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+                            <div class="neos-header">
+                                {props.i18n.id('email.action.create').translate()}
+                            </div>
+                            
+                            <fieldset class="mx-4">
+                                <label for="subject">{props.i18n.id('email.subject').translate()}</label>
+                                <input
+                                    type="text"
+                                    x-model="subject"
+                                    id="subject"
+                                    placeholder={props.placeholder}
+                                    class="block w-full"
+                                />
+                            </fieldset>
+                        </div>
+                        <div class="neos-modal-footer">
+                            <button type="button" class="neos-button" data-dismiss="modal">
+                                {Translation.translate('cancel', null, [], 'Main', 'Neos.Neos')}
+                            </button>
+                            <a :href="action + '&moduleArguments[subject]=' + subject" class="neos-button neos-button-primary">
+                                {props.i18n.id('email.action.create').translate()}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="neos-modal-backdrop neos-in"></div>
             </div>
         `
     }

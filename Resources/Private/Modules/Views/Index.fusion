@@ -15,7 +15,7 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
                 <span
                     class="inline-block"
                     aria-label={props.i18n.id(props.ping ? 'status.active' : 'status.inactive').translate()}
-                    data-balloon-pos="up"
+                    x-tooltip
                 >
                     <img width="152" alt="Mautic Logo" aria-hidden="true" src={StaticResource.uri("Garagist.Mautic", "Public/Assets/" + props.logo)} />
                 </span>
