@@ -89,10 +89,10 @@ class ApiService
 
         if ($emailRecord) { //match found -> update
             $response = $this->emailApi->edit($emailRecord['id'], $data);
-            $this->mauticLogger->info(sprintf('Edit mautic record with identifier:%s', $nodeIdentifier));
+            $this->mauticLogger->info(sprintf('Edit mautic record with identifier %s', $nodeIdentifier));
         } else { // no match found -> create
             $response = $this->emailApi->create($data);
-            $this->mauticLogger->info(sprintf('Create new mautic record with identifier:%s', $nodeIdentifier));
+            $this->mauticLogger->info(sprintf('Create new mautic record with identifier %s', $nodeIdentifier));
         }
 
         if (isset($response['error'])) {
