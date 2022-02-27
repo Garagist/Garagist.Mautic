@@ -6,13 +6,13 @@ namespace Garagist\Mautic\Service;
 
 use Garagist\Mautic\Domain\Dto\Segment;
 use Mautic\Api\Contacts;
-use Neos\Flow\Annotations as Flow;
 use Mautic\Api\Emails;
-use Mautic\Exception\ContextNotFoundException;
-use Neos\ContentRepository\Exception\NodeException;
-use Mautic\Auth\AuthInterface;
-use Mautic\MauticApi;
 use Mautic\Auth\ApiAuth;
+use Mautic\Auth\AuthInterface;
+use Mautic\Exception\ContextNotFoundException;
+use Mautic\MauticApi;
+use Neos\ContentRepository\Exception\NodeException;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -74,8 +74,9 @@ class ApiService
         $auth = $initAuth->newAuth($this->settings['api'], 'BasicAuth');
 
         $api = new MauticApi();
-        $this->emailApi = $api->newApi("emails", $auth, $this->settings['api']['baseUrl'] . '/api/');
-        $this->contactApi = $api->newApi("contacts", $auth, $this->settings['api']['baseUrl'] . '/api/');
+        $url = $this->settings['api']['baseUrl'] . '/api/';
+        $this->emailApi = $api->newApi("emails", $auth, $url);
+        $this->contactApi = $api->newApi("contacts", $auth, $url);
     }
 
     /**
