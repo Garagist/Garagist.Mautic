@@ -1,4 +1,9 @@
 prototype(Garagist.Mautic:Component.Form) < prototype(Neos.Fusion:Component) {
+    @propTypes {
+        id = ${PropTypes.integer}
+        url= ${PropTypes.string}
+    }
+
     id = ${q(node).property('mauticFormId')}
     url = ${Configuration.Setting('Garagist.Mautic.publicUrl')}
 
