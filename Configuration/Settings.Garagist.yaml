@@ -3,11 +3,11 @@ Garagist:
     routeArgument:
       htmlTemplate: emailHtml
       plaintextTemplate: emailPlain
-    publicUrl: null
     api:
       baseUrl: null
       userName: null
       password: null
+    publicUrl: null
     forms:
       hideIds: []
     segmentMapping: []
