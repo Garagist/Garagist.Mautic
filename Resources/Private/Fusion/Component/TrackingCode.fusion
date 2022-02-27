@@ -1,8 +1,9 @@
 prototype(Garagist.Mautic:Component.TrackingCode) < prototype(Neos.Fusion:Component) {
     url = ${Configuration.setting('Garagist.Mautic.publicUrl')}
     enableTracking = ${Configuration.setting('Garagist.Mautic.enableTracking')}
+    doNotTrack = ${q(node).properties('mauticDoNotTrack')}
 
-    @if.hasUrlAndNotInBackend = ${this.enableTracking && this.url && !node.context.inBackend}
+    @if.setTrackingCode = ${this.enableTracking && this.url && !this.doNotTrack && !node.context.inBackend}
 
     renderer = Neos.Fusion:Tag {
         tagName = 'script'
