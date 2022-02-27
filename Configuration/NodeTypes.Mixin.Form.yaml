@@ -1,0 +1,25 @@
+'Garagist.Mautic:Mixin.Form':
+  abstract: true
+  label: "${Neos.Node.labelForNode(node).postfix(' (' + q(node).property('formId') + ')')}"
+  ui:
+    label: i18n
+    icon: envelope-open-text
+    position: 2000
+    inspector:
+      groups:
+        mautic:
+          label: Mautic
+          icon: paper-plane
+  properties:
+    formId:
+      type: integer
+      defaultValue: 2
+      ui:
+        label: i18n
+        reloadPageIfChanged: true
+        inspector:
+          group: mautic
+          editor: Neos.Neos/Inspector/Editors/SelectBoxEditor
+          editorOptions:
+            allowEmpty: true
+            dataSourceIdentifier: garagist-mautic-forms

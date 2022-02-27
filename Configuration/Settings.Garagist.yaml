@@ -3,10 +3,13 @@ Garagist:
     routeArgument:
       htmlTemplate: emailHtml
       plaintextTemplate: emailPlain
+    publicUrl: null
     api:
       baseUrl: null
       userName: null
       password: null
+    forms:
+      hideIds: []
     segmentMapping: []
     # Add here the segment ID of the Mautic segment who contains not confirmed contacts
     unconfirmedSegment: null

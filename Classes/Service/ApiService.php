@@ -7,6 +7,7 @@ namespace Garagist\Mautic\Service;
 use Garagist\Mautic\Domain\Dto\Segment;
 use Mautic\Api\Contacts;
 use Mautic\Api\Emails;
+use Mautic\Api\Forms;
 use Mautic\Auth\ApiAuth;
 use Mautic\Auth\AuthInterface;
 use Mautic\Exception\ContextNotFoundException;
@@ -17,6 +18,7 @@ use Neos\Flow\Exception;
 use Psr\Log\LoggerInterface;
 use Throwable;
 use function array_pop;
+use function in_array;
 use function sprintf;
 
 /**
@@ -51,6 +53,11 @@ class ApiService
     protected $contactApi;
 
     /**
+     * @var Forms
+     */
+    protected $formApi;
+
+    /**
      * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
      * @var LoggerInterface
      */
@@ -77,6 +84,7 @@ class ApiService
         $url = $this->settings['api']['baseUrl'] . '/api/';
         $this->emailApi = $api->newApi("emails", $auth, $url);
         $this->contactApi = $api->newApi("contacts", $auth, $url);
+        $this->formApi = $api->newApi("forms", $auth, $url);
     }
 
     /**
@@ -163,6 +171,32 @@ class ApiService
         $segments = $this->validateResponse($this->contactApi->getSegments());
         foreach ($segments as $segment) {
             $data[] = new Segment($segment['id'], $segment['name'], $segment['alias']);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get the list of all forms
+     *
+     * @return array
+     */
+    public function getForms(): array
+    {
+        $response = $this->validateResponse($this->formApi->getList('', 0, 0, 'id', 'ASC', true));
+
+        if ($response['total'] === 0) {
+            return [];
+        }
+
+        $data = [];
+        $hideFormIds = $this->settings['forms']['hideIds'];
+
+        foreach ($response['forms'] as $form) {
+            $id = $form['id'];
+            if (!in_array($id, $hideFormIds)) {
+                $data[$id] = $form['name'];
+            }
         }
 
         return $data;
