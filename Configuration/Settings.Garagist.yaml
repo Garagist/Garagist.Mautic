@@ -8,6 +8,7 @@ Garagist:
       userName: null
       password: null
     publicUrl: null
+    enableTracking: false
     forms:
       hideIds: []
     segmentMapping: []
