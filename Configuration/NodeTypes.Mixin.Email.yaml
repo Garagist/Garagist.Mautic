@@ -7,7 +7,7 @@
           label: Mautic
           icon: paper-plane
   properties:
-    emailModule:
+    mauticEmailModule:
       ui:
         label: i18n
         inspector:

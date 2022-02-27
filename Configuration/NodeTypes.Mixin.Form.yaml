@@ -11,7 +11,7 @@
           label: Mautic
           icon: paper-plane
   properties:
-    formId:
+    mauticFormId:
       type: integer
       defaultValue: 2
       ui:

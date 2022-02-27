@@ -3,7 +3,7 @@
     xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file original="" product-name="Garagist.Mautic" source-language="en" target-language="de" datatype="plaintext">
         <body>
-            <trans-unit id="properties.emailModule" xml:space="preserve">
+            <trans-unit id="properties.mauticEmailModule" xml:space="preserve">
                 <source>Show emails</source>
                 <target>Zeige E-Mails</target>
             </trans-unit>

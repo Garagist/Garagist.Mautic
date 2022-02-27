@@ -3,7 +3,7 @@
     xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file original="" product-name="Garagist.Mautic" source-language="en" target-language="de" datatype="plaintext">
         <body>
-            <trans-unit id="properties.formId" xml:space="preserve">
+            <trans-unit id="properties.mauticFormId" xml:space="preserve">
                 <source>Mautic form</source>
                 <target>Mautic Formular</target>
             </trans-unit>

@@ -1,5 +1,5 @@
 prototype(Garagist.Mautic:Component.Form) < prototype(Neos.Fusion:Component) {
-    id = ${q(node).property('formId')}
+    id = ${q(node).property('mauticFormId')}
     url = ${Configuration.Setting('Garagist.Mautic.publicUrl')}
 
     @if.hasUrlAndId = ${this.url && this.id}
