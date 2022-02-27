@@ -1,6 +1,6 @@
 'Garagist.Mautic:Mixin.Form':
   abstract: true
-  label: "${Neos.Node.labelForNode(node).postfix(' (' + q(node).property('formId') + ')')}"
+  label: "${Neos.Node.labelForNode(node).postfix(' (' + q(node).property('mauticFormId') + ')')}"
   ui:
     label: i18n
     icon: envelope-open-text
