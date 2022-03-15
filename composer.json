@@ -42,5 +42,17 @@
             "tailwind.config.js",
             "yarn.lock"
         ]
-    }
+    },
+    "authors": [
+        {
+            "name": "David Spiola",
+            "role": "Developer"
+        },
+        {
+            "name": "Jon Uhlmann",
+            "email": "hello@uhlmann.pro",
+            "homepage": "https://www.uhlmann.pro",
+            "role": "Developer"
+        }
+    ]
 }
