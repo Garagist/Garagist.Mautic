@@ -7,7 +7,7 @@ prototype(Garagist.Mautic:Component.TrackingCode) < prototype(Neos.Fusion:Compon
 
     url = ${Configuration.setting('Garagist.Mautic.publicUrl')}
     enableTracking = ${Configuration.setting('Garagist.Mautic.enableTracking')}
-    doNotTrack = ${q(node).properties('mauticDoNotTrack')}
+    doNotTrack = ${q(node).property('mauticDoNotTrack')}
 
     @if.setTrackingCode = ${this.enableTracking && this.url && !this.doNotTrack && !node.context.inBackend}
 
