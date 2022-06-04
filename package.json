@@ -14,7 +14,6 @@
     "pipeline": "yarn install --silent --non-interactive;concurrently -r yarn:pipeline:*;yarn build"
   },
   "dependencies": {
-    "@tailwindcss/nesting": "^0.0.0-insiders.565cd3e",
     "alpinejs": "^3.9.5",
     "autoprefixer": "^10.4.4",
     "concurrently": "^7.1.0",
