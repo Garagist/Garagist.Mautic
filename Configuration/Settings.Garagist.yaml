@@ -7,6 +7,10 @@ Garagist:
       baseUrl: null
       userName: null
       password: null
+    publicUrl: null
+    enableTracking: false
+    forms:
+      hideIds: []
     segmentMapping: []
     # Add here the segment ID of the Mautic segment who contains not confirmed contacts
     unconfirmedSegment: null

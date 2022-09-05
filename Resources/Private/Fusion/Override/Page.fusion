@@ -1,0 +1,5 @@
+prototype(Neos.Neos:Page) {
+    mauticTrackingCode = Garagist.Mautic:Component.TrackingCode {
+        @position = 'before closingBodyTag'
+    }
+}

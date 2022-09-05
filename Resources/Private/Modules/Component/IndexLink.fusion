@@ -1,6 +1,6 @@
 prototype(Garagist.Mautic:Component.IndexLink) < prototype(Neos.Fusion:Component) {
-    count = null
-    title = null
+    count = ${null}
+    title = ${null}
     class = 'text-sm'
     show = ${this.count ? null : 'showPagesWithoutEmails'}
 

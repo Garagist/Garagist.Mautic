@@ -6,17 +6,19 @@ namespace Garagist\Mautic\Service;
 
 use Garagist\Mautic\Domain\Dto\Segment;
 use Mautic\Api\Contacts;
-use Neos\Flow\Annotations as Flow;
 use Mautic\Api\Emails;
-use Mautic\Exception\ContextNotFoundException;
-use Neos\ContentRepository\Exception\NodeException;
-use Mautic\Auth\AuthInterface;
-use Mautic\MauticApi;
+use Mautic\Api\Forms;
 use Mautic\Auth\ApiAuth;
+use Mautic\Auth\AuthInterface;
+use Mautic\Exception\ContextNotFoundException;
+use Mautic\MauticApi;
+use Neos\ContentRepository\Exception\NodeException;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Psr\Log\LoggerInterface;
 use Throwable;
 use function array_pop;
+use function in_array;
 use function sprintf;
 
 /**
@@ -51,6 +53,11 @@ class ApiService
     protected $contactApi;
 
     /**
+     * @var Forms
+     */
+    protected $formApi;
+
+    /**
      * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
      * @var LoggerInterface
      */
@@ -74,8 +81,10 @@ class ApiService
         $auth = $initAuth->newAuth($this->settings['api'], 'BasicAuth');
 
         $api = new MauticApi();
-        $this->emailApi = $api->newApi("emails", $auth, $this->settings['api']['baseUrl'] . '/api/');
-        $this->contactApi = $api->newApi("contacts", $auth, $this->settings['api']['baseUrl'] . '/api/');
+        $url = $this->settings['api']['baseUrl'] . '/api/';
+        $this->emailApi = $api->newApi("emails", $auth, $url);
+        $this->contactApi = $api->newApi("contacts", $auth, $url);
+        $this->formApi = $api->newApi("forms", $auth, $url);
     }
 
     /**
@@ -89,10 +98,10 @@ class ApiService
 
         if ($emailRecord) { //match found -> update
             $response = $this->emailApi->edit($emailRecord['id'], $data);
-            $this->mauticLogger->info(sprintf('Edit mautic record with identifier:%s', $nodeIdentifier));
+            $this->mauticLogger->info(sprintf('Edit mautic record with identifier %s', $nodeIdentifier));
         } else { // no match found -> create
             $response = $this->emailApi->create($data);
-            $this->mauticLogger->info(sprintf('Create new mautic record with identifier:%s', $nodeIdentifier));
+            $this->mauticLogger->info(sprintf('Create new mautic record with identifier %s', $nodeIdentifier));
         }
 
         if (isset($response['error'])) {
@@ -162,6 +171,32 @@ class ApiService
         $segments = $this->validateResponse($this->contactApi->getSegments());
         foreach ($segments as $segment) {
             $data[] = new Segment($segment['id'], $segment['name'], $segment['alias']);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get the list of all forms
+     *
+     * @return array
+     */
+    public function getForms(): array
+    {
+        $response = $this->validateResponse($this->formApi->getList('', 0, 0, 'id', 'ASC', true));
+
+        if ($response['total'] === 0) {
+            return [];
+        }
+
+        $data = [];
+        $hideFormIds = $this->settings['forms']['hideIds'];
+
+        foreach ($response['forms'] as $form) {
+            $id = $form['id'];
+            if (!in_array($id, $hideFormIds)) {
+                $data[$id] = $form['name'];
+            }
         }
 
         return $data;

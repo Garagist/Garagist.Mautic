@@ -66,7 +66,7 @@ final class MauticProcessManager implements EventListenerInterface
      */
     public function whenMauticEmailCreate(MauticEmailCreate $event): void
     {
-        $this->mauticLogger->info(sprintf('Creating email with identifier:%s', $event->getEmailIdentifier()));
+        $emailIdentifier = $event->getEmailIdentifier();
         try {
             $email = $this->mauticService->saveEmail(
                 $event->getEmailIdentifier(),
@@ -74,8 +74,9 @@ final class MauticProcessManager implements EventListenerInterface
                 $event->getProperties()
             );
             $this->mauticService->updateEmailEvent($email);
+            $this->mauticLogger->info(sprintf('Creating email with identifier %s', $emailIdentifier));
         } catch (Exception $e) {
-            $this->mauticLogger->error(sprintf('Creating email with node identifier:%s failed! Reason:', $e->getMessage()));
+            $this->mauticLogger->error(sprintf('Creating email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
         }
     }
 
@@ -85,8 +86,9 @@ final class MauticProcessManager implements EventListenerInterface
      */
     public function whenMauticEmailUpdate(MauticEmailUpdate $event): void
     {
-        $this->mauticLogger->info(sprintf('Updating email with identifier:%s', $event->getNodeIdentifier()));
-        $email = $this->mauticService->getByEmailIdentifier($event->getEmailIdentifier());
+        $emailIdentifier = $event->getEmailIdentifier();
+        $this->mauticLogger->info(sprintf('Updating email with identifier %s', $emailIdentifier));
+        $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
         $this->mauticService->updateEmail($email);
     }
 
@@ -96,9 +98,10 @@ final class MauticProcessManager implements EventListenerInterface
      */
     public function whenMauticEmailSend(MauticEmailSend $event): void
     {
-        $this->mauticLogger->info(sprintf('Sending email with identifier:%s started', $event->getEmailIdentifier()));
+        $emailIdentifier = $event->getEmailIdentifier();
+        $this->mauticLogger->info(sprintf('Sending email with identifier %s started', $emailIdentifier));
 
-        $email = $this->mauticService->getByEmailIdentifier($event->getEmailIdentifier());
+        $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
         $this->mauticService->sendEmail($email, $event->getMauticIdentifier());
     }
 
@@ -109,8 +112,9 @@ final class MauticProcessManager implements EventListenerInterface
      */
     public function whenMauticEmailSent(MauticEmailSent $event): void
     {
-        $this->mauticLogger->info(sprintf('Sent email with identifier:%s', $event->getEmailIdentifier()));
-        $email = $this->mauticService->getByEmailIdentifier($event->getEmailIdentifier());
+        $emailIdentifier = $event->getEmailIdentifier();
+        $this->mauticLogger->info(sprintf('Sent email with identifier %s', $emailIdentifier));
+        $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
         $this->mauticService->finishTask($email);
     }
 
@@ -121,8 +125,9 @@ final class MauticProcessManager implements EventListenerInterface
      */
     public function whenMauticEmailSync(MauticEmailSync $event): void
     {
-        $this->mauticLogger->info(sprintf('Syncing email with identifier:%s started', $event->getEmailIdentifier()));
-        $email = $this->mauticService->getByEmailIdentifier($event->getEmailIdentifier());
+        $emailIdentifier = $event->getEmailIdentifier();
+        $this->mauticLogger->info(sprintf('Syncing email with identifier %s started', $emailIdentifier));
+        $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
         $this->mauticService->syncEmail($email);
     }
 
@@ -133,8 +138,9 @@ final class MauticProcessManager implements EventListenerInterface
      */
     public function whenMauticEmailPublish(MauticEmailPublish $event): void
     {
-        $this->mauticLogger->info(sprintf('Publish email with identifier:%s started', $event->getEmailIdentifier()));
-        $email = $this->mauticService->getByEmailIdentifier($event->getEmailIdentifier());
+        $emailIdentifier = $event->getEmailIdentifier();
+        $this->mauticLogger->info(sprintf('Publish email with identifier %s started', $emailIdentifier));
+        $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
         $this->mauticService->publishEmail($email);
     }
 
@@ -145,8 +151,9 @@ final class MauticProcessManager implements EventListenerInterface
      */
     public function whenMauticEmailUnPublish(MauticEmailUnPublish $event): void
     {
-        $this->mauticLogger->info(sprintf('UnPublish email with identifier:%s started', $event->getEmailIdentifier()));
-        $email = $this->mauticService->getByEmailIdentifier($event->getEmailIdentifier());
+        $emailIdentifier = $event->getEmailIdentifier();
+        $this->mauticLogger->info(sprintf('UnPublish email with identifier %s started', $emailIdentifier));
+        $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
         $this->mauticService->unPublishEmail($email);
     }
 
@@ -157,12 +164,14 @@ final class MauticProcessManager implements EventListenerInterface
      */
     public function whenMauticEmailTaskFinished(MauticEmailTaskFinished $event): void
     {
+        $emailIdentifier = $event->getEmailIdentifier();
+        $task = $event->getTask();
         if ($event->getError() === '') {
-            $this->mauticLogger->info(sprintf('Task "%s" finished with email with identifier:%s', $event->getTask(), $event->getEmailIdentifier()));
+            $this->mauticLogger->info(sprintf('Task "%s" finished with email %s', $task, $emailIdentifier));
         } else {
-            $this->mauticLogger->error(sprintf('Task "%s" finished with an error! email identifier:%s - Reason: %s', $event->getTask(), $event->getEmailIdentifier(), $event->getError()));
+            $this->mauticLogger->error(sprintf('Task "%s" finished with an error! Email %s - Reason: %s', $task, $emailIdentifier, $event->getError()));
         }
-        $email = $this->mauticService->getByEmailIdentifier($event->getEmailIdentifier());
+        $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
         $this->mauticService->finishTask($email, $event->getError() !== '');
     }
 }
