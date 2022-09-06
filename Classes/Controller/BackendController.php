@@ -404,6 +404,21 @@ class BackendController extends AbstractModuleController
         ]);
     }
 
+    public function linkAction(NodeInterface $node): void
+    {
+        $linkingService = $this->linkingService;
+        $controllerContext = $this->controllerContext;
+        $uri = $linkingService->createNodeUri(
+            $controllerContext,
+            null,
+            $node,
+            'html',
+            true,
+            []
+        );
+        $this->redirectToUri($uri);
+    }
+
     /**
      * Create a new mautic email
      *

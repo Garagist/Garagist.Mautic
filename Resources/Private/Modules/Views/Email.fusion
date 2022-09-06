@@ -20,6 +20,11 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
         arguments.node = ${node}
     }
 
+    link = Neos.Fusion:UriBuilder {
+        action = 'link'
+        arguments.node = ${node}
+    }
+
     placeholder = ${this.titleOverride || this.title}
 
     renderer = Neos.Fusion:Component {
@@ -37,7 +42,9 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                 <Garagist.Mautic:Component.FlashMessages flashMessages={props.flashMessages} />
                 <section class='mautic-list'>
                     <h1 class="text-xl font-bold mb-4">
+                        <a href={props.link} target="_blank" class="hover:!underline focus:!underline">
                         {props.i18n.id('emails.headline').arguments([props.title]).translate()}
+                        </a>
                     </h1>
                     <table class='neos-table' x-data x-tooltips>
                         <thead>
@@ -113,7 +120,7 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                             <div class="neos-header">
                                 {props.i18n.id('email.action.create').translate()}
                             </div>
-                            
+
                             <fieldset class="mx-4">
                                 <label for="subject">{props.i18n.id('email.subject').translate()}</label>
                                 <input
