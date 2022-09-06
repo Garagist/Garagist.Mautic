@@ -128,9 +128,7 @@ class ApiService
      */
     public function findEmailByNeosIdentifier(string $neosIdentifier)
     {
-        $match
-            = $this->validateResponse($this->emailApi->getList($neosIdentifier));
-
+        $match = $this->validateResponse($this->emailApi->getList($neosIdentifier));
         if ($match['total'] === 1) { //match found
             return array_pop($match['emails']);
         }
