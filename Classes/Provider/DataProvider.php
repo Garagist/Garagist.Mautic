@@ -102,7 +102,7 @@ class DataProvider implements DataProviderInterface
         $subject = $email->getProperty('subject');
         $title = $node->getProperty('title');
 
-        if ($subject) {
+        if (!$subject) {
             // Fallback handling for old entries
             $titleOverride = $node->getProperty('titleOverride');
             $subject = $titleOverride ? $titleOverride : $title;
