@@ -129,7 +129,7 @@ class NodeService
      *
      * @param array  $dimensions Optional list of dimensions and their values which should be set
      * @param string $workspaceName Optional Name of the workspace to set for the context
-     * 
+     *
      * @return Context
      */
     protected function createContentContext(array $dimensions = [], string $workspaceName = 'live'): Context

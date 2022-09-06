@@ -2,8 +2,6 @@
 
 namespace Garagist\Mautic\Domain\Dto;
 
-use Neos\Flow\Annotations as Flow;
-
 class Segment
 {
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Garagist\Mautic\Manager;
 
 use Neos\Flow\Annotations as Flow;
-use Garagist\Mautic\Domain\Model\MauticEmail;
 use Garagist\Mautic\Event\MauticEmailCreate;
 use Garagist\Mautic\Event\MauticEmailPublish;
 use Garagist\Mautic\Event\MauticEmailSent;
@@ -14,8 +13,6 @@ use Garagist\Mautic\Event\MauticEmailTaskFinished;
 use Garagist\Mautic\Event\MauticEmailUnPublish;
 use Garagist\Mautic\Event\MauticEmailUpdate;
 use Garagist\Mautic\Service\MauticService;
-use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventStore\StreamName;
 use Garagist\Mautic\Service\ApiService;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStoreFactory;

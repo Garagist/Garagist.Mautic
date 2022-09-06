@@ -6,7 +6,6 @@ namespace Garagist\Mautic\Service;
 
 use Garagist\Mautic\Domain\Dto\HistoryItem;
 use Neos\EventSourcing\Event\DomainEventInterface;
-use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\Flow\Annotations as Flow;
 use Garagist\Mautic\Event\MauticEmailCreate;
 use Garagist\Mautic\Event\MauticEmailPublish;
