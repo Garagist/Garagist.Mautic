@@ -3,6 +3,7 @@
 /.eslintrc export-ignore
 /.gitattributes export-ignore
 /.github export-ignore
+/.postcssrc.js export-ignore
 /.gitignore export-ignore
 /.jshintrc export-ignore
 /.nvmrc export-ignore
