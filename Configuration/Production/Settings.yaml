@@ -1,0 +1,12 @@
+Garagist:
+  Mautic:
+    enableTracking: true
+
+Flow:
+  log:
+    psr3:
+      'Neos\Flow\Log\PsrLoggerFactory':
+        'Garagist.Mautic:MauticLogger':
+          default:
+            options:
+              severityThreshold: '%LOG_INFO%'

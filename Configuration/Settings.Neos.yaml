@@ -18,7 +18,7 @@ Neos:
               options:
                 logFileURL: '%FLOW_PATH_DATA%Logs/Mautic.log'
                 createParentDirectories: true
-                severityThreshold: '%LOG_INFO%'
+                severityThreshold: '%LOG_DEBUG%'
   Neos:
     userInterface:
       translation:
