@@ -7,18 +7,26 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
     hasCategories = ${Carbon.Array.check(this.categories)}
     showPagesWithoutEmails = ${this.hasPages && Array.some(this.pages, page => page.count > 0) ? 'false' : 'true'}
     logo = ${this.ping ? 'Logo.svg' : 'LogoInactive.svg'}
+    mauticPublicUrl = ${Configuration.Setting('Garagist.Mautic.publicUrl')}
 
     renderer = afx`
         <main class="mautic" x-data={"{showPagesWithoutEmails:" + props.showPagesWithoutEmails + "}"}>
             <h1>
-                <span class="sr-only">Mautic</span>
-                <span
-                    class="inline-block"
-                    aria-label={props.i18n.id(props.ping ? 'status.active' : 'status.inactive').translate()}
-                    x-tooltip
+                <Carbon.Eel:Tag
+                    tagName={props.mauticPublicUrl ? 'a' : null}
+                    attributes.href={props.mauticPublicUrl}
+                    attributes.target="_blank"
+                    attributes.class="inline-block"
                 >
-                    <img width="152" alt="Mautic Logo" aria-hidden="true" src={StaticResource.uri("Garagist.Mautic", "Public/Assets/" + props.logo)} />
-                </span>
+                    <span class="sr-only">Mautic</span>
+                    <span
+                        class="inline-block"
+                        aria-label={props.i18n.id(props.ping ? 'status.active' : 'status.inactive').translate()}
+                        x-tooltip
+                    >
+                        <img width="152" alt="Mautic Logo" aria-hidden="true" src={StaticResource.uri("Garagist.Mautic", "Public/Assets/" + props.logo)} />
+                    </span>
+                </Carbon.Eel:Tag>
             </h1>
             <h2 class="sr-only">{props.i18n.id('list.emails.header').translate()}</h2>
             <Garagist.Mautic:Component.ToggleSwitch
@@ -61,4 +69,3 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
         </main>
     `
 }
-

@@ -3,4 +3,5 @@
   options:
     fusionPathPatterns:
       - 'resource://Neos.Fusion/Private/Fusion'
+      - 'resource://Carbon.Eel/Private/Fusion'
       - 'resource://Garagist.Mautic/Private/Modules'
