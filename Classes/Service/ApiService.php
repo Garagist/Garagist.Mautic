@@ -105,7 +105,10 @@ class ApiService
         }
 
         if (isset($response['error'])) {
-            throw new Exception($response['error']['message']);
+            throw new Exception(json_encode($response['error']));
+        }
+        if (isset($response['errors'])) {
+            throw new Exception(json_encode($response['errors']));
         }
 
         return $response;
