@@ -15,12 +15,17 @@ Garagist:
     # Add here the segment ID of the Mautic segment who contains not confirmed contacts
     unconfirmedSegment: null
     # Make actions configurable
-    actions:
-      publishAndSend: true
-      unpublishAndUpdate: true
-      delete: true
-
-      publish: false
-      unpublish: false
-      send: false
-      update: false
+    jobs:
+      transactions:
+        publishAndSend:
+          up:
+            - publish
+            - send
+          down:
+            - unpublish
+      actions:
+        delete: true
+        publish: true
+        unpublish: true
+        send: true
+        update: true
