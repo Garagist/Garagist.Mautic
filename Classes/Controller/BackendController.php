@@ -222,7 +222,7 @@ class BackendController extends AbstractModuleController
     {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
-            $this->mauticService->updateEmailEvent($email);
+            $this->mauticService->fireUpdateEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
                 'email.feedback.updated',
@@ -253,7 +253,7 @@ class BackendController extends AbstractModuleController
     {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
-            $this->mauticService->publishEmailEvent($email);
+            $this->mauticService->firePublishEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
                 'email.feedback.published',
@@ -284,7 +284,7 @@ class BackendController extends AbstractModuleController
     {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
-            $this->mauticService->unPublishEmailEvent($email);
+            $this->mauticService->fireUnPublishEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
                 'email.feedback.unpublished',
@@ -315,7 +315,7 @@ class BackendController extends AbstractModuleController
     {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
-            $this->mauticService->sendEmailEvent($email);
+            $this->mauticService->fireSendEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
                 'email.feedback.sent',
@@ -457,7 +457,7 @@ class BackendController extends AbstractModuleController
             )
         ];
 
-        $this->mauticService->createEmailEvent($node->getIdentifier(), $properties);
+        $this->mauticService->fireCreateEmailEvent($node->getIdentifier(), $properties);
 
         $this->addFlashMessage('', 'email.feedback.created', Message::SEVERITY_OK, [$title]);
         $this->redirect('email', null, null, ['node' => $node], 1);

@@ -70,7 +70,7 @@ final class MauticProcessManager implements EventListenerInterface
                 $event->getNodeIdentifier(),
                 $event->getProperties()
             );
-            $this->mauticService->updateEmailEvent($email);
+            $this->mauticService->fireUpdateEmailEvent($email);
             $this->mauticLogger->info(sprintf('Creating email with identifier %s', $emailIdentifier));
         } catch (Exception $e) {
             $this->mauticLogger->error(sprintf('Creating email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));

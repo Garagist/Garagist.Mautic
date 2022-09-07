@@ -89,7 +89,7 @@ class MauticService
      * @throws \Doctrine\ORM\ORMException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
-    public function createEmailEvent(string $nodeIdentifier, array $properties): void
+    public function fireCreateEmailEvent(string $nodeIdentifier, array $properties): void
     {
         $event = new MauticEmailCreate(Algorithms::generateUUID(), $nodeIdentifier, $properties);
         $streamName = StreamName::fromString('email-' . $event->getEmailIdentifier());
@@ -101,7 +101,7 @@ class MauticService
      * @param MauticEmail $email
      * @return void
      */
-    public function updateEmailEvent(MauticEmail $email): void
+    public function fireUpdateEmailEvent(MauticEmail $email): void
     {
         $this->setTask($email, MauticEmail::TASK_UPDATE);
         $emailIdentifier = $email->getEmailIdentifier();
@@ -115,7 +115,7 @@ class MauticService
      * @param string $error
      * @return void
      */
-    public function taskFinishedEvent(MauticEmail $email, string $error = ''): void
+    public function fireTaskFinishedEvent(MauticEmail $email, string $error = ''): void
     {
         $event = new MauticEmailTaskFinished($email->getEmailIdentifier(), $email->getNodeIdentifier(), $email->getTask(), $error);
         $streamName = StreamName::fromString('email-' . $email->getEmailIdentifier());
@@ -128,7 +128,7 @@ class MauticService
      * @throws Exception
      * @throws ExceptionInterface
      */
-    public function sendEmailEvent(MauticEmail $email): void
+    public function fireSendEmailEvent(MauticEmail $email): void
     {
         $this->setTask($email, MauticEmail::TASK_SEND);
         $emailIdentifier = $email->getEmailIdentifier();
@@ -147,7 +147,7 @@ class MauticService
      * @param MauticEmail $email
      * @return void
      */
-    public function publishEmailEvent(MauticEmail $email): void
+    public function firePublishEmailEvent(MauticEmail $email): void
     {
         $this->setTask($email, MauticEmail::TASK_PUBLISH);
         $emailIdentifier = $email->getEmailIdentifier();
@@ -160,7 +160,7 @@ class MauticService
      * @param MauticEmail $email
      * @return void
      */
-    public function unPublishEmailEvent(MauticEmail $email): void
+    public function fireUnPublishEmailEvent(MauticEmail $email): void
     {
         $this->setTask($email, MauticEmail::TASK_UN_PUBLISH);
         $emailIdentifier = $email->getEmailIdentifier();
@@ -174,7 +174,7 @@ class MauticService
      * @throws Exception
      * @throws ExceptionInterface
      */
-    public function syncEmailEvent(MauticEmail $email): void
+    public function fireSyncEmailEvent(MauticEmail $email): void
     {
         $emailIdentifier = $email->getEmailIdentifier();
         $event = new MauticEmailSync($emailIdentifier, $email->getNodeIdentifier());
@@ -268,10 +268,10 @@ class MauticService
             $data = $this->dataProvider->getDataForSegmentSendOut($email, $segments);
             $this->apiService->alterEmail($emailIdentifier, $data);
             $email->setDateModified(new DateTime());
-            $this->taskFinishedEvent($email);
+            $this->fireTaskFinishedEvent($email);
             $this->mauticLogger->info(sprintf('Update email with identifier %s', $emailIdentifier));
         } catch (Exception $e) {
-            $this->taskFinishedEvent($email, sprintf('Update email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
+            $this->fireTaskFinishedEvent($email, sprintf('Update email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
         }
     }
 
@@ -295,7 +295,7 @@ class MauticService
             $email->setPublished(true);
             $this->mauticEmailRepository->update($email);
 
-            $this->taskFinishedEvent($email);
+            $this->fireTaskFinishedEvent($email);
             $this->mauticLogger->info(sprintf('Published email with identifier %s', $emailIdentifier));
         }
 
@@ -315,7 +315,7 @@ class MauticService
 
         $email->setPublished(false);
         $this->mauticEmailRepository->update($email);
-        $this->taskFinishedEvent($email);
+        $this->fireTaskFinishedEvent($email);
 
         return true;
     }
