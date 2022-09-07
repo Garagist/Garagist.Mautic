@@ -31,6 +31,11 @@ class MauticEmail
     /**
      * @var string
      */
+    const TASK_DELETE = 'delete';
+
+    /**
+     * @var string
+     */
     const TASK_UPDATE = 'update';
 
     /**
@@ -70,6 +75,11 @@ class MauticEmail
      * @var bool
      */
     protected $published;
+
+    /**
+     * @var bool
+     */
+    protected $deleted = false;
 
     /**
      * @var DateTime
@@ -261,6 +271,22 @@ class MauticEmail
     public function setPublished(bool $published): void
     {
         $this->published = $published;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleted(): bool
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * @param bool $deleted
+     */
+    public function setDeleted(bool $deleted): void
+    {
+        $this->deleted = $deleted;
     }
 
     /**

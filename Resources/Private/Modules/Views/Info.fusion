@@ -54,9 +54,9 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
                         </thead>
                         <tbody>
                             <Neos.Fusion:Loop items={props.history}>
-                                <tr @if.render={item.type != 'Garagist.Mautic:MauticEmailTaskFinished' || item.error}>
+                                <tr @if={item.type != 'Garagist.Mautic:MauticEmailTaskFinished' || item.error}>
                                     <td>{Date.format(item.date, 'd.m.Y H:m:s')}</td>
-                                    <td>{item.type}</td>
+                                    <td>{Translation.translate(item.type, item.type, [], 'Module', 'Garagist.Mautic')}</td>
                                     <td>{item.message}</td>
                                 </tr>
                             </Neos.Fusion:Loop>
@@ -98,7 +98,8 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
             >
                 {props.i18n.id('info.action.refresh')}
             </Neos.Fusion:Link.Action>
-            <Neos.Fusion:Link.Action @if.error={Array.last(props.history).error} class="neos-button neos-button-warning" href.action="unlock" href.arguments.node={props.node} href.arguments.email={props.email}>
+            <Neos.Fusion:Link.Action
+                @if={Array.last(props.history).error} class="neos-button neos-button-warning" href.action="unlock" href.arguments.node={props.node} href.arguments.email={props.email}>
                 {props.i18n.id('info.action.unlock').translate()}
             </Neos.Fusion:Link.Action>
         </div>

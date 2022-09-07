@@ -125,6 +125,10 @@
                 <source>A new email for {0} has been created</source>
                 <target>Eine neue E-Mail für {0} wurde erstellt</target>
             </trans-unit>
+            <trans-unit id="email.feedback.deleted" xml:space="preserve">
+                <source>The email {0} has been deleted</source>
+                <target>Die E-Mail {0} wurde gelöscht</target>
+            </trans-unit>
             <trans-unit id="email.feedback.updated" xml:space="preserve">
                 <source>The email has been updated</source>
                 <target>Die E-Mail wurde aktualisiert</target>
@@ -228,6 +232,38 @@
             <trans-unit id="info.action.unlock" xml:space="preserve">
                 <source>Unlock Task</source>
                 <target>Task entsperren</target>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailCreate" xml:space="preserve">
+                <source>Email created</source>
+                <target>E-Mail erstellt</target>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailDelete" xml:space="preserve">
+                <source>Email deleted</source>
+                <target>E-Mail gelöscht</target>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailPublish" xml:space="preserve">
+                <source>Email published</source>
+                <target>E-Mail publiziert</target>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailSend" xml:space="preserve">
+                <source>Email send</source>
+                <target>E-Mail senden</target>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailSent" xml:space="preserve">
+                <source>Email sent</source>
+                <target>Email gesendet</target>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailSync" xml:space="preserve">
+                <source>Email synced</source>
+                <target>E-Mail synchronisiert</target>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailUnpublish" xml:space="preserve">
+                <source>Email unpublished</source>
+                <target>Publizieren zurückgezogen</target>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailUpdate" xml:space="preserve">
+                <source>Email updated</source>
+                <target>E-Mail aktualisiert</target>
             </trans-unit>
         </body>
     </file>

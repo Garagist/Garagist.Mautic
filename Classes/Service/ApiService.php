@@ -88,10 +88,25 @@ class ApiService
     }
 
     /**
+     * @param string $nodeIdentifier
+     * @throws NodeException|Exception
+     * @return void
+     */
+    public function deleteEmail(string $nodeIdentifier): void
+    {
+        $emailRecord = $this->findEmailByNeosIdentifier($nodeIdentifier);
+        if ($emailRecord) {
+            $response = $this->emailApi->delete($emailRecord['id']);
+            $this->mauticLogger->info(sprintf('Delete mautic record with identifier %s', $nodeIdentifier));
+            $this->handleError($response);
+        }
+    }
+
+    /**
      * @throws NodeException|Exception
      * @return array
      */
-    public function alterEmail(string $nodeIdentifier, array $data)
+    public function alterEmail(string $nodeIdentifier, array $data): array
     {
 
         $emailRecord = $this->findEmailByNeosIdentifier($nodeIdentifier);
@@ -104,14 +119,23 @@ class ApiService
             $this->mauticLogger->info(sprintf('Create new mautic record with identifier %s', $nodeIdentifier));
         }
 
+        $this->handleError($response);
+
+        return $response;
+    }
+
+    /**
+     * @throws NodeException|Exception
+     * @return void
+     */
+    protected function handleError($response): void
+    {
         if (isset($response['error'])) {
             throw new Exception(json_encode($response['error']));
         }
         if (isset($response['errors'])) {
             throw new Exception(json_encode($response['errors']));
         }
-
-        return $response;
     }
 
     /**

@@ -13,6 +13,7 @@ use Garagist\Mautic\Event\MauticEmailSent;
 use Garagist\Mautic\Event\MauticEmailSync;
 use Garagist\Mautic\Event\MauticEmailTaskFinished;
 use Garagist\Mautic\Event\MauticEmailUnpublish;
+use Garagist\Mautic\Event\MauticEmailDelete;
 use Garagist\Mautic\Event\MauticEmailUpdate;
 use Garagist\Mautic\Provider\DataProviderInterface;
 use Garagist\Mautic\Domain\Model\MauticEmail;
@@ -171,6 +172,19 @@ class MauticService
 
     /**
      * @param MauticEmail $email
+     * @return void
+     */
+    public function fireDeleteEmailEvent(MauticEmail $email): void
+    {
+        $this->setTask($email, MauticEmail::TASK_DELETE);
+        $emailIdentifier = $email->getEmailIdentifier();
+        $event = new MauticEmailDelete($emailIdentifier);
+        $streamName = StreamName::fromString('email-' . $emailIdentifier);
+        $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
+    }
+
+    /**
+     * @param MauticEmail $email
      * @throws Exception
      * @throws ExceptionInterface
      */
@@ -245,7 +259,14 @@ class MauticService
      */
     public function getEmailsNodeIdentifier(string $nodeIdentifier)
     {
-        return $this->mauticEmailRepository->findByNodeIdentifier($nodeIdentifier);
+        $result = [];
+        $emails = $this->mauticEmailRepository->findByNodeIdentifier($nodeIdentifier);
+        foreach ($emails as $email) {
+            if (!$email->isDeleted()) {
+                $result[] = $email;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -278,15 +299,15 @@ class MauticService
     /**
      * @param MauticEmail $email
      * @param DateTime|null $datePublish
-     * @param DateTime|null $dateUnPublish
+     * @param DateTime|null $dateUnpublish
      * @return bool
      * @throws Exception
      * @throws \Neos\ContentRepository\Exception\NodeException
      */
-    public function publishEmail(MauticEmail $email, DateTime $datePublish = null, DateTime $dateUnPublish = null): bool
+    public function publishEmail(MauticEmail $email, DateTime $datePublish = null, DateTime $dateUnpublish = null): bool
     {
         $emailIdentifier = $email->getEmailIdentifier();
-        if ($this->apiService->isEmailPublished($emailIdentifier) && ($datePublish !== null || $dateUnPublish !== null)) {
+        if ($this->apiService->isEmailPublished($emailIdentifier) && ($datePublish !== null || $dateUnpublish !== null)) {
             throw new Exception(sprintf("The email with identifier %s is already published and can therefore not be rescheduled for publishing. ", $emailIdentifier));
         } else {
             $data = $datePublish === null ? ['isPublished' => true] : ['publishUp' => $datePublish]; // publish right away or at a sustain date.
@@ -308,7 +329,7 @@ class MauticService
      * @throws \Neos\ContentRepository\Exception\NodeException
      * @throws Exception
      */
-    public function unPublishEmail(MauticEmail $email): bool
+    public function unpublishEmail(MauticEmail $email): bool
     {
         $data = ['isPublished' => false, 'publishUp' => null, 'publishDown' => null]; // remove all publishing settings
         $this->apiService->alterEmail($email->getEmailIdentifier(), $data);
@@ -318,6 +339,24 @@ class MauticService
         $this->fireTaskFinishedEvent($email);
 
         return true;
+    }
+
+    /**
+     * @param MauticEmail $email
+     * @return void
+     * @throws \Neos\ContentRepository\Exception\NodeException
+     * @throws Exception
+     */
+    public function deleteEmail(MauticEmail $email): void
+    {
+        $emailIdentifier = $email->getEmailIdentifier();
+        try {
+            $this->apiService->deleteEmail($emailIdentifier);
+            $email->setDeleted(true);
+            $this->fireTaskFinishedEvent($email, '');
+        } catch (Exception $e) {
+            $this->fireTaskFinishedEvent($email, sprintf('Delete email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
+        }
     }
 
     /**
@@ -359,14 +398,11 @@ class MauticService
     {
         $emailIdentifier = $email->getEmailIdentifier();
         $emailRecord = $this->apiService->findEmailByNeosIdentifier($emailIdentifier);
-        if ($emailRecord == null) {
-            throw new Exception(sprintf('Mautic record with email identifier %s does not exist and can therefore not be sync.', $emailIdentifier));
+        if ($emailRecord != null) {
+            $email->setPublished($emailRecord['isPublished']);
+            $this->mauticEmailRepository->update($email);
+            $this->mauticLogger->info(sprintf('Mautic record with email identifier %s has been synced.', $emailIdentifier));
         }
-
-        $email->setPublished($emailRecord['isPublished']);
-
-        $this->mauticEmailRepository->update($email);
-        $this->mauticLogger->info(sprintf('Mautic record with email identifier %s has been synced.', $emailIdentifier));
     }
 
     /**

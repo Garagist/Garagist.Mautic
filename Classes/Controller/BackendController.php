@@ -503,10 +503,13 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    public function deleteAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
+    public function deleteAction(NodeInterface $node, MauticEmail $email): void
     {
-        // TODO
-        $this->redirectCommand($node, $email, $redirect);
+        $title = $email->getProperty('subject') ?? $node->getProperty('title');
+        $this->mauticService->fireDeleteEmailEvent($email);
+
+        $this->addFlashMessage('', 'email.feedback.deleted', Message::SEVERITY_OK, [$title]);
+        $this->redirect('email', null, null, ['node' => $node]);
     }
 
 

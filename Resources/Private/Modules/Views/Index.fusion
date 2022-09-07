@@ -30,23 +30,23 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
             </h1>
             <h2 class="sr-only">{props.i18n.id('list.emails.header').translate()}</h2>
             <Garagist.Mautic:Component.ToggleSwitch
-                @if.set={props.showPagesWithoutEmails == 'false'}
+                @if={props.showPagesWithoutEmails == 'false'}
                 toggle="showPagesWithoutEmails"
                 label="list.showPagesWithoutEmails"
             />
 
-            <p @if.set={!props.hasPages}>{props.i18n.id('list.emails.none').translate()}</p>
+            <p @if={!props.hasPages}>{props.i18n.id('list.emails.none').translate()}</p>
 
             <!-- There are pages with categories -->
-            <Neos.Fusion:Loop @if.set={props.hasCategories} items={props.categories}>
+            <Neos.Fusion:Loop @if={props.hasCategories} items={props.categories}>
                 <div
                     class={[iterator.isFirst ? null : "xl:mt-16", "mt-12"]}
                     x-show={item.main.count || Array.some(item.pages, page => page.count > 0) ? null : 'showPagesWithoutEmails'}
                     x-transition={!!this['x-show']}
                 >
-                    <h3 @if.set={!item.main} class="text-xl mb-4">{item.title}</h3>
+                    <h3 @if={!item.main} class="text-xl mb-4">{item.title}</h3>
                     <Garagist.Mautic:Component.IndexLink
-                        @if.set={item.main}
+                        @if={item.main}
                         class="mb-4 text-xl"
                         show={null}
                         {...item.main}
@@ -60,7 +60,7 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
             </Neos.Fusion:Loop>
 
             <!-- There aren't pages with categories -->
-            <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" @if.set={!props.hasCategories && props.hasPages}>
+            <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" @if={!props.hasCategories && props.hasPages}>
                 <Neos.Fusion:Loop items={props.pages}>
                     <Garagist.Mautic:Component.IndexLink {...item} />
                 </Neos.Fusion:Loop>

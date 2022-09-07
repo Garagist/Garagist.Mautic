@@ -25,9 +25,12 @@ Garagist:
             - send
           down:
             - unpublish
-      actions:
-        delete: true
-        publish: true
-        unpublish: true
-        send: true
-        update: true
+    actions:
+      publishAndSend: false
+      unpublishAndUpdate: false
+
+      delete: true
+      publish: true
+      unpublish: true
+      send: true
+      update: true

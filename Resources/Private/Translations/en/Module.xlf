@@ -95,6 +95,9 @@
             <trans-unit id="email.feedback.created" xml:space="preserve">
                 <source>A new email for {0} has been created</source>
             </trans-unit>
+            <trans-unit id="email.feedback.deleted" xml:space="preserve">
+                <source>The email {0} has been deleted</source>
+            </trans-unit>
             <trans-unit id="email.feedback.updated" xml:space="preserve">
                 <source>The email has been updated</source>
             </trans-unit>
@@ -169,6 +172,30 @@
             </trans-unit>
             <trans-unit id="info.action.unlock" xml:space="preserve">
                 <source>Unlock Task</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailCreate" xml:space="preserve">
+                <source>Email created</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailDelete" xml:space="preserve">
+                <source>Email deleted</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailPublish" xml:space="preserve">
+                <source>Email published</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailSend" xml:space="preserve">
+                <source>Email send</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailSent" xml:space="preserve">
+                <source>Email sent</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailSync" xml:space="preserve">
+                <source>Email synced</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailUnpublish" xml:space="preserve">
+                <source>Email unpublished</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailUpdate" xml:space="preserve">
+                <source>Email updated</source>
             </trans-unit>
         </body>
     </file>

@@ -61,16 +61,17 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                             <tr>
                                 <td width="1%" class="!text-center whitespace-nowrap">
                                     <span
-                                        @if.set={item.isFailed}
+                                        @if={item.isFailed}
                                         class="inline-block"
                                         aria-label={props.i18n.id('email.task.failed').translate()}
                                     >
                                         <i class="fas fa-exclamation-triangle text-red-500"></i>
                                     </span>
-                                    <i @if.set={!item.isFailed} class="fas fa-check text-green-600"></i>
+                                    <i @if={!item.isFailed} class="fas fa-check text-green-600"></i>
                                 </td>
-                                <td width="1%" class="whitespace-nowrap !p-0">
+                                <td width="1%" class={["whitespace-nowrap !p-0", item.subject ? null : '!text-center']}>
                                     <Neos.Fusion:Link.Action
+                                        @if={item.subject}
                                         class="neos-button neos-button-primary block text-left"
                                         href.action="info"
                                         href.arguments={item.hrefArguments}
@@ -78,13 +79,15 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                                     >
                                         {item.subject}
                                     </Neos.Fusion:Link.Action>
+                                    {item.subject ? '' : '–'}
                                 </td>
                                 <td>{item.dateCreated}</td>
                                 <td>{item.dateSent}</td>
                                 <td class="neos-action">
-                                    <div class="neos-pull-right" x-data="actions(2)">
+                                    <div class="neos-pull-right" x-data={"actions(" + (item.properties ? "2" : "1") + ")"}>
                                         <Garagist.Mautic:Component.EmailActionButtons {...item} />
                                         <Neos.Fusion:Link.Action
+                                            @if={item.properties}
                                             class="neos-button neos-button-primary"
                                             href.action="info"
                                             href.arguments={item.hrefArguments}
