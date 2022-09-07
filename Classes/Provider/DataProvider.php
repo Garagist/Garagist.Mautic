@@ -19,6 +19,11 @@ use Psr\Log\LoggerInterface;
  */
 class DataProvider implements DataProviderInterface
 {
+    /**
+     * @var int
+     * @Flow\InjectConfiguration(path="newsletterCategoryId", package="Garagist.Mautic")
+     */
+    protected $newsletterCategoryId;
 
     /**
      * @var array
@@ -96,6 +101,7 @@ class DataProvider implements DataProviderInterface
     {
         $this->mauticLogger->debug(sprintf('Using %s DataProvider', static::class));
         $node = $this->getNode($email->getNodeIdentifier());
+        $emailIdentifier = $email->getEmailIdentifier();
 
         $html = $this->mauticService->getNewsletterTemplate($email->getProperty('htmlUrl'));
         $plaintext = $this->mauticService->getNewsletterTemplate($email->getProperty('plaintextUrl'));
@@ -111,15 +117,21 @@ class DataProvider implements DataProviderInterface
         // Get langauge from html template
         preg_match('/<html.+?lang="([^"]+)"/im', $html, $languageMatch);
         $language = $languageMatch[1] ?? 'en';
+        $language = explode('-', $language)[0];
+
+        $name = [$emailIdentifier, $title];
+        if ($title != $subject) {
+            $name[] = $subject;
+        }
 
         // TODO
-        // * category (object/null)
         // * dynamicContent
 
         return [
             'title' => $title,
-            'name' => $email->getEmailIdentifier() . ' ❯ ' . $title,
+            'name' => join(' ❯ ', $name),
             'subject' => $subject,
+            'category' => $this->newsletterCategoryId,
             'template' => 'blank',
             'isPublished' => 0,
             'customHtml' => $html,
@@ -127,6 +139,11 @@ class DataProvider implements DataProviderInterface
             'emailType' => 'list',
             'lists' => $segments,
             'language' => $language,
+            'utmTags' => [
+                'utmSource' => 'newsletter',
+                'utmMedium' => 'email',
+                'utmCampaign' => $emailIdentifier,
+            ],
         ];
     }
 
