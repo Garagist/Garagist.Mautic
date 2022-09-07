@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Garagist\Mautic\Event;
 
 use Neos\EventSourcing\Event\DomainEventInterface;
+use Doctrine\ORM\Mapping as ORM;
 
-final class MauticEmailUpdate implements DomainEventInterface
+class MauticEmailUpdate implements DomainEventInterface
 {
     /**
      * @var string
@@ -18,10 +19,49 @@ final class MauticEmailUpdate implements DomainEventInterface
      */
     private $emailIdentifier;
 
-    public function __construct(string $emailIdentifier, string $nodeIdentifier)
+    /**
+     * @ORM\Column(type="flow_json_array")
+     * @var array<mixed>
+     */
+    protected $properties = [];
+
+    /**
+     * @param string $emailIdentifier
+     * @param string $nodeIdentifier
+     * @param array $properties
+     */
+    public function __construct(string $emailIdentifier, string $nodeIdentifier, array $properties)
     {
         $this->emailIdentifier = $emailIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
+        $this->properties = $properties;
+    }
+
+    /* @return void
+     * @ORM\PostLoad
+     */
+    public function ensurePropertiesIsNeverNull()
+    {
+        if (!is_array($this->properties)) {
+            $this->properties = [];
+        }
+    }
+
+    /**
+     * @return array Property values, indexed by their name
+     */
+    public function getProperties(): array
+    {
+        return $this->properties;
+    }
+
+    /**
+     * @param array $properties
+     * @return void
+     */
+    public function setProperties(array $properties): void
+    {
+        $this->properties = $properties;
     }
 
     /**
