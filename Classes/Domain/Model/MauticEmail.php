@@ -26,7 +26,7 @@ class MauticEmail
     /**
      * @var string
      */
-    const TASK_UN_PUBLISH = 'unPublish';
+    const TASK_UNPUBLISH = 'unpublish';
 
     /**
      * @var string
@@ -180,7 +180,7 @@ class MauticEmail
 
     /**
      * Returns all properties of this email.
-     * 
+     *
      * @return array Property values, indexed by their name
      */
     public function getProperties(): array

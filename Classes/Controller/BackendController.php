@@ -280,11 +280,11 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    public function unPublishAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
+    public function unpublishAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
     {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
-            $this->mauticService->fireUnPublishEmailEvent($email);
+            $this->mauticService->fireUnpublishEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
                 'email.feedback.unpublished',
@@ -490,7 +490,7 @@ class BackendController extends AbstractModuleController
     public function unpublishAndUpdateAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
     {
         if ($email->isPublished()) {
-            $this->unPublishAction($node, $email, 'none');
+            $this->unpublishAction($node, $email, 'none');
         }
         $this->updateAction($node, $email, $redirect);
     }

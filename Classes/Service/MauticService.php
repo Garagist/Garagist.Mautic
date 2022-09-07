@@ -12,7 +12,7 @@ use Garagist\Mautic\Event\MauticEmailPublish;
 use Garagist\Mautic\Event\MauticEmailSent;
 use Garagist\Mautic\Event\MauticEmailSync;
 use Garagist\Mautic\Event\MauticEmailTaskFinished;
-use Garagist\Mautic\Event\MauticEmailUnPublish;
+use Garagist\Mautic\Event\MauticEmailUnpublish;
 use Garagist\Mautic\Event\MauticEmailUpdate;
 use Garagist\Mautic\Provider\DataProviderInterface;
 use Garagist\Mautic\Domain\Model\MauticEmail;
@@ -160,11 +160,11 @@ class MauticService
      * @param MauticEmail $email
      * @return void
      */
-    public function fireUnPublishEmailEvent(MauticEmail $email): void
+    public function fireUnpublishEmailEvent(MauticEmail $email): void
     {
-        $this->setTask($email, MauticEmail::TASK_UN_PUBLISH);
+        $this->setTask($email, MauticEmail::TASK_UNPUBLISH);
         $emailIdentifier = $email->getEmailIdentifier();
-        $event = new MauticEmailUnPublish($emailIdentifier, $email->getNodeIdentifier());
+        $event = new MauticEmailUnpublish($emailIdentifier, $email->getNodeIdentifier());
         $streamName = StreamName::fromString('email-' . $emailIdentifier);
         $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
     }

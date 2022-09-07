@@ -10,7 +10,7 @@ use Garagist\Mautic\Event\MauticEmailPublish;
 use Garagist\Mautic\Event\MauticEmailSent;
 use Garagist\Mautic\Event\MauticEmailSync;
 use Garagist\Mautic\Event\MauticEmailTaskFinished;
-use Garagist\Mautic\Event\MauticEmailUnPublish;
+use Garagist\Mautic\Event\MauticEmailUnpublish;
 use Garagist\Mautic\Event\MauticEmailUpdate;
 use Garagist\Mautic\Service\MauticService;
 use Garagist\Mautic\Service\ApiService;
@@ -129,7 +129,7 @@ final class MauticProcessManager implements EventListenerInterface
     }
 
     /**
-     * @param MauticEmailSync $event
+     * @param MauticEmailPublish $event
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      * @throws \Neos\Flow\Persistence\Exception\UnknownObjectException
      */
@@ -142,20 +142,21 @@ final class MauticProcessManager implements EventListenerInterface
     }
 
     /**
-     * @param MauticEmailSync $event
+     * @param MauticEmailUnpublish $event
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      * @throws \Neos\Flow\Persistence\Exception\UnknownObjectException
      */
-    public function whenMauticEmailUnPublish(MauticEmailUnPublish $event): void
+    public function whenMauticEmailUnpublish(MauticEmailUnpublish $event): void
     {
         $emailIdentifier = $event->getEmailIdentifier();
-        $this->mauticLogger->info(sprintf('UnPublish email with identifier %s started', $emailIdentifier));
+        $this->mauticLogger->info(sprintf('Unpublish email with identifier %s started', $emailIdentifier));
         $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
-        $this->mauticService->unPublishEmail($email);
+        $this->mauticService->unpublishEmail($email);
     }
 
     /**
-     * @param MauticEmailSync $event
+    /**
+     * @param MauticEmailTaskFinished $event
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      * @throws \Neos\Flow\Persistence\Exception\UnknownObjectException
      */

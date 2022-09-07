@@ -33,7 +33,7 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
             <Neos.Fusion:Link.Action
                 @if.set={props.canUnpublish}
                 class={props.buttonClass}
-                href.action="unPublish"
+                href.action="unpublish"
                 href.arguments={props.hrefArguments}
                 aria-label={props.i18n.id('list.email.unpublish').translate()}
             >
@@ -117,4 +117,3 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
         </Neos.Fusion:Fragment>
     `
 }
-
