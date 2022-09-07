@@ -99,6 +99,19 @@ class MauticService
 
     /**
      * @param MauticEmail $email
+     * @return void
+     */
+    public function updateEmailEvent(MauticEmail $email): void
+    {
+        $this->setTask($email, MauticEmail::TASK_UPDATE);
+        $emailIdentifier = $email->getEmailIdentifier();
+        $event = new MauticEmailUpdate($emailIdentifier, $email->getNodeIdentifier(), $email->getProperties());
+        $streamName = StreamName::fromString('email-' . $emailIdentifier);
+        $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
+    }
+
+    /**
+     * @param MauticEmail $email
      * @param string $error
      * @return void
      */
@@ -128,19 +141,6 @@ class MauticService
         } else {
             throw new Exception(sprintf("The email with identifier %s could not be send because it's not published.", $emailIdentifier));
         }
-    }
-
-    /**
-     * @param MauticEmail $email
-     * @return void
-     */
-    public function updateEmailEvent(MauticEmail $email): void
-    {
-        $this->setTask($email, MauticEmail::TASK_UPDATE);
-        $emailIdentifier = $email->getEmailIdentifier();
-        $event = new MauticEmailUpdate($emailIdentifier, $email->getNodeIdentifier());
-        $streamName = StreamName::fromString('email-' . $emailIdentifier);
-        $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
     }
 
     /**
