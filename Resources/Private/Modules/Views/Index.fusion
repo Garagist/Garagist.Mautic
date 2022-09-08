@@ -33,14 +33,14 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
                     </span>
                 </Carbon.Eel:Tag>
             </h1>
-            <h2 class="sr-only">{props.i18n.id('list.emails.header').translate()}</h2>
+            <h2 class="sr-only">{props.i18n.id('newsletter.available').translate()}</h2>
             <Garagist.Mautic:Component.ToggleSwitch
                 @if={props.showPagesWithoutEmails == 'false'}
                 toggle="showPagesWithoutEmails"
-                label="list.showPagesWithoutEmails"
+                label="showPagesWithoutEmails"
             />
 
-            <p @if={!props.hasPages}>{props.i18n.id('list.emails.none').translate()}</p>
+            <p @if={!props.hasPages}>{props.i18n.id('newsletter.none').translate()}</p>
 
             <!-- There are pages with categories -->
             <Neos.Fusion:Loop @if={props.hasCategories} items={props.categories}>

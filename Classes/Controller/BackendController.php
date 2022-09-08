@@ -189,7 +189,7 @@ class BackendController extends AbstractModuleController
             if (count($noCategory)) {
                 $categories['noCategory'] = [
                     'title' => $this->translationHelper->translate(
-                        'list.emails.noCategory',
+                        'pages.noCategory',
                         'Pages without category',
                         [],
                         'Module',

@@ -38,7 +38,7 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                 <Garagist.Mautic:Component.FlashMessages flashMessages={props.flashMessages} />
                 <section class='mautic-list'>
                     <h1 class="text-2xl mb-4">
-                        {props.i18n.id('emails.headline').translate()}{': '}
+                        {props.i18n.id('newsletter.headline').translate()}{': '}
                         <Neos.Fusion:Link.Action
                             @if={props.categoryNode}
                             href.action="link"
@@ -59,11 +59,11 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                     <table class='neos-table' x-data x-tooltips>
                         <thead>
                             <tr>
-                                <td>{props.i18n.id('email.status').translate()}</td>
-                                <td>{props.i18n.id('email.subject').translate()}</td>
-                                <td>{props.i18n.id('email.createdOn').translate()}</td>
-                                <td>{props.i18n.id('email.sentOn').translate()}</td>
-                                <td class="!text-right">{props.i18n.id('email.actions').translate()}</td>
+                                <td>{props.i18n.id('status').translate()}</td>
+                                <td>{props.i18n.id('subject').translate()}</td>
+                                <td>{props.i18n.id('createdOn').translate()}</td>
+                                <td>{props.i18n.id('sentOn').translate()}</td>
+                                <td class="!text-right">{props.i18n.id('actions').translate()}</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -73,7 +73,7 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                                     <span
                                         @if={item.isFailed}
                                         class="inline-block"
-                                        aria-label={props.i18n.id('email.task.failed').translate()}
+                                        aria-label={props.i18n.id('task.failed').translate()}
                                     >
                                         <i class="fas fa-exclamation-triangle text-red-500"></i>
                                     </span>
@@ -104,7 +104,7 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                                             class="neos-button neos-button-primary"
                                             href.action="detail"
                                             href.arguments={item.hrefArguments}
-                                            aria-label={props.i18n.id('list.email.detail').translate()}
+                                            aria-label={props.i18n.id('email.detail').translate()}
                                         >
                                             <i class="fas fa-info icon-white"></i>
                                         </Neos.Fusion:Link.Action>
@@ -122,14 +122,14 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                     data-toggle="modal"
                     class="neos-button neos-button-primary"
                 >
-                    {props.i18n.id('email.action.create').translate()}
+                    {props.i18n.id('email.create').translate()}
                 </button>
                 <Neos.Fusion:Link.Action
                     class="neos-button neos-button-secondary"
-                    href.action="email"
+                    href.action="node"
                     href.arguments.node={props.node}
                 >
-                    {props.i18n.id('email.action.refresh')}
+                    {props.i18n.id('list.refresh')}
                 </Neos.Fusion:Link.Action>
             </div>
             <div class="neos-hide mautic" id="create">
@@ -145,11 +145,11 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                                 class="neos-close neos-button"
                             ></button>
                             <div class="neos-header">
-                                {props.i18n.id('email.action.create').translate()}
+                                {props.i18n.id('email.create').translate()}
                             </div>
 
                             <fieldset class="mx-4">
-                                <label for="subject">{props.i18n.id('email.subject').translate()}</label>
+                                <label for="subject">{props.i18n.id('subject').translate()}</label>
                                 <input
                                     type="text"
                                     x-model="subject"
@@ -171,7 +171,7 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                                 :href="action + '&moduleArguments[subject]=' + subject"
                                 class="neos-button neos-button-primary"
                             >
-                                {props.i18n.id('email.action.create').translate()}
+                                {props.i18n.id('email.create').translate()}
                             </a>
                         </div>
                     </div>

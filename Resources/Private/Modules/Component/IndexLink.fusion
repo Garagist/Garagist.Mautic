@@ -14,7 +14,7 @@ prototype(Garagist.Mautic:Component.IndexLink) < prototype(Neos.Fusion:Component
             <div class={[props.count ? "bg-green-800" : "bg-red-800" ,"leading-none flex-shrink-0 h-16 w-16 rounded-l flex flex-col items-center justify-center"]}>
                 <span class="text-lg">{props.count}</span>
                 <span class="text-xs">
-                    {Translation.translate('list.emails.count', null, [], 'Module', 'Garagist.Mautic', props.count)}
+                    {Translation.translate('emails.count', null, [], 'Module', 'Garagist.Mautic', props.count)}
                 </span>
             </div>
             <div class="flex-1 min-w-0 px-3">
