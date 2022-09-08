@@ -5,24 +5,25 @@ declare(strict_types=1);
 namespace Garagist\Mautic\Service;
 
 use Garagist\Mautic\Domain\Dto\HistoryItem;
-use Neos\EventSourcing\Event\DomainEventInterface;
-use Neos\Flow\Annotations as Flow;
+use Garagist\Mautic\Domain\Model\MauticEmail;
+use Garagist\Mautic\Domain\Repository\MauticEmailRepository;
 use Garagist\Mautic\Event\MauticEmailCreate;
+use Garagist\Mautic\Event\MauticEmailDelete;
 use Garagist\Mautic\Event\MauticEmailPublish;
+use Garagist\Mautic\Event\MauticEmailSend;
 use Garagist\Mautic\Event\MauticEmailSent;
 use Garagist\Mautic\Event\MauticEmailSync;
 use Garagist\Mautic\Event\MauticEmailTaskFinished;
 use Garagist\Mautic\Event\MauticEmailUnpublish;
-use Garagist\Mautic\Event\MauticEmailDelete;
 use Garagist\Mautic\Event\MauticEmailUpdate;
 use Garagist\Mautic\Provider\DataProviderInterface;
-use Garagist\Mautic\Domain\Model\MauticEmail;
-use Garagist\Mautic\Domain\Repository\MauticEmailRepository;
-use Garagist\Mautic\Event\MauticEmailSend;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Neos\EventSourcing\EventStore\StreamName;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Neos\Flow\Http\Client\Browser;
 use Neos\Flow\Http\Client\CurlEngine;
@@ -276,6 +277,15 @@ class MauticService
     public function getByEmailIdentifier(string $emailIdentifier): MauticEmail
     {
         return $this->mauticEmailRepository->findOneByEmailIdentifier($emailIdentifier);
+    }
+
+    /**
+     * @param NodeInterface $node
+     * @return array
+     */
+    public function getPrefilledSegments(NodeInterface $node): array
+    {
+        return $this->dataProvider->getPrefilledSegments($node);
     }
 
     /**

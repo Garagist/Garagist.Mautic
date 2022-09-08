@@ -17,6 +17,11 @@ Garagist:
 
     # Settings for email segments
     segment:
+      # If an segment is prefilled from the choose dialog, the user can't change it
+      lockPrefilled: true
+
+      # The ID of the segment to use for the newsletter
+      # But you can also define an object to handle the segment in your own data provider
       mapping: null
 
       # Add here to segments to choose from on creation

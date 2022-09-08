@@ -206,6 +206,22 @@ class DataProvider implements DataProviderInterface
         ];
     }
 
+    /**
+     * @param NodeInterface $node
+     * @return array of ids
+     */
+    public function getPrefilledSegments(NodeInterface $node): array
+    {
+        $segmentMapping = $this->settings['segment']['mapping'];
+        if (is_array($segmentMapping)) {
+            return $segmentMapping;
+        }
+        if (is_string($segmentMapping) || is_numeric($segmentMapping)) {
+            return [(int) $segmentMapping];
+        }
+
+        return [];
+    }
 
     /**
      * @param MauticEmail $email

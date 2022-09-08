@@ -376,11 +376,15 @@ class BackendController extends AbstractModuleController
         $categoryNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
         $emails = $this->mauticService->getEmailsNodeIdentifier($node->getIdentifier());
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
+        $prefilledSegments = $this->mauticService->getPrefilledSegments($node);
+        $segments = $this->apiService->getAllSegments();
         $this->view->assignMultiple([
             'emails' => $emails,
             'node' => $node,
             'categoryNode' => $categoryNode,
-            'flashMessages' => $flashMessages
+            'prefilledSegments' => $prefilledSegments,
+            'segments' => $segments,
+            'flashMessages' => $flashMessages,
         ]);
     }
 
@@ -430,11 +434,15 @@ class BackendController extends AbstractModuleController
      * @param string|null $subject
      * @return void
      */
-    public function createAction(NodeInterface $node, ?string $subject = null): void
+    public function createAction(NodeInterface $node, ?string $subject = null, ?array $segments = null): void
     {
         $linkingService = $this->linkingService;
         $controllerContext = $this->controllerContext;
         $title = $node->getProperty('title');
+        $convertedSegments = [];
+        foreach ($segments as $value) {
+            $convertedSegments[] = (int)$value;
+        }
 
         if (!$subject) {
             $titleOverride = $node->getProperty('titleOverride');
@@ -443,6 +451,7 @@ class BackendController extends AbstractModuleController
 
         $properties = [
             "subject" => $subject,
+            "segments" => $convertedSegments,
             "htmlUrl" => $linkingService->createNodeUri(
                 $controllerContext,
                 null,

@@ -105,6 +105,10 @@
                 <source>Receiver</source>
                 <target>Empfänger</target>
             </trans-unit>
+            <trans-unit id="pleaseChooseMinimalOneItem" xml:space="preserve">
+                <source>Please choose at least one item</source>
+                <target>Bitte wählen Sie mindestens einen Eintrag aus</target>
+            </trans-unit>
             <trans-unit id="sentOn" xml:space="preserve">
                 <source>Sent on</source>
                 <target>Gesendet am</target>

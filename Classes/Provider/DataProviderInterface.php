@@ -25,5 +25,7 @@ interface DataProviderInterface
 
     public function filterSegments(MauticEmail $email, array $segmentsFromMautic): array;
 
+    public function getPrefilledSegments(NodeInterface $node): array;
+
     public function getCategoryNode(NodeInterface $node): ?NodeInterface;
 }
