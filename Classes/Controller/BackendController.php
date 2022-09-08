@@ -139,24 +139,24 @@ class BackendController extends AbstractModuleController
         $categoryList = [];
         $hasCategories = false;
         foreach ($nodes as $node) {
-            $parentNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
+            $categoryNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
             $identifier = $node->getIdentifier();
-            $parentIdentifier = $parentNode ? $parentNode->getIdentifier() : null;
+            $categoryIdentifier = $categoryNode ? $categoryNode->getIdentifier() : null;
             $title = $node->getProperty('title');
-            $parentTitle = $parentNode ? $parentNode->getProperty('title') : null;
+            $categoryTitle = $categoryNode ? $categoryNode->getProperty('title') : null;
             $count = count($this->mauticService->getEmailsNodeIdentifier(
                 $node->getIdentifier()
             ));
-            if ($parentNode) {
-                $categoryList[$parentIdentifier] = $parentTitle;
+            if ($categoryNode) {
+                $categoryList[$categoryIdentifier] = $categoryTitle;
                 $hasCategories = true;
             }
             $pages[$identifier] = [
                 "count" => $count,
                 "node" => $node,
                 "title" => $title,
-                "parentTitle" => $parentTitle,
-                "parentIdentifier" => $parentIdentifier,
+                "categoryTitle" => $categoryTitle,
+                "categoryIdentifier" => $categoryIdentifier,
             ];
         }
 
@@ -168,7 +168,7 @@ class BackendController extends AbstractModuleController
             foreach ($categoryList as $identifier => $title) {
                 $items = [];
                 foreach ($pages as $item) {
-                    if ($identifier == $item['parentIdentifier']) {
+                    if ($identifier == $item['categoryIdentifier']) {
                         $items[] = $item;
                     }
                 }
@@ -181,7 +181,7 @@ class BackendController extends AbstractModuleController
 
             $noCategory = [];
             foreach ($pages as $identifier => $item) {
-                if (!$item['parentIdentifier'] && !array_key_exists($identifier, $categoryList)) {
+                if (!$item['categoryIdentifier'] && !array_key_exists($identifier, $categoryList)) {
                     $noCategory[] = $item;
                 }
             }
