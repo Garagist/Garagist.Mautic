@@ -21,11 +21,9 @@ interface DataProviderInterface
 
     public function getUtmTags(string $campaign, string $medium = 'email', string $source = 'newsletter'): array;
 
-    public function getDataForSegmentSendOut(MauticEmail $email, array $segments): array;
+    public function getData(MauticEmail $email, array $segmentIds): array;
 
-    public function getSegmentsForSendOut(MauticEmail $email): array;
-
-    public function filterUnconfirmedSegment(array $segments): array;
+    public function filterSegments(MauticEmail $email, array $segmentsFromMautic): array;
 
     public function getCategoryNode(NodeInterface $node): ?NodeInterface;
 }

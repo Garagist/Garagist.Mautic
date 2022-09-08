@@ -57,6 +57,10 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                                 <td>{props.emailData.subject}</td>
                             </tr>
                             <tr>
+                                <td>{props.i18n.id('recipients').translate()}</td>
+                                <td>{props.emailData.properties.recipients}</td>
+                            </tr>
+                            <tr>
                                 <td>{props.i18n.id('actions').translate()}</td>
                                 <td class="!p-0" x-data="actions(1)">
                                     <Garagist.Mautic:Component.EmailActionButtons

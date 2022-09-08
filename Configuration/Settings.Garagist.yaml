@@ -20,8 +20,7 @@ Garagist:
       mapping: null
 
       # Add here to segments to choose from on creation
-      # choose:
-      #   1: Newsletter
+      # choose: [1, 2]
       choose: null
 
       # Add here the segment ID of the Mautic segment who contains not confirmed contacts

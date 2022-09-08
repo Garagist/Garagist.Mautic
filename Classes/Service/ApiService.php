@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Garagist\Mautic\Service;
 
-use Garagist\Mautic\Domain\Dto\Segment;
 use Mautic\Api\Contacts;
 use Mautic\Api\Emails;
 use Mautic\Api\Forms;
@@ -188,17 +187,11 @@ class ApiService
     }
 
     /**
-     * @return Segment[]
+     * @return array
      */
     public function getAllSegments(): array
     {
-        $data = [];
-        $segments = $this->validateResponse($this->contactApi->getSegments());
-        foreach ($segments as $segment) {
-            $data[] = new Segment($segment['id'], $segment['name'], $segment['alias']);
-        }
-
-        return $data;
+        return $this->validateResponse($this->contactApi->getSegments());
     }
 
     /**

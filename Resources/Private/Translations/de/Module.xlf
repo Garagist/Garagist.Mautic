@@ -101,6 +101,10 @@
                 <source>Identifier</source>
                 <target>Identifier</target>
             </trans-unit>
+            <trans-unit id="recipients" xml:space="preserve">
+                <source>Receiver</source>
+                <target>Empfänger</target>
+            </trans-unit>
             <trans-unit id="sentOn" xml:space="preserve">
                 <source>Sent on</source>
                 <target>Gesendet am</target>

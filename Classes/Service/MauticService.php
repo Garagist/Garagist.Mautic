@@ -285,8 +285,22 @@ class MauticService
     {
         $emailIdentifier = $email->getEmailIdentifier();
         try {
-            $segments = $this->dataProvider->getSegmentsForSendOut($email);
-            $data = $this->dataProvider->getDataForSegmentSendOut($email, $segments);
+            $allSegments = $this->apiService->getAllSegments();
+
+            if (!is_array($allSegments) || count($allSegments) == 0) {
+                throw new Exception(sprintf('Mautic has no segments: %s', json_encode($allSegments)), 1662631248);
+            }
+            $segmentsIds = $this->dataProvider->filterSegments($email, $allSegments);
+
+            // Save recipients to properties
+            $recipients = [];
+            foreach ($segmentsIds as $id) {
+                $recipients[] = $allSegments[$id]['name'];
+            }
+            $email->setProperty('recipients', implode(', ', $recipients));
+
+            // Get data from provider
+            $data = $this->dataProvider->getData($email, $segmentsIds);
             $this->apiService->alterEmail($emailIdentifier, $data);
             $email->setDateModified(new DateTime());
             $this->fireTaskFinishedEvent($email);
@@ -420,7 +434,7 @@ class MauticService
 
     public function getSegmentsForEmail(MauticEmail $email)
     {
-        return $this->dataProvider->getSegmentsForSendOut($email);
+        return $this->dataProvider->filterSegments($email);
     }
 
     /**

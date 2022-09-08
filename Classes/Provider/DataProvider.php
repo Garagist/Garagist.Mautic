@@ -170,7 +170,7 @@ class DataProvider implements DataProviderInterface
      * @throws \Neos\Eel\Exception
      * @throws \Neos\Flow\Http\Client\InfiniteRedirectionException
      */
-    public function getDataForSegmentSendOut(MauticEmail $email, array $segments): array
+    public function getData(MauticEmail $email, array $segmentIds): array
     {
         $this->mauticLogger->debug(sprintf('Using %s DataProvider', static::class));
         $node = $this->getNode($email->getNodeIdentifier());
@@ -200,39 +200,22 @@ class DataProvider implements DataProviderInterface
             'customHtml' => $html,
             'plainText' => $plaintext,
             'emailType' => 'list',
-            'lists' => $segments,
+            'lists' => $segmentIds,
             'language' => $language,
             'utmTags' => $this->getUtmTags($emailIdentifier),
         ];
     }
 
 
-
     /**
      * @param MauticEmail $email
-     * @return array
+     * @param array $segmentsFromMautic
+     * @return array Segment IDs
      */
-    public function getSegmentsForSendOut(MauticEmail $email): array
+    public function filterSegments(MauticEmail $email, array $segmentsFromMautic): array
     {
-        $segments = $this->getChoosenSegments($email) ?? $this->getAllSegmentIDsFromMautic();
-        return $this->filterUnconfirmedSegment($segments);
-    }
-
-    /**
-     * Remove unconfirmed segment from segments
-     *
-     * @param array $segments
-     * @return array
-     */
-    public function filterUnconfirmedSegment(array $segments): array
-    {
-        $unconfirmedSegment = $this->settings['segment']['unconfirmed'];
-        if (!isset($unconfirmedSegment)) {
-            return $segments;
-        }
-        return array_filter($segments, function ($n) use ($unconfirmedSegment) {
-            return $n !== $unconfirmedSegment;
-        });
+        $segments = $this->getChoosenSegments($email) ?? $this->getAllSegmentIDsFromMautic($segmentsFromMautic);
+        return $segments;
     }
 
     /**
@@ -257,22 +240,24 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
-     * Get all the segment IDs from Mautic
+     * Get all the segment IDs from Mautic, removes the unconfirmed segment
      *
      * @return array
      * @throws Exception
      */
-    protected function getAllSegmentIDsFromMautic(): array
+    protected function getAllSegmentIDsFromMautic(array $segmentsFromMautic): array
     {
-        $allSegments = $this->apiService->getAllSegments();
         $segments = array_map(function ($n) {
             return $n->getId();
-        }, $allSegments);
+        }, $segmentsFromMautic);
 
-        if (count($segments)) {
+        $unconfirmedSegment = $this->settings['segment']['unconfirmed'];
+        if (!isset($unconfirmedSegment)) {
             return $segments;
         }
 
-        throw new Exception(sprintf('Mautic has no segments: %s', json_encode($allSegments)), 1662631248);
+        return array_filter($segments, function ($n) use ($unconfirmedSegment) {
+            return $n !== $unconfirmedSegment;
+        });
     }
 }
