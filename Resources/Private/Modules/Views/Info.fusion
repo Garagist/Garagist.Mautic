@@ -59,7 +59,10 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
                             <tr>
                                 <td>{props.i18n.id('email.actions').translate()}</td>
                                 <td class="!p-0" x-data="actions(1)">
-                                    <Garagist.Mautic:Component.EmailActionButtons infoView={true} {...props.emailData}/>
+                                    <Garagist.Mautic:Component.EmailActionButtons
+                                        infoView={true}
+                                        {...props.emailData}
+                                    />
                                 </td>
                             </tr>
                         </tbody>
@@ -120,7 +123,12 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
                 {props.i18n.id('info.action.refresh')}
             </Neos.Fusion:Link.Action>
             <Neos.Fusion:Link.Action
-                @if={Array.last(props.history).error} class="neos-button neos-button-warning" href.action="unlock" href.arguments.node={props.node} href.arguments.email={props.email}>
+                @if={Array.last(props.history).error}
+                class="neos-button neos-button-warning"
+                href.action="unlock"
+                href.arguments.node={props.node}
+                href.arguments.email={props.email}
+            >
                 {props.i18n.id('info.action.unlock').translate()}
             </Neos.Fusion:Link.Action>
         </div>

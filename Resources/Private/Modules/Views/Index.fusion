@@ -24,7 +24,12 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
                         aria-label={props.i18n.id(props.ping ? 'status.active' : 'status.inactive').translate()}
                         x-tooltip
                     >
-                        <img width="152" alt="Mautic Logo" aria-hidden="true" src={StaticResource.uri("Garagist.Mautic", "Public/Assets/" + props.logo)} />
+                        <img
+                            width="152"
+                            alt="Mautic Logo"
+                            aria-hidden="true"
+                            src={StaticResource.uri("Garagist.Mautic", "Public/Assets/" + props.logo)}
+                        />
                     </span>
                 </Carbon.Eel:Tag>
             </h1>
@@ -60,7 +65,10 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
             </Neos.Fusion:Loop>
 
             <!-- There aren't pages with categories -->
-            <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" @if={!props.hasCategories && props.hasPages}>
+            <div
+                @if={!props.hasCategories && props.hasPages}
+                class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            >
                 <Neos.Fusion:Loop items={props.pages}>
                     <Garagist.Mautic:Component.IndexLink {...item} />
                 </Neos.Fusion:Loop>

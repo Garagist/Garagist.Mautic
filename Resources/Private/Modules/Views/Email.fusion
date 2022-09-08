@@ -94,7 +94,10 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                                 <td>{item.dateCreated}</td>
                                 <td>{item.dateSent}</td>
                                 <td class="neos-action">
-                                    <div class="neos-pull-right" x-data={"actions(" + (item.properties ? "2" : "1") + ")"}>
+                                    <div
+                                        x-data={"actions(" + (item.properties ? "2" : "1") + ")"}
+                                        class="neos-pull-right"
+                                    >
                                         <Garagist.Mautic:Component.EmailActionButtons {...item} />
                                         <Neos.Fusion:Link.Action
                                             @if={item.properties}
@@ -114,7 +117,11 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                 </section>
             </main>
             <div class="neos-footer">
-                <button class="neos-button neos-button-primary" data-toggle="modal" href="#create">
+                <button
+                    href="#create"
+                    data-toggle="modal"
+                    class="neos-button neos-button-primary"
+                >
                     {props.i18n.id('email.action.create').translate()}
                 </button>
                 <Neos.Fusion:Link.Action
@@ -127,9 +134,16 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
             </div>
             <div class="neos-hide mautic" id="create">
                 <div class="neos-modal-centered">
-                    <div class="neos-modal-content" x-data={"{action:'" + props.createAction + "', subject:''}"}>
+                    <div
+                        x-data={"{action:'" + props.createAction + "', subject:''}"}
+                        class="neos-modal-content"
+                    >
                         <div class="neos-modal-header">
-                            <button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+                            <button
+                                data-dismiss="modal"
+                                type="button"
+                                class="neos-close neos-button"
+                            ></button>
                             <div class="neos-header">
                                 {props.i18n.id('email.action.create').translate()}
                             </div>
@@ -146,10 +160,17 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
                             </fieldset>
                         </div>
                         <div class="neos-modal-footer">
-                            <button type="button" class="neos-button" data-dismiss="modal">
+                            <button
+                                data-dismiss="modal"
+                                type="button"
+                                class="neos-button"
+                            >
                                 {Translation.translate('cancel', null, [], 'Main', 'Neos.Neos')}
                             </button>
-                            <a :href="action + '&moduleArguments[subject]=' + subject" class="neos-button neos-button-primary">
+                            <a
+                                :href="action + '&moduleArguments[subject]=' + subject"
+                                class="neos-button neos-button-primary"
+                            >
                                 {props.i18n.id('email.action.create').translate()}
                             </a>
                         </div>
