@@ -19,7 +19,6 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
     segments = ${segments}
     prefilledSegments = ${prefilledSegments}
     lockPrefilledSegments = ${Configuration.Setting('Garagist.Mautic.segment.lockPrefilled')}
-    showSegmentsOnCreate = ${Carbon.Array.check(this.chooseSegment) && Carbon.Array.check(this.segments)}
 
     createAction = Neos.Fusion:UriBuilder {
         action = 'create'
@@ -139,76 +138,15 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                     {props.i18n.id('list.refresh')}
                 </Neos.Fusion:Link.Action>
             </div>
-            <div class="neos-hide mautic" id="create">
-                <div class="neos-modal-centered">
-                    <div
-                        x-data={"{action:'" + props.createAction + "', subject:'', segments:" + Json.stringify(props.prefilledSegments) + "}"}
-                        class="neos-modal-content"
-                    >
-                        <div class="neos-modal-header">
-                            <button
-                                data-dismiss="modal"
-                                type="button"
-                                class="neos-close neos-button"
-                            ></button>
-                            <div class="neos-header">
-                                {props.i18n.id('email.create').translate()}
-                            </div>
-
-                            <fieldset class="mx-4">
-                                <label for="subject">{props.i18n.id('subject').translate()}</label>
-                                <input
-                                    type="text"
-                                    x-model="subject"
-                                    id="subject"
-                                    placeholder={props.placeholder}
-                                    class="block w-full"
-                                />
-                            </fieldset>
-                            <fieldset
-                                @if={props.showSegmentsOnCreate}
-                                class="mx-4"
-                            >
-                                <legend class="!p-0 !leading-5 !text-sm">
-                                    {props.i18n.id('recipients').translate()}
-                                </legend>
-                                <Neos.Fusion:Loop items={props.chooseSegment}>
-                                    <label class={[props.lockPrefilledSegments && Array.indexOf(props.prefilledSegments, item) != -1 ? "pointer-events-none" : null, "neos-checkbox !block mt-2 cursor-pointer"]}>
-                                        <input
-                                            x-model="segments"
-                                            value={item}
-                                            type="checkbox"
-                                        />
-                                        <span></span>
-                                        {segments[item].name}
-                                    </label>
-                                </Neos.Fusion:Loop>
-                                <div x-show="!segments.length" x-transition class="neos-button neos-button-danger my-2 w-full">
-                                    {props.i18n.id('pleaseChooseMinimalOneItem').translate()}
-                                </div>
-                            </fieldset>
-                        </div>
-                        <div class="neos-modal-footer">
-                            <button
-                                data-dismiss="modal"
-                                type="button"
-                                class="neos-button"
-                            >
-                                {Translation.translate('cancel', null, [], 'Main', 'Neos.Neos')}
-                            </button>
-                            <a
-                                :href="action + '&moduleArguments[subject]=' + subject + '&moduleArguments[segments]=' + segments"
-                                :disabled={props.showSegmentsOnCreate ? "!segments.length" : null}
-                                :class={props.showSegmentsOnCreate ? "!segments.length&&'pointer-events-none'" : null}
-                                class="neos-button neos-button-primary"
-                            >
-                                {props.i18n.id('email.create').translate()}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="neos-modal-backdrop neos-in"></div>
-            </div>
+            <Garagist.Mautic:Component.PropertiesModal
+                id="create"
+                action={props.createAction}
+                segments={props.segments}
+                chooseSegment={props.chooseSegment}
+                prefilledSegments={props.prefilledSegments}
+                placeholder={props.placeholder}
+                lockPrefilledSegments={props.lockPrefilledSegments}
+            />
         `
     }
 }

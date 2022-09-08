@@ -1,0 +1,90 @@
+prototype(Garagist.Mautic:Component.PropertiesModal) < prototype(Neos.Fusion:Component) {
+    id = 'create'
+    headline = ${props.i18n.id('email.create').translate()}
+    submit = ${this.headline}
+
+    action = null
+    prefilledSegments = null
+    placeholder = null
+    chooseSegment = null
+    lockPrefilledSegments = null
+    segments = null
+
+    @if.hasAction = ${this.action}
+
+    i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
+    _showSegments = ${Carbon.Array.check(this.chooseSegment) && Carbon.Array.check(this.segments)}
+
+    renderer = afx`
+         <div class="neos-hide mautic" id={props.id}>
+                <div class="neos-modal-centered">
+                    <div
+                        x-data={"{action:'" + props.action + "', subject:'', placeholder:'" + props.placeholder + "', segments:" + Json.stringify(props.prefilledSegments) + "}"}
+                        class="neos-modal-content"
+                    >
+                        <div class="neos-modal-header">
+                            <button
+                                data-dismiss="modal"
+                                type="button"
+                                class="neos-close neos-button"
+                            ></button>
+                            <div class="neos-header">
+                                {props.headline}
+                            </div>
+
+                            <fieldset class="mx-4">
+                                <label for="subject">{props.i18n.id('subject').translate()}</label>
+                                <input
+                                    type="text"
+                                    x-model="subject"
+                                    id="subject"
+                                    :placeholder="placeholder"
+                                    class="block w-full"
+                                />
+                            </fieldset>
+                            <fieldset
+                                @if={props._showSegments}
+                                class="mx-4"
+                            >
+                                <legend class="!p-0 !leading-5 !text-sm">
+                                    {props.i18n.id('recipients').translate()}
+                                </legend>
+                                <Neos.Fusion:Loop items={props.chooseSegment}>
+                                    <label class={[props.lockPrefilledSegments && Array.indexOf(props.prefilledSegments, item) != -1 ? "pointer-events-none" : null, "neos-checkbox !block mt-2 cursor-pointer"]}>
+                                        <input
+                                            x-model="segments"
+                                            value={item}
+                                            type="checkbox"
+                                        />
+                                        <span></span>
+                                        {segments[item].name}
+                                    </label>
+                                </Neos.Fusion:Loop>
+                                <div x-show="!segments.length" x-transition class="neos-button neos-button-danger my-2 w-full">
+                                    {props.i18n.id('pleaseChooseMinimalOneItem').translate()}
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="neos-modal-footer">
+                            <button
+                                data-dismiss="modal"
+                                type="button"
+                                class="neos-button"
+                            >
+                                {Translation.translate('cancel', null, [], 'Main', 'Neos.Neos')}
+                            </button>
+                            <a
+                                :href="action + '&moduleArguments[subject]=' + (subject||placeholder) + '&moduleArguments[segments]=' + segments"
+                                :disabled={props._showSegments ? "!segments.length" : null}
+                                :class={props._showSegments ? "!segments.length&&'pointer-events-none'" : null}
+                                class="neos-button neos-button-primary"
+                            >
+                                {props.submit}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="neos-modal-backdrop neos-in"></div>
+            </div>
+    `
+}
