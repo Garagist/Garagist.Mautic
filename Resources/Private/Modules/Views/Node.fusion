@@ -1,4 +1,4 @@
-Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
+Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
     emails = ${emails}
     node = ${node}
     categoryNode = ${categoryNode}

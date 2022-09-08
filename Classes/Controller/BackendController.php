@@ -371,7 +371,7 @@ class BackendController extends AbstractModuleController
      * @param NodeInterface $node
      * @return void
      */
-    public function emailAction(NodeInterface $node): void
+    public function nodeAction(NodeInterface $node): void
     {
         $categoryNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
         $emails = $this->mauticService->getEmailsNodeIdentifier($node->getIdentifier());
@@ -464,7 +464,7 @@ class BackendController extends AbstractModuleController
         $this->mauticService->fireCreateEmailEvent($node->getIdentifier(), $properties);
 
         $this->addFlashMessage('', 'email.feedback.created', Message::SEVERITY_OK, [$title]);
-        $this->redirect('email', null, null, ['node' => $node], 1);
+        $this->redirect('node', null, null, ['node' => $node], 1);
     }
 
     /**
@@ -513,7 +513,7 @@ class BackendController extends AbstractModuleController
         $this->mauticService->fireDeleteEmailEvent($email);
 
         $this->addFlashMessage('', 'email.feedback.deleted', Message::SEVERITY_OK, [$title]);
-        $this->redirect('email', null, null, ['node' => $node]);
+        $this->redirect('node', null, null, ['node' => $node]);
     }
 
 
@@ -528,7 +528,7 @@ class BackendController extends AbstractModuleController
     private function redirectCommand(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
     {
         if (!isset($redirect)) {
-            $redirect = 'email';
+            $redirect = 'node';
         }
         if ($redirect === 'none') {
             return;
