@@ -14,6 +14,7 @@
     "pipeline": "yarn install --silent --non-interactive;concurrently -r yarn:pipeline:*;yarn build"
   },
   "dependencies": {
+    "@alpinejs/collapse": "^3.10.3",
     "alpinejs": "^3.10.3",
     "autoprefixer": "^10.4.8",
     "concurrently": "^7.3.0",

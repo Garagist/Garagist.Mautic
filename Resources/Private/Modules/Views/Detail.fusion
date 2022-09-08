@@ -68,24 +68,36 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                         </tbody>
                     </table>
                 </section>
-                <section>
-                    <h2 class="text-xl">{props.i18n.id('history').translate()}</h2>
-                    <table class="neos-info-table">
-                        <thead>
-                            <th>{props.i18n.id('date').translate()}</th>
-                            <th>{props.i18n.id('type').translate()}</th>
-                            <th>{props.i18n.id('message').translate()}</th>
-                        </thead>
-                        <tbody>
-                            <Neos.Fusion:Loop items={props.history}>
-                                <tr @if={item.type != 'Garagist.Mautic:MauticEmailTaskFinished' || item.error}>
-                                    <td>{Date.format(item.date, 'd.m.Y H:m:s')}</td>
-                                    <td>{Translation.translate(item.type, item.type, [], 'Module', 'Garagist.Mautic')}</td>
-                                    <td>{item.message}</td>
-                                </tr>
-                            </Neos.Fusion:Loop>
-                        </tbody>
-                    </table>
+                <section role="region" x-data="{expanded:false}">
+                    <h2 class="text-xl">
+                        <button
+                            x-on:click="expanded = !expanded"
+                            :aria-expanded="expanded"
+                            class="flex items-center"
+                        >
+                            <span class="block mr-4">{props.i18n.id('history').translate()}</span>
+                            <span x-show="expanded" aria-hidden="true">&minus;</span>
+                            <span x-show="!expanded" aria-hidden="true">&plus;</span>
+                        </button>
+                    </h2>
+                    <div x-show="expanded" x-collapse>
+                        <table class="neos-info-table !mb-0">
+                            <thead>
+                                <th>{props.i18n.id('date').translate()}</th>
+                                <th>{props.i18n.id('type').translate()}</th>
+                                <th>{props.i18n.id('message').translate()}</th>
+                            </thead>
+                            <tbody>
+                                <Neos.Fusion:Loop items={props.history}>
+                                    <tr @if={item.type != 'Garagist.Mautic:MauticEmailTaskFinished' || item.error}>
+                                        <td>{Date.format(item.date, 'd.m.Y H:m:s')}</td>
+                                        <td>{Translation.translate(item.type, item.type, [], 'Module', 'Garagist.Mautic')}</td>
+                                        <td>{item.message}</td>
+                                    </tr>
+                                </Neos.Fusion:Loop>
+                            </tbody>
+                        </table>
+                    </div>
                 </section>
             </div>
 
