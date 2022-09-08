@@ -1,6 +1,6 @@
 prototype(Garagist.Mautic:Component.EmailData) < prototype(Neos.Fusion:Component) {
-    email = ${null}
-    node = ${null}
+    email = null
+    node = null
     redirect = 'email'
 
     @if.hasEmail = ${this.email}
