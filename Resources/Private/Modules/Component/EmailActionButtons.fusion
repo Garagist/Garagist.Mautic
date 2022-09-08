@@ -1,11 +1,9 @@
 prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:Component) {
-
-
     i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
     actions = ${Configuration.Setting('Garagist.Mautic.actions')}
-    infoView = false
+    detailView = false
 
-    showDisabled = ${this.infoView}
+    showDisabled = ${this.detailView}
 
     buttonClass = 'neos-button neos-button-primary'
     disabledClass = 'neos-button opacity-60 cursor-not-allowed !bg-transparent'

@@ -73,9 +73,9 @@
                 <source>Delete email</source>
                 <target>E-Mail löschen</target>
             </trans-unit>
-            <trans-unit id="list.email.info" xml:space="preserve">
-                <source>Information about this email</source>
-                <target>Informationen über diese E-Mail</target>
+            <trans-unit id="list.email.detail" xml:space="preserve">
+                <source>Details about this email</source>
+                <target>Details über diese E-Mail</target>
             </trans-unit>
             <trans-unit id="status.active" xml:space="preserve">
                 <source>Mautic API Status: Active</source>
@@ -177,59 +177,59 @@
                 <source>Refresh list</source>
                 <target>Liste aktualisieren</target>
             </trans-unit>
-            <trans-unit id="info.metadata" xml:space="preserve">
+            <trans-unit id="detail.metadata" xml:space="preserve">
                 <source>Metadata</source>
                 <target>Meta Daten</target>
             </trans-unit>
-            <trans-unit id="info.name" xml:space="preserve">
+            <trans-unit id="detail.name" xml:space="preserve">
                 <source>Name</source>
                 <target>Name</target>
             </trans-unit>
-            <trans-unit id="info.subject" xml:space="preserve">
+            <trans-unit id="detail.subject" xml:space="preserve">
                 <source>Subject</source>
                 <target>Betreff</target>
             </trans-unit>
-            <trans-unit id="info.history" xml:space="preserve">
+            <trans-unit id="detail.history" xml:space="preserve">
                 <source>History</source>
                 <target>Historie</target>
             </trans-unit>
-            <trans-unit id="info.date" xml:space="preserve">
+            <trans-unit id="detail.date" xml:space="preserve">
                 <source>Date</source>
                 <target>Datum</target>
             </trans-unit>
-            <trans-unit id="info.type" xml:space="preserve">
+            <trans-unit id="detail.type" xml:space="preserve">
                 <source>Type</source>
                 <target>Typ</target>
             </trans-unit>
-            <trans-unit id="info.isPublished" xml:space="preserve">
+            <trans-unit id="detail.isPublished" xml:space="preserve">
                 <source>Published</source>
                 <target>Publiziert</target>
             </trans-unit>
-            <trans-unit id="info.message" xml:space="preserve">
+            <trans-unit id="detail.message" xml:space="preserve">
                 <source>Message</source>
                 <target>Nachricht</target>
             </trans-unit>
-            <trans-unit id="info.content" xml:space="preserve">
+            <trans-unit id="detail.content" xml:space="preserve">
                 <source>Content of the email</source>
                 <target>Inhalt der E-Mail</target>
             </trans-unit>
-            <trans-unit id="info.content.html" xml:space="preserve">
+            <trans-unit id="detail.content.html" xml:space="preserve">
                 <source>HTML email</source>
                 <target>HTML E-Mail</target>
             </trans-unit>
-            <trans-unit id="info.content.plaintext" xml:space="preserve">
+            <trans-unit id="detail.content.plaintext" xml:space="preserve">
                 <source>Plaintext email</source>
                 <target>Plaintext E-Mail</target>
             </trans-unit>
-            <trans-unit id="info.content" xml:space="preserve">
+            <trans-unit id="detail.content" xml:space="preserve">
                 <source>Content of the email</source>
                 <target>Inhalt der E-Mail</target>
             </trans-unit>
-            <trans-unit id="info.action.refresh" xml:space="preserve">
+            <trans-unit id="detail.action.refresh" xml:space="preserve">
                 <source>Refresh view</source>
                 <target>Ansicht aktualisieren</target>
             </trans-unit>
-            <trans-unit id="info.action.unlock" xml:space="preserve">
+            <trans-unit id="detail.action.unlock" xml:space="preserve">
                 <source>Unlock Task</source>
                 <target>Task entsperren</target>
             </trans-unit>

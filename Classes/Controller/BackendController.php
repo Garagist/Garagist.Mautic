@@ -385,13 +385,13 @@ class BackendController extends AbstractModuleController
     }
 
     /**
-     * Render the information about a mautic email
+     * Render the details about a mautic email
      *
      * @param NodeInterface $node
      * @param MauticEmail $email
      * @return void
      */
-    public function infoAction(NodeInterface $node, MauticEmail $email): void
+    public function detailAction(NodeInterface $node, MauticEmail $email): void
     {
         $categoryNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
         $mauticRecord = $this->apiService->findEmailByNeosIdentifier($email->getEmailIdentifier());

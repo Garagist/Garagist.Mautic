@@ -83,7 +83,7 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                                     <Neos.Fusion:Link.Action
                                         @if={item.subject}
                                         class="neos-button neos-button-primary block text-left"
-                                        href.action="info"
+                                        href.action="detail"
                                         href.arguments={item.hrefArguments}
                                         aria-label={'ID: ' + item.emailIdentifier}
                                     >
@@ -102,9 +102,9 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                                         <Neos.Fusion:Link.Action
                                             @if={item.properties}
                                             class="neos-button neos-button-primary"
-                                            href.action="info"
+                                            href.action="detail"
                                             href.arguments={item.hrefArguments}
-                                            aria-label={props.i18n.id('list.email.info').translate()}
+                                            aria-label={props.i18n.id('list.email.detail').translate()}
                                         >
                                             <i class="fas fa-info icon-white"></i>
                                         </Neos.Fusion:Link.Action>
