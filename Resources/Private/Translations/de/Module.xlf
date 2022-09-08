@@ -16,8 +16,8 @@
                 <target>Dieses Modul verwaltet den Newsletter mit Mautic. Es zeigt den Status an und verwaltet die Aktionen.</target>
             </trans-unit>
             <trans-unit id="emails.headline" xml:space="preserve">
-                <source>Newsletter: {0}</source>
-                <target>Newsletter: {0}</target>
+                <source>Newsletter</source>
+                <target>Newsletter</target>
             </trans-unit>
             <trans-unit id="list.emails.header" xml:space="preserve">
                 <source>Available newsletter</source>

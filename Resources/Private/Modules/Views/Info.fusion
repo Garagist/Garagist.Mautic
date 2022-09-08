@@ -1,10 +1,13 @@
 Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
     email = ${email}
     node = ${node}
+    categoryNode = ${categoryNode}
     history = ${history}
     mauticRecord = ${mauticRecord}
     i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
     flashMessages = ${flashMessages}
+    title = ${q(node).property('title')}
+    categoryTitle = ${this.categoryNode ? q(this.categoryNode).property('title') : null}
 
     emailData = Garagist.Mautic:Component.EmailData {
         node = ${node}
@@ -12,16 +15,34 @@ Garagist.Mautic.BackendController.info = Neos.Fusion:Component {
         redirect = 'info'
     }
 
-    title = ${q(node).property('title')}
-
     renderer = afx`
         <main class="mautic" x-data x-tooltips>
             <Garagist.Mautic:Component.FlashMessages flashMessages={props.flashMessages} />
             <div class="space-y-4">
                 <h1 class="text-2xl">
-                    <Neos.Fusion:Link.Action href.action="email" href.arguments.node={props.node}>
-                        {props.i18n.id('emails.headline').arguments([props.title]).translate()}
-                    </Neos.Fusion:Link.Action>
+                    <Neos.Fusion:Link.Action
+                        href.action="email"
+                        href.arguments.node={props.node}
+                        class="hover:!underline focus:!underline"
+                        content={props.i18n.id('emails.headline').translate()}
+                    />
+                    {': '}
+                    <Neos.Fusion:Link.Action
+                        @if={props.categoryNode}
+                        href.action="link"
+                        href.arguments.node={props.categoryNode}
+                        class="hover:!underline focus:!underline"
+                        target="_blank"
+                        content={props.categoryTitle}
+                    />
+                    {props.categoryNode ? ' › ' : ''}
+                    <Neos.Fusion:Link.Action
+                        href.action="link"
+                        href.arguments.node={props.node}
+                        class="hover:!underline focus:!underline"
+                        target="_blank"
+                        content={props.title}
+                    />
                 </h1>
                 <section>
                     <h2 class="text-xl">{props.i18n.id('info.metadata').translate()}</h2>

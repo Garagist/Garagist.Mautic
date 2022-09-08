@@ -1,7 +1,7 @@
 Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
-
     emails = ${emails}
     node = ${node}
+    categoryNode = ${categoryNode}
     flashMessages = ${flashMessages}
 
     severityMapping = Neos.Fusion:DataStructure {
@@ -14,14 +14,10 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
     title = ${q(node).property('title')}
     titleOverride = ${q(node).property('titleOverride')}
     i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
+    categoryTitle = ${this.categoryNode ? q(this.categoryNode).property('title') : null}
 
     createAction = Neos.Fusion:UriBuilder {
         action = 'create'
-        arguments.node = ${node}
-    }
-
-    link = Neos.Fusion:UriBuilder {
-        action = 'link'
         arguments.node = ${node}
     }
 
@@ -41,10 +37,24 @@ Garagist.Mautic.BackendController.email = Neos.Fusion:Component {
             <main class="mautic">
                 <Garagist.Mautic:Component.FlashMessages flashMessages={props.flashMessages} />
                 <section class='mautic-list'>
-                    <h1 class="text-xl font-bold mb-4">
-                        <a href={props.link} target="_blank" class="hover:!underline focus:!underline">
-                        {props.i18n.id('emails.headline').arguments([props.title]).translate()}
-                        </a>
+                    <h1 class="text-2xl mb-4">
+                        {props.i18n.id('emails.headline').translate()}{': '}
+                        <Neos.Fusion:Link.Action
+                            @if={props.categoryNode}
+                            href.action="link"
+                            href.arguments.node={props.categoryNode}
+                            class="hover:!underline focus:!underline"
+                            target="_blank"
+                            content={props.categoryTitle}
+                        />
+                        {props.categoryNode ? ' › ' : ''}
+                        <Neos.Fusion:Link.Action
+                            href.action="link"
+                            href.arguments.node={props.node}
+                            class="hover:!underline focus:!underline"
+                            target="_blank"
+                            content={props.title}
+                        />
                     </h1>
                     <table class='neos-table' x-data x-tooltips>
                         <thead>

@@ -373,11 +373,13 @@ class BackendController extends AbstractModuleController
      */
     public function emailAction(NodeInterface $node): void
     {
+        $categoryNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
         $emails = $this->mauticService->getEmailsNodeIdentifier($node->getIdentifier());
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
         $this->view->assignMultiple([
             'emails' => $emails,
             'node' => $node,
+            'categoryNode' => $categoryNode,
             'flashMessages' => $flashMessages
         ]);
     }
@@ -391,6 +393,7 @@ class BackendController extends AbstractModuleController
      */
     public function infoAction(NodeInterface $node, MauticEmail $email): void
     {
+        $categoryNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
         $mauticRecord = $this->apiService->findEmailByNeosIdentifier($email->getEmailIdentifier());
         $history = $this->mauticService->getAuditLog($email);
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
@@ -398,6 +401,7 @@ class BackendController extends AbstractModuleController
         $this->view->assignMultiple([
             'email' => $email,
             'node' => $node,
+            'categoryNode' => $categoryNode,
             'history' => $history,
             'mauticRecord' => $mauticRecord,
             'flashMessages' => $flashMessages,
