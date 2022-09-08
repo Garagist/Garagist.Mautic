@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Garagist\Mautic\Provider;
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Flow\Annotations as Flow;
+use Garagist\Mautic\Domain\Model\MauticEmail;
 use Garagist\Mautic\Service\ApiService;
 use Garagist\Mautic\Service\MauticService;
-use Garagist\Mautic\Domain\Model\MauticEmail;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Psr\Log\LoggerInterface;
 
@@ -20,22 +21,10 @@ use Psr\Log\LoggerInterface;
 class DataProvider implements DataProviderInterface
 {
     /**
-     * @var int
-     * @Flow\InjectConfiguration(path="newsletterCategoryId", package="Garagist.Mautic")
-     */
-    protected $newsletterCategoryId;
-
-    /**
      * @var array
-     * @Flow\InjectConfiguration(path="segmentMapping", package="Garagist.Mautic")
+     * @Flow\InjectConfiguration(package="Garagist.Mautic")
      */
-    protected $segmentMapping;
-
-    /**
-     * @var int|null
-     * @Flow\InjectConfiguration(path="unconfirmedSegment", package="Garagist.Mautic")
-     */
-    protected $unconfirmedSegment;
+    protected $settings;
 
     /**
      * @Flow\Inject
@@ -90,6 +79,90 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
+     * Get the choosen segment from the email
+     *
+     * @param MauticEmail $email
+     * @return array|null
+     */
+    public function getChoosenSegments(MauticEmail $email): ?array
+    {
+        return $email->getProperty('segments');
+    }
+
+    /**
+     * Get subject from email
+     *
+     * @param MauticEmail $email
+     * @return string
+     */
+    public function getSubject(MauticEmail $email): string
+    {
+        $subject = $email->getProperty('subject');
+
+        if (is_string($subject) && $subject !== '') {
+            return $subject;
+        }
+
+        $node = $this->getNode($email->getNodeIdentifier());
+        $title = $node->getProperty('title');
+        $titleOverride = $node->getProperty('titleOverride');
+
+        return $titleOverride ? $titleOverride : $title;
+    }
+
+    /**
+     * Get langauge from html template
+     *
+     * @param string $html
+     * @return string
+     */
+    public function getLanguageFromHtml(string $html): string
+    {
+        preg_match('/<html.+?lang="([^"]+)"/im', $html, $languageMatch);
+        $language = $languageMatch[1] ?? 'en';
+        return explode('-', $language)[0];
+    }
+
+    /**
+     * Get HTML from email
+     *
+     * @param MauticEmail $email
+     * @return string
+     */
+    public function getHtml(MauticEmail $email): string
+    {
+        return $this->mauticService->getNewsletterTemplate($email->getProperty('htmlUrl'));
+    }
+
+    /**
+     * Get Plaintext from email
+     *
+     * @param MauticEmail $email
+     * @return string
+     */
+    public function getPlaintext(MauticEmail $email): string
+    {
+        return $this->mauticService->getNewsletterTemplate($email->getProperty('plaintextUrl'));
+    }
+
+    /**
+     * Get the UTM tags for the email
+     *
+     * @param string $campaign
+     * @param string $medium
+     * @param string $source
+     * @return array
+     */
+    public function getUtmTags(string $campaign, string $medium = 'email', string $source = 'newsletter'): array
+    {
+        return [
+            'utmSource' => $source,
+            'utmMedium' => $medium,
+            'utmCampaign' => $campaign,
+        ];
+    }
+
+    /**
      * @param MauticEmail $email
      * @param array $segments
      * @return iterable
@@ -103,21 +176,11 @@ class DataProvider implements DataProviderInterface
         $node = $this->getNode($email->getNodeIdentifier());
         $emailIdentifier = $email->getEmailIdentifier();
 
-        $html = $this->mauticService->getNewsletterTemplate($email->getProperty('htmlUrl'));
-        $plaintext = $this->mauticService->getNewsletterTemplate($email->getProperty('plaintextUrl'));
-        $subject = $email->getProperty('subject');
+        $html = $this->getHtml($email);
+        $plaintext = $this->getPlaintext($email);
         $title = $node->getProperty('title');
-
-        if (!$subject) {
-            // Fallback handling for old entries
-            $titleOverride = $node->getProperty('titleOverride');
-            $subject = $titleOverride ? $titleOverride : $title;
-        }
-
-        // Get langauge from html template
-        preg_match('/<html.+?lang="([^"]+)"/im', $html, $languageMatch);
-        $language = $languageMatch[1] ?? 'en';
-        $language = explode('-', $language)[0];
+        $subject = $this->getSubject($email);
+        $language = $this->getLanguageFromHtml($html);
 
         $name = [$emailIdentifier, $title];
         if ($title != $subject) {
@@ -131,7 +194,7 @@ class DataProvider implements DataProviderInterface
             'title' => $title,
             'name' => join(' ❯ ', $name),
             'subject' => $subject,
-            'category' => $this->newsletterCategoryId,
+            'category' => $this->settings['newsletterCategoryId'],
             'template' => 'blank',
             'isPublished' => 0,
             'customHtml' => $html,
@@ -139,13 +202,11 @@ class DataProvider implements DataProviderInterface
             'emailType' => 'list',
             'lists' => $segments,
             'language' => $language,
-            'utmTags' => [
-                'utmSource' => 'newsletter',
-                'utmMedium' => 'email',
-                'utmCampaign' => $emailIdentifier,
-            ],
+            'utmTags' => $this->getUtmTags($emailIdentifier),
         ];
     }
+
+
 
     /**
      * @param MauticEmail $email
@@ -153,18 +214,37 @@ class DataProvider implements DataProviderInterface
      */
     public function getSegmentsForSendOut(MauticEmail $email): array
     {
-        $segments = $this->apiService->getAllSegments();
-        $data = array_map(function ($n) {
-            return $n->getId();
-        }, $segments);
+        $segments = $this->getChoosenSegments($email) ?? $this->getAllSegmentIDsFromMautic();
+        return $this->filterUnconfirmedSegment($segments);
+    }
 
-        if (!isset($this->unconfirmedSegment)) {
-            return $data;
+    /**
+     * Remove unconfirmed segment from segments
+     *
+     * @param array $segments
+     * @return array
+     */
+    public function filterUnconfirmedSegment(array $segments): array
+    {
+        $unconfirmedSegment = $this->settings['segment']['unconfirmed'];
+        if (!isset($unconfirmedSegment)) {
+            return $segments;
         }
-
-        return array_filter($data, function ($n) {
-            return $n !== $this->unconfirmedSegment;
+        return array_filter($segments, function ($n) use ($unconfirmedSegment) {
+            return $n !== $unconfirmedSegment;
         });
+    }
+
+    /**
+     * Get the category Node
+     *
+     * @param NodeInterface $node
+     * @return NodeInterface|null
+     */
+    public function getCategoryNode(NodeInterface $node): ?NodeInterface
+    {
+        $fq = new FlowQuery([$node]);
+        return $fq->closest('[instanceof Garagist.Mautic:Mixin.Category]')->get(0);
     }
 
     /**
@@ -174,5 +254,25 @@ class DataProvider implements DataProviderInterface
     protected function getNode($nodeIdentifier)
     {
         return $this->context->getNodeByIdentifier($nodeIdentifier);
+    }
+
+    /**
+     * Get all the segment IDs from Mautic
+     *
+     * @return array
+     * @throws Exception
+     */
+    protected function getAllSegmentIDsFromMautic(): array
+    {
+        $allSegments = $this->apiService->getAllSegments();
+        $segments = array_map(function ($n) {
+            return $n->getId();
+        }, $allSegments);
+
+        if (count($segments)) {
+            return $segments;
+        }
+
+        throw new Exception(sprintf('Mautic has no segments: %s', json_encode($allSegments)), 1662631248);
     }
 }

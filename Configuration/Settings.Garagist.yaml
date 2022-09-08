@@ -11,11 +11,22 @@ Garagist:
     enableTracking: false
     forms:
       hideIds: []
+
     # Add here the ID fo the newsletter category
     newsletterCategoryId: null
-    segmentMapping: []
-    # Add here the segment ID of the Mautic segment who contains not confirmed contacts
-    unconfirmedSegment: null
+
+    # Settings for email segments
+    segment:
+      mapping: null
+
+      # Add here to segments to choose from on creation
+      # choose:
+      #   1: Newsletter
+      choose: null
+
+      # Add here the segment ID of the Mautic segment who contains not confirmed contacts
+      unconfirmed: null
+
     # Make actions configurable
     jobs:
       transactions:
