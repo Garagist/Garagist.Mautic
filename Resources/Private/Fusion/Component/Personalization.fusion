@@ -1,0 +1,9 @@
+prototype(Garagist.Mautic:Personalization) {
+    // Add Personaliation fields like this in your text
+    // Availble fields: Every field from contactfield, surounded by an # on both sides (case insensitive)
+    // {#ifNewsletter}Hello #FIRSTNAME# #Lastname#, this is your newsletter{:else}Fallback for Webview{/if}
+    @class = 'Garagist\\Mautic\\FusionObjects\\PersonalizationImplementation'
+    enable = ${!node.context.inBackend}
+    webview = true
+    content = ${value}
+}

@@ -7,6 +7,7 @@ namespace Garagist\Mautic\Provider;
 use Garagist\Mautic\Domain\Model\MauticEmail;
 use Garagist\Mautic\Service\ApiService;
 use Garagist\Mautic\Service\MauticService;
+use Garagist\Mautic\Service\PersonalizationService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
@@ -25,6 +26,12 @@ class DataProvider implements DataProviderInterface
      * @Flow\InjectConfiguration(package="Garagist.Mautic")
      */
     protected $settings;
+
+    /**
+     * @Flow\Inject
+     * @var PersonalizationService
+     */
+    protected $personalizationService;
 
     /**
      * @Flow\Inject
@@ -131,7 +138,8 @@ class DataProvider implements DataProviderInterface
      */
     public function getHtml(MauticEmail $email): string
     {
-        return $this->mauticService->getNewsletterTemplate($email->getProperty('htmlUrl'));
+        $content = $this->mauticService->getNewsletterTemplate($email->getProperty('htmlUrl'));
+        return $this->personalizationService->mautic($content);
     }
 
     /**
@@ -142,7 +150,8 @@ class DataProvider implements DataProviderInterface
      */
     public function getPlaintext(MauticEmail $email): string
     {
-        return $this->mauticService->getNewsletterTemplate($email->getProperty('plaintextUrl'));
+        $content =  $this->mauticService->getNewsletterTemplate($email->getProperty('plaintextUrl'));
+        return $this->personalizationService->mautic($content);
     }
 
     /**

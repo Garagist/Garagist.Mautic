@@ -14,7 +14,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Garagist\\Mautic\\": "Classes/"
+            "Garagist\\Mautic\\": "Classes"
         }
     },
     "extra": {
