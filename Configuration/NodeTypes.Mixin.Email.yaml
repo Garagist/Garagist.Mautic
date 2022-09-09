@@ -17,6 +17,6 @@
             icon: paper-plane
             src: >-
               ClientEval:
-              "/neos/management/mautic/email?"
+              "/neos/management/mautic/node?"
               + encodeURIComponent("moduleArguments[node]")
               + "=" + encodeURIComponent(node.contextPath.split('@')[0] + '@live')
