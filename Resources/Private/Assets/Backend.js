@@ -1,5 +1,8 @@
 import Alpine from "alpinejs";
+import collapse from "@alpinejs/collapse";
 import tippy, { createSingleton } from "tippy.js";
+
+Alpine.plugin(collapse);
 
 if (window.name == "email-module") {
     document.documentElement.classList.add("email-module-integrated");
@@ -53,7 +56,7 @@ const rafTimeOut = (callback, delay) => {
 Alpine.data("actions", (minItems) => ({
     init() {
         const items = this.$root.querySelectorAll("a,button").length;
-        if (items <= minItems) {
+        if (items < minItems) {
             rafTimeOut(() => window.location.reload(), 5000);
         }
     },

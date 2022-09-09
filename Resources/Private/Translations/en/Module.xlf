@@ -12,43 +12,52 @@
             <trans-unit id="module.mautic.description" xml:space="preserve">
                 <source>This module manages the newsletter with mautic. It shows the status and handle the actions.</source>
             </trans-unit>
-            <trans-unit id="emails.headline" xml:space="preserve">
-                <source>Newsletter: {0}</source>
+            <trans-unit id="newsletter.headline" xml:space="preserve">
+                <source>Newsletter</source>
             </trans-unit>
-            <trans-unit id="list.emails.header" xml:space="preserve">
+            <trans-unit id="newsletter.available" xml:space="preserve">
                 <source>Available newsletter</source>
             </trans-unit>
-            <trans-unit id="list.emails.none" xml:space="preserve">
+            <trans-unit id="newsletter.none" xml:space="preserve">
                 <source>No pages with newsletter were found</source>
             </trans-unit>
-            <trans-unit id="list.emails.noCategory" xml:space="preserve">
+            <trans-unit id="pages.noCategory" xml:space="preserve">
                 <source>Pages without category</source>
             </trans-unit>
-            <group id="list.emails.count" restype="x-gettext-plurals">
-                <trans-unit id="list.emails.count[0]" xml:space="preserve">
+            <group id="emails.count" restype="x-gettext-plurals">
+                <trans-unit id="emails.count[0]" xml:space="preserve">
                     <source>email</source>
                 </trans-unit>
-                <trans-unit id="list.emails.count[1]" xml:space="preserve">
+                <trans-unit id="emails.count[1]" xml:space="preserve">
                     <source>emails</source>
                 </trans-unit>
             </group>
-            <trans-unit id="list.showPagesWithoutEmails" xml:space="preserve">
+            <trans-unit id="showPagesWithoutEmails" xml:space="preserve">
                 <source>Show pages without emails</source>
             </trans-unit>
-            <trans-unit id="list.email.publish" xml:space="preserve">
+            <trans-unit id="email.publish" xml:space="preserve">
                 <source>Publish email</source>
             </trans-unit>
-            <trans-unit id="list.email.unpublish" xml:space="preserve">
+            <trans-unit id="email.unpublish" xml:space="preserve">
                 <source>Unpublish email</source>
             </trans-unit>
-            <trans-unit id="list.email.send" xml:space="preserve">
+            <trans-unit id="email.send" xml:space="preserve">
                 <source>Send email</source>
             </trans-unit>
-            <trans-unit id="list.email.update" xml:space="preserve">
+            <trans-unit id="email.update" xml:space="preserve">
                 <source>Update email</source>
             </trans-unit>
-            <trans-unit id="list.email.info" xml:space="preserve">
-                <source>Information about this email</source>
+            <trans-unit id="email.publishAndSend" xml:space="preserve">
+                <source>Publish and send email</source>
+            </trans-unit>
+            <trans-unit id="email.unpublishAndUpdate" xml:space="preserve">
+                <source>Update email</source>
+            </trans-unit>
+            <trans-unit id="email.delete" xml:space="preserve">
+                <source>Delete email</source>
+            </trans-unit>
+            <trans-unit id="email.detail" xml:space="preserve">
+                <source>Details about this email</source>
             </trans-unit>
             <trans-unit id="status.active" xml:space="preserve">
                 <source>Mautic API Status: Active</source>
@@ -56,35 +65,47 @@
             <trans-unit id="status.inactive" xml:space="preserve">
                 <source>Mautic API Status: Inactive</source>
             </trans-unit>
-            <trans-unit id="email.createdOn" xml:space="preserve">
+            <trans-unit id="createdOn" xml:space="preserve">
                 <source>Created</source>
             </trans-unit>
-            <trans-unit id="email.status" xml:space="preserve">
+            <trans-unit id="status" xml:space="preserve">
                 <source>Status</source>
             </trans-unit>
-            <trans-unit id="email.sentOn" xml:space="preserve">
+            <trans-unit id="sentOn" xml:space="preserve">
                 <source>Sent on</source>
             </trans-unit>
-            <trans-unit id="email.subject" xml:space="preserve">
+            <trans-unit id="subject" xml:space="preserve">
                 <source>Subject</source>
             </trans-unit>
-            <trans-unit id="email.identifier" xml:space="preserve">
+            <trans-unit id="email.edit" xml:space="preserve">
+                <source>Change receiver</source>
+            </trans-unit>
+            <trans-unit id="email.edit.withSegments" xml:space="preserve">
+                <source>Change subject and/or receiver</source>
+            </trans-unit>
+            <trans-unit id="identifier" xml:space="preserve">
                 <source>Identifier</source>
             </trans-unit>
-            <trans-unit id="email.actions" xml:space="preserve">
+            <trans-unit id="recipients" xml:space="preserve">
+                <source>Receiver</source>
+            </trans-unit>
+            <trans-unit id="pleaseChooseMinimalOneItem" xml:space="preserve">
+                <source>Please choose at least one item</source>
+            </trans-unit>
+            <trans-unit id="actions" xml:space="preserve">
                 <source>Actions</source>
             </trans-unit>
-            <trans-unit id="email.task.running" xml:space="preserve">
-                <source>The Task "{0}" is currently running… please wait!</source>
-            </trans-unit>
-            <trans-unit id="email.task.failed" xml:space="preserve">
+            <trans-unit id="task.failed" xml:space="preserve">
                 <source>The last task could not be executed! Please check the info log</source>
             </trans-unit>
-            <trans-unit id="email.action.create" xml:space="preserve">
+            <trans-unit id="email.create" xml:space="preserve">
                 <source>Create new email</source>
             </trans-unit>
             <trans-unit id="email.feedback.created" xml:space="preserve">
                 <source>A new email for {0} has been created</source>
+            </trans-unit>
+            <trans-unit id="email.feedback.deleted" xml:space="preserve">
+                <source>The email {0} has been deleted</source>
             </trans-unit>
             <trans-unit id="email.feedback.updated" xml:space="preserve">
                 <source>The email has been updated</source>
@@ -119,47 +140,65 @@
             <trans-unit id="email.feedback.identifier" xml:space="preserve">
                 <source><![CDATA[Identifier of the email: <br/><code>{0}</code>]]></source>
             </trans-unit>
-            <trans-unit id="email.action.refresh" xml:space="preserve">
+            <trans-unit id="list.refresh" xml:space="preserve">
                 <source>Refresh list</source>
             </trans-unit>
-            <trans-unit id="info.metadata" xml:space="preserve">
+            <trans-unit id="metadata" xml:space="preserve">
                 <source>Metadata</source>
             </trans-unit>
-            <trans-unit id="info.name" xml:space="preserve">
-                <source>Name</source>
-            </trans-unit>
-            <trans-unit id="info.subject" xml:space="preserve">
+            <trans-unit id="subject" xml:space="preserve">
                 <source>Subject</source>
             </trans-unit>
-            <trans-unit id="info.history" xml:space="preserve">
+            <trans-unit id="history" xml:space="preserve">
                 <source>History</source>
             </trans-unit>
-            <trans-unit id="info.date" xml:space="preserve">
+            <trans-unit id="date" xml:space="preserve">
                 <source>Date</source>
             </trans-unit>
-            <trans-unit id="info.type" xml:space="preserve">
+            <trans-unit id="type" xml:space="preserve">
                 <source>Type</source>
             </trans-unit>
-            <trans-unit id="info.isPublished" xml:space="preserve">
-                <source>Published</source>
-            </trans-unit>
-            <trans-unit id="info.message" xml:space="preserve">
+            <trans-unit id="message" xml:space="preserve">
                 <source>Message</source>
             </trans-unit>
-            <trans-unit id="info.content" xml:space="preserve">
+            <trans-unit id="email.content" xml:space="preserve">
                 <source>Content of the email</source>
             </trans-unit>
-            <trans-unit id="info.content.html" xml:space="preserve">
+            <trans-unit id="email.content.html" xml:space="preserve">
                 <source>HTML email</source>
             </trans-unit>
-            <trans-unit id="info.content.plaintext" xml:space="preserve">
+            <trans-unit id="email.content.plaintext" xml:space="preserve">
                 <source>Plaintext email</source>
             </trans-unit>
-            <trans-unit id="info.action.refresh" xml:space="preserve">
+            <trans-unit id="view.refresh" xml:space="preserve">
                 <source>Refresh view</source>
             </trans-unit>
-            <trans-unit id="info.action.unlock" xml:space="preserve">
+            <trans-unit id="task.unlock" xml:space="preserve">
                 <source>Unlock Task</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailCreate" xml:space="preserve">
+                <source>Email created</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailDelete" xml:space="preserve">
+                <source>Email deleted</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailPublish" xml:space="preserve">
+                <source>Email published</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailSend" xml:space="preserve">
+                <source>Email send</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailSent" xml:space="preserve">
+                <source>Email sent</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailSync" xml:space="preserve">
+                <source>Email synced</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailUnpublish" xml:space="preserve">
+                <source>Email unpublished</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailUpdate" xml:space="preserve">
+                <source>Email updated</source>
             </trans-unit>
         </body>
     </file>

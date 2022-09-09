@@ -1,0 +1,125 @@
+Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
+    emails = ${emails}
+    node = ${node}
+    categoryNode = ${categoryNode}
+    flashMessages = ${flashMessages}
+
+    severityMapping = Neos.Fusion:DataStructure {
+        OK = 'success'
+        Notice = 'notice'
+        Warning = 'warning'
+        Error = 'error'
+    }
+
+    title = ${q(node).property('title')}
+    categoryTitle = ${this.categoryNode ? q(this.categoryNode).property('title') : null}
+    _i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
+
+    renderer = Neos.Fusion:Component {
+        @apply.props = ${props}
+        _emails = Neos.Fusion:Map {
+            items = ${props.emails}
+            itemRenderer = Garagist.Mautic:Component.EmailData {
+                node = ${props.node}
+                email = ${item}
+            }
+        }
+
+        renderer = afx`
+            <main class="mautic">
+                <Garagist.Mautic:Component.FlashMessages flashMessages={props.flashMessages} />
+                <section class='mautic-list'>
+                    <h1 class="text-2xl mb-4">
+                        {props._i18n.id('newsletter.headline').translate()}{': '}
+                        <Neos.Fusion:Link.Action
+                            @if={props.categoryNode}
+                            href.action="link"
+                            href.arguments.node={props.categoryNode}
+                            class="hover:!underline focus:!underline"
+                            target="_blank"
+                            content={props.categoryTitle}
+                        />
+                        {props.categoryNode ? ' › ' : ''}
+                        <Neos.Fusion:Link.Action
+                            href.action="link"
+                            href.arguments.node={props.node}
+                            class="hover:!underline focus:!underline"
+                            target="_blank"
+                            content={props.title}
+                        />
+                    </h1>
+                    <table class='neos-table' x-data x-tooltips>
+                        <thead>
+                            <tr>
+                                <td>{props._i18n.id('status').translate()}</td>
+                                <td>{props._i18n.id('subject').translate()}</td>
+                                <td>{props._i18n.id('createdOn').translate()}</td>
+                                <td>{props._i18n.id('sentOn').translate()}</td>
+                                <td>{props._i18n.id('recipients').translate()}</td>
+                                <td class="!text-right">{props._i18n.id('actions').translate()}</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <Neos.Fusion:Loop items={props._emails}>
+                            <tr>
+                                <td width="1%" class="!text-center whitespace-nowrap">
+                                    <span
+                                        @if={item.isFailed}
+                                        class="inline-block"
+                                        aria-label={props._i18n.id('task.failed').translate()}
+                                    >
+                                        <i class="fas fa-exclamation-triangle text-red-500"></i>
+                                    </span>
+                                    <i @if={!item.isFailed} class="fas fa-check text-green-600"></i>
+                                </td>
+                                <td width="1%" class={["whitespace-nowrap !p-0", item.subject ? null : '!text-center']}>
+                                    <Neos.Fusion:Link.Action
+                                        @if={item.subject}
+                                        class="neos-button neos-button-primary block text-left"
+                                        href.action="detail"
+                                        href.arguments={item.hrefArguments}
+                                        aria-label={'ID: ' + item.emailIdentifier}
+                                    >
+                                        {item.subject}
+                                    </Neos.Fusion:Link.Action>
+                                    {item.subject ? '' : '–'}
+                                </td>
+                                <td>{item.dateCreated}</td>
+                                <td>{item.dateSent}</td>
+                                <td>{item.properties ? item.properties.recipients : ''}</td>
+                                <td class="neos-action">
+                                    <div
+                                        x-data={"actions(" + (item.properties ? "2" : "1") + ")"}
+                                        class="neos-pull-right"
+                                    >
+                                        <Garagist.Mautic:Component.EmailActionButtons {...item} />
+                                        <Neos.Fusion:Link.Action
+                                            @if={item.properties}
+                                            class="neos-button neos-button-primary"
+                                            href.action="detail"
+                                            href.arguments={item.hrefArguments}
+                                            aria-label={props._i18n.id('email.detail').translate()}
+                                        >
+                                            <i class="fas fa-info icon-white"></i>
+                                        </Neos.Fusion:Link.Action>
+                                    </div>
+                                </td>
+                            </tr>
+                        </Neos.Fusion:Loop>
+                        </tbody>
+                    </table>
+                </section>
+            </main>
+            <div class="neos-footer mautic">
+                <Garagist.Mautic:Component.PropertiesModal node={props.node} />
+                <Neos.Fusion:Link.Action
+                    class="neos-button neos-button-secondary"
+                    href.action="node"
+                    href.arguments.node={props.node}
+                >
+                    {props._i18n.id('list.refresh')}
+                </Neos.Fusion:Link.Action>
+            </div>
+        `
+    }
+}

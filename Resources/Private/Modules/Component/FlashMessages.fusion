@@ -20,24 +20,33 @@ prototype(Garagist.Mautic:Component.FlashMessages) < prototype(Neos.Fusion:Compo
                 title = ${item.title ? Translation.translate(item.title, item.title, item.arguments, 'Module', 'Garagist.Mautic') : null}
                 message = ${item.message ? Translation.translate(item.message, item.message, item.arguments, 'Module', 'Garagist.Mautic') : null}
                 renderer = afx`
-                    <div class={'neos-notification neos-notification-' + props.severity} x-data="{expanded:false}">
+                    <div
+                        x-data="{expanded:false}"
+                        class={'neos-notification neos-notification-' + props.severity}
+                    >
                         <div
-                            class={['neos-notification-content', props.message ? 'expandable' : null]}
                             :class="expanded&&'expanded'"
+                            class={['neos-notification-content', props.message ? 'expandable' : null]}
                         >
                             <i class={'fas fa-' + props.severity}></i>
-                            <div @if.set={props.title && !props.message} class="neos-notification-heading">
+                            <div
+                                @if={props.title && !props.message}
+                                class="neos-notification-heading"
+                            >
                                 {props.title}
                             </div>
                             <button
-                                @if.set={props.title && props.message}
+                                @if={props.title && props.message}
                                 x-on:click="expanded=!expanded"
                                 type="button"
                                 class="neos-notification-heading text-left"
                             >
                                 {props.title}
                             </button>
-                            <div @if.set={props.message} class="neos-expand-content">
+                            <div
+                                @if={props.message}
+                                class="neos-expand-content"
+                            >
                                 {props.message}
                             </div>
                         </div>

@@ -2,7 +2,6 @@
 
 namespace Garagist\Mautic\Domain\Dto;
 
-use Neos\Flow\Annotations as Flow;
 use DateTime;
 
 class HistoryItem

@@ -27,8 +27,6 @@ class MauticCommandController extends CommandController
      */
     protected $mauticService;
 
-
-
     public function getCommand(string $neosIdentifier)
     {
         var_dump($this->apiService->findEmailByNeosIdentifier($neosIdentifier));

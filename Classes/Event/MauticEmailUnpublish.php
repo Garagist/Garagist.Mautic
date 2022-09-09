@@ -6,7 +6,7 @@ namespace Garagist\Mautic\Event;
 
 use Neos\EventSourcing\Event\DomainEventInterface;
 
-final class MauticEmailUnPublish implements DomainEventInterface
+final class MauticEmailUnpublish implements DomainEventInterface
 {
     /**
      * @var string

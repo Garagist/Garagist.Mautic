@@ -2,43 +2,57 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
     ping = ${ping}
     pages = ${pages}
     categories = ${categories}
-    i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
     hasPages = ${Carbon.Array.check(this.pages)}
     hasCategories = ${Carbon.Array.check(this.categories)}
     showPagesWithoutEmails = ${this.hasPages && Array.some(this.pages, page => page.count > 0) ? 'false' : 'true'}
     logo = ${this.ping ? 'Logo.svg' : 'LogoInactive.svg'}
+    mauticPublicUrl = ${Configuration.Setting('Garagist.Mautic.publicUrl')}
+
+    _i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
 
     renderer = afx`
         <main class="mautic" x-data={"{showPagesWithoutEmails:" + props.showPagesWithoutEmails + "}"}>
             <h1>
-                <span class="sr-only">Mautic</span>
-                <span
-                    class="inline-block"
-                    aria-label={props.i18n.id(props.ping ? 'status.active' : 'status.inactive').translate()}
-                    x-tooltip
+                <Carbon.Eel:Tag
+                    tagName={props.mauticPublicUrl ? 'a' : null}
+                    attributes.href={props.mauticPublicUrl}
+                    attributes.target="_blank"
+                    attributes.class="inline-block"
                 >
-                    <img width="152" alt="Mautic Logo" aria-hidden="true" src={StaticResource.uri("Garagist.Mautic", "Public/Assets/" + props.logo)} />
-                </span>
+                    <span class="sr-only">Mautic</span>
+                    <span
+                        class="inline-block"
+                        aria-label={props._i18n.id(props.ping ? 'status.active' : 'status.inactive').translate()}
+                        x-tooltip
+                    >
+                        <img
+                            width="152"
+                            alt="Mautic Logo"
+                            aria-hidden="true"
+                            src={StaticResource.uri("Garagist.Mautic", "Public/Assets/" + props.logo)}
+                        />
+                    </span>
+                </Carbon.Eel:Tag>
             </h1>
-            <h2 class="sr-only">{props.i18n.id('list.emails.header').translate()}</h2>
+            <h2 class="sr-only">{props._i18n.id('newsletter.available').translate()}</h2>
             <Garagist.Mautic:Component.ToggleSwitch
-                @if.set={props.showPagesWithoutEmails == 'false'}
+                @if={props.showPagesWithoutEmails == 'false'}
                 toggle="showPagesWithoutEmails"
-                label="list.showPagesWithoutEmails"
+                label="showPagesWithoutEmails"
             />
 
-            <p @if.set={!props.hasPages}>{props.i18n.id('list.emails.none').translate()}</p>
+            <p @if={!props.hasPages}>{props._i18n.id('newsletter.none').translate()}</p>
 
             <!-- There are pages with categories -->
-            <Neos.Fusion:Loop @if.set={props.hasCategories} items={props.categories}>
+            <Neos.Fusion:Loop @if={props.hasCategories} items={props.categories}>
                 <div
                     class={[iterator.isFirst ? null : "xl:mt-16", "mt-12"]}
                     x-show={item.main.count || Array.some(item.pages, page => page.count > 0) ? null : 'showPagesWithoutEmails'}
                     x-transition={!!this['x-show']}
                 >
-                    <h3 @if.set={!item.main} class="text-xl mb-4">{item.title}</h3>
+                    <h3 @if={!item.main} class="text-xl mb-4">{item.title}</h3>
                     <Garagist.Mautic:Component.IndexLink
-                        @if.set={item.main}
+                        @if={item.main}
                         class="mb-4 text-xl"
                         show={null}
                         {...item.main}
@@ -52,7 +66,10 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
             </Neos.Fusion:Loop>
 
             <!-- There aren't pages with categories -->
-            <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" @if.set={!props.hasCategories && props.hasPages}>
+            <div
+                @if={!props.hasCategories && props.hasPages}
+                class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            >
                 <Neos.Fusion:Loop items={props.pages}>
                     <Garagist.Mautic:Component.IndexLink {...item} />
                 </Neos.Fusion:Loop>
@@ -61,4 +78,3 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
         </main>
     `
 }
-

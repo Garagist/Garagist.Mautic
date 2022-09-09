@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Garagist\Mautic\Provider;
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Flow\Annotations as Flow;
+use Garagist\Mautic\Domain\Model\MauticEmail;
 use Garagist\Mautic\Service\ApiService;
 use Garagist\Mautic\Service\MauticService;
-use Garagist\Mautic\Domain\Model\MauticEmail;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Psr\Log\LoggerInterface;
 
@@ -19,18 +20,11 @@ use Psr\Log\LoggerInterface;
  */
 class DataProvider implements DataProviderInterface
 {
-
     /**
      * @var array
-     * @Flow\InjectConfiguration(path="segmentMapping", package="Garagist.Mautic")
+     * @Flow\InjectConfiguration(package="Garagist.Mautic")
      */
-    protected $segmentMapping;
-
-    /**
-     * @var int|null
-     * @Flow\InjectConfiguration(path="unconfirmedSegment", package="Garagist.Mautic")
-     */
-    protected $unconfirmedSegment;
+    protected $settings;
 
     /**
      * @Flow\Inject
@@ -85,6 +79,90 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
+     * Get the choosen segment from the email
+     *
+     * @param MauticEmail $email
+     * @return array|null
+     */
+    public function getChoosenSegments(MauticEmail $email): ?array
+    {
+        return $email->getProperty('segments');
+    }
+
+    /**
+     * Get subject from email
+     *
+     * @param MauticEmail $email
+     * @return string
+     */
+    public function getSubject(MauticEmail $email): string
+    {
+        $subject = $email->getProperty('subject');
+
+        if (is_string($subject) && $subject !== '') {
+            return $subject;
+        }
+
+        $node = $this->getNode($email->getNodeIdentifier());
+        $title = $node->getProperty('title');
+        $titleOverride = $node->getProperty('titleOverride');
+
+        return $titleOverride ? $titleOverride : $title;
+    }
+
+    /**
+     * Get langauge from html template
+     *
+     * @param string $html
+     * @return string
+     */
+    public function getLanguageFromHtml(string $html): string
+    {
+        preg_match('/<html.+?lang="([^"]+)"/im', $html, $languageMatch);
+        $language = $languageMatch[1] ?? 'en';
+        return explode('-', $language)[0];
+    }
+
+    /**
+     * Get HTML from email
+     *
+     * @param MauticEmail $email
+     * @return string
+     */
+    public function getHtml(MauticEmail $email): string
+    {
+        return $this->mauticService->getNewsletterTemplate($email->getProperty('htmlUrl'));
+    }
+
+    /**
+     * Get Plaintext from email
+     *
+     * @param MauticEmail $email
+     * @return string
+     */
+    public function getPlaintext(MauticEmail $email): string
+    {
+        return $this->mauticService->getNewsletterTemplate($email->getProperty('plaintextUrl'));
+    }
+
+    /**
+     * Get the UTM tags for the email
+     *
+     * @param string $campaign
+     * @param string $medium
+     * @param string $source
+     * @return array
+     */
+    public function getUtmTags(string $campaign, string $medium = 'email', string $source = 'newsletter'): array
+    {
+        return [
+            'utmSource' => $source,
+            'utmMedium' => $medium,
+            'utmCampaign' => $campaign,
+        ];
+    }
+
+    /**
      * @param MauticEmail $email
      * @param array $segments
      * @return iterable
@@ -92,62 +170,80 @@ class DataProvider implements DataProviderInterface
      * @throws \Neos\Eel\Exception
      * @throws \Neos\Flow\Http\Client\InfiniteRedirectionException
      */
-    public function getDataForSegmentSendOut(MauticEmail $email, array $segments): array
+    public function getData(MauticEmail $email, array $segmentIds): array
     {
         $this->mauticLogger->debug(sprintf('Using %s DataProvider', static::class));
         $node = $this->getNode($email->getNodeIdentifier());
+        $emailIdentifier = $email->getEmailIdentifier();
 
-        $html = $this->mauticService->getNewsletterTemplate($email->getProperty('htmlUrl'));
-        $plaintext = $this->mauticService->getNewsletterTemplate($email->getProperty('plaintextUrl'));
-        $subject = $email->getProperty('subject');
+        $html = $this->getHtml($email);
+        $plaintext = $this->getPlaintext($email);
         $title = $node->getProperty('title');
+        $subject = $this->getSubject($email);
+        $language = $this->getLanguageFromHtml($html);
 
-        if ($subject) {
-            // Fallback handling for old entries
-            $titleOverride = $node->getProperty('titleOverride');
-            $subject = $titleOverride ? $titleOverride : $title;
+        $name = [$emailIdentifier, $title];
+        if ($title != $subject) {
+            $name[] = $subject;
         }
 
-        // Get langauge from html template
-        preg_match('/<html.+?lang="([^"]+)"/im', $html, $languageMatch);
-        $language = $languageMatch[1] ?? 'en';
-
         // TODO
-        // * category (object/null)
         // * dynamicContent
 
         return [
             'title' => $title,
-            'name' => $email->getEmailIdentifier() . ' ❯ ' . $title,
+            'name' => join(' ❯ ', $name),
             'subject' => $subject,
+            'category' => $this->settings['newsletterCategoryId'],
             'template' => 'blank',
             'isPublished' => 0,
             'customHtml' => $html,
             'plainText' => $plaintext,
             'emailType' => 'list',
-            'lists' => $segments,
+            'lists' => $segmentIds,
             'language' => $language,
+            'utmTags' => $this->getUtmTags($emailIdentifier),
         ];
     }
 
     /**
-     * @param MauticEmail $email
-     * @return array
+     * @param NodeInterface $node
+     * @return array of ids
      */
-    public function getSegmentsForSendOut(MauticEmail $email): array
+    public function getPrefilledSegments(NodeInterface $node): array
     {
-        $segments = $this->apiService->getAllSegments();
-        $data = array_map(function ($n) {
-            return $n->getId();
-        }, $segments);
-
-        if (!isset($this->unconfirmedSegment)) {
-            return $data;
+        $segmentMapping = $this->settings['segment']['mapping'];
+        if (is_array($segmentMapping)) {
+            return $segmentMapping;
+        }
+        if (is_string($segmentMapping) || is_numeric($segmentMapping)) {
+            return [(int) $segmentMapping];
         }
 
-        return array_filter($data, function ($n) {
-            return $n !== $this->unconfirmedSegment;
-        });
+        return [];
+    }
+
+    /**
+     * @param MauticEmail $email
+     * @param array $segmentsFromMautic
+     * @return array Segment IDs
+     */
+    public function filterSegments(MauticEmail $email, array $segmentsFromMautic): array
+    {
+        $segments = $this->getChoosenSegments($email) ?? $this->getAllSegmentIDsFromMautic($segmentsFromMautic);
+        return $segments;
+    }
+
+    /**
+     * Get the category Node
+     *
+     * @param NodeInterface $node
+     * @return NodeInterface|null
+     */
+    public function getCategoryNode(NodeInterface $node): ?NodeInterface
+    {
+        $fq = new FlowQuery([$node]);
+        return $fq->closest('[instanceof Garagist.Mautic:Mixin.Category]')->get(0);
     }
 
     /**
@@ -157,5 +253,27 @@ class DataProvider implements DataProviderInterface
     protected function getNode($nodeIdentifier)
     {
         return $this->context->getNodeByIdentifier($nodeIdentifier);
+    }
+
+    /**
+     * Get all the segment IDs from Mautic, removes the unconfirmed segment
+     *
+     * @return array
+     * @throws Exception
+     */
+    protected function getAllSegmentIDsFromMautic(array $segmentsFromMautic): array
+    {
+        $segments = array_map(function ($n) {
+            return $n->getId();
+        }, $segmentsFromMautic);
+
+        $unconfirmedSegment = $this->settings['segment']['unconfirmed'];
+        if (!isset($unconfirmedSegment)) {
+            return $segments;
+        }
+
+        return array_filter($segments, function ($n) use ($unconfirmedSegment) {
+            return $n !== $unconfirmedSegment;
+        });
     }
 }

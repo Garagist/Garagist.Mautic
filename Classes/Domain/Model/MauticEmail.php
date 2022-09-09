@@ -26,7 +26,12 @@ class MauticEmail
     /**
      * @var string
      */
-    const TASK_UN_PUBLISH = 'unPublish';
+    const TASK_UNPUBLISH = 'unpublish';
+
+    /**
+     * @var string
+     */
+    const TASK_DELETE = 'delete';
 
     /**
      * @var string
@@ -70,6 +75,11 @@ class MauticEmail
      * @var bool
      */
     protected $published;
+
+    /**
+     * @var bool
+     */
+    protected $deleted = false;
 
     /**
      * @var DateTime
@@ -180,7 +190,7 @@ class MauticEmail
 
     /**
      * Returns all properties of this email.
-     * 
+     *
      * @return array Property values, indexed by their name
      */
     public function getProperties(): array
@@ -261,6 +271,22 @@ class MauticEmail
     public function setPublished(bool $published): void
     {
         $this->published = $published;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleted(): bool
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * @param bool $deleted
+     */
+    public function setDeleted(bool $deleted): void
+    {
+        $this->deleted = $deleted;
     }
 
     /**

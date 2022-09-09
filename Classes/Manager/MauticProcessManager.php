@@ -5,17 +5,15 @@ declare(strict_types=1);
 namespace Garagist\Mautic\Manager;
 
 use Neos\Flow\Annotations as Flow;
-use Garagist\Mautic\Domain\Model\MauticEmail;
 use Garagist\Mautic\Event\MauticEmailCreate;
 use Garagist\Mautic\Event\MauticEmailPublish;
 use Garagist\Mautic\Event\MauticEmailSent;
 use Garagist\Mautic\Event\MauticEmailSync;
+use Garagist\Mautic\Event\MauticEmailDelete;
 use Garagist\Mautic\Event\MauticEmailTaskFinished;
-use Garagist\Mautic\Event\MauticEmailUnPublish;
+use Garagist\Mautic\Event\MauticEmailUnpublish;
 use Garagist\Mautic\Event\MauticEmailUpdate;
 use Garagist\Mautic\Service\MauticService;
-use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventStore\StreamName;
 use Garagist\Mautic\Service\ApiService;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStoreFactory;
@@ -73,7 +71,7 @@ final class MauticProcessManager implements EventListenerInterface
                 $event->getNodeIdentifier(),
                 $event->getProperties()
             );
-            $this->mauticService->updateEmailEvent($email);
+            $this->mauticService->fireUpdateEmailEvent($email);
             $this->mauticLogger->info(sprintf('Creating email with identifier %s', $emailIdentifier));
         } catch (Exception $e) {
             $this->mauticLogger->error(sprintf('Creating email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
@@ -126,13 +124,15 @@ final class MauticProcessManager implements EventListenerInterface
     public function whenMauticEmailSync(MauticEmailSync $event): void
     {
         $emailIdentifier = $event->getEmailIdentifier();
-        $this->mauticLogger->info(sprintf('Syncing email with identifier %s started', $emailIdentifier));
-        $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
-        $this->mauticService->syncEmail($email);
+        if ($emailIdentifier) {
+            $this->mauticLogger->info(sprintf('Syncing email with identifier %s started', $emailIdentifier));
+            $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
+            $this->mauticService->syncEmail($email);
+        }
     }
 
     /**
-     * @param MauticEmailSync $event
+     * @param MauticEmailPublish $event
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      * @throws \Neos\Flow\Persistence\Exception\UnknownObjectException
      */
@@ -145,20 +145,33 @@ final class MauticProcessManager implements EventListenerInterface
     }
 
     /**
-     * @param MauticEmailSync $event
+     * @param MauticEmailUnpublish $event
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      * @throws \Neos\Flow\Persistence\Exception\UnknownObjectException
      */
-    public function whenMauticEmailUnPublish(MauticEmailUnPublish $event): void
+    public function whenMauticEmailUnpublish(MauticEmailUnpublish $event): void
     {
         $emailIdentifier = $event->getEmailIdentifier();
-        $this->mauticLogger->info(sprintf('UnPublish email with identifier %s started', $emailIdentifier));
+        $this->mauticLogger->info(sprintf('Unpublish email with identifier %s started', $emailIdentifier));
         $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
-        $this->mauticService->unPublishEmail($email);
+        $this->mauticService->unpublishEmail($email);
     }
 
     /**
-     * @param MauticEmailSync $event
+     * @param MauticEmailDelete $event
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws \Neos\Flow\Persistence\Exception\UnknownObjectException
+     */
+    public function whenMauticEmailDelete(MauticEmailDelete $event): void
+    {
+        $emailIdentifier = $event->getEmailIdentifier();
+        $this->mauticLogger->info(sprintf('Delete email with identifier %s started', $emailIdentifier));
+        $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
+        $this->mauticService->deleteEmail($email);
+    }
+
+    /**
+     * @param MauticEmailTaskFinished $event
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      * @throws \Neos\Flow\Persistence\Exception\UnknownObjectException
      */
@@ -166,12 +179,13 @@ final class MauticProcessManager implements EventListenerInterface
     {
         $emailIdentifier = $event->getEmailIdentifier();
         $task = $event->getTask();
-        if ($event->getError() === '') {
+        $error = $event->getError();
+        if ($error === '') {
             $this->mauticLogger->info(sprintf('Task "%s" finished with email %s', $task, $emailIdentifier));
         } else {
-            $this->mauticLogger->error(sprintf('Task "%s" finished with an error! Email %s - Reason: %s', $task, $emailIdentifier, $event->getError()));
+            $this->mauticLogger->error(sprintf('Task "%s" finished with an error! Email %s - Reason: %s', $task, $emailIdentifier, $error));
         }
         $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
-        $this->mauticService->finishTask($email, $event->getError() !== '');
+        $this->mauticService->finishTask($email, $error !== '');
     }
 }
