@@ -62,6 +62,9 @@
             <trans-unit id="status.active" xml:space="preserve">
                 <source>Mautic API Status: Active</source>
             </trans-unit>
+            <trans-unit id="connection.failed" xml:space="preserve">
+                <source>No connection could be established to Mautic</source>
+            </trans-unit>
             <trans-unit id="status.inactive" xml:space="preserve">
                 <source>Mautic API Status: Inactive</source>
             </trans-unit>

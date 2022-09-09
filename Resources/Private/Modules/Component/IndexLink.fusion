@@ -1,6 +1,7 @@
 prototype(Garagist.Mautic:Component.IndexLink) < prototype(Neos.Fusion:Component) {
-    count = ${null}
-    title = ${null}
+    count = null
+    title = null
+    ping = null
     class = 'text-sm'
     show = ${this.count ? null : 'showPagesWithoutEmails'}
 
@@ -9,7 +10,7 @@ prototype(Garagist.Mautic:Component.IndexLink) < prototype(Neos.Fusion:Component
             x-show={props.show}
             x-transition={!!props.show}
             style={props.show ? 'display:none' : null}
-            class={[props.class, "relative rounded bg-neos shadow-sm flex items-center hover:bg-neos-darker focus-within:bg-neos-darker"]}
+            class={[props.class, props.ping ? 'hover:bg-neos-darker focus-within:bg-neos-darker' : null, "relative rounded bg-neos shadow-sm flex items-center"]}
         >
             <div class={[props.count ? "bg-green-800" : "bg-red-800" ,"leading-none flex-shrink-0 h-16 w-16 rounded-l flex flex-col items-center justify-center"]}>
                 <span class="text-lg">{props.count}</span>
@@ -17,9 +18,10 @@ prototype(Garagist.Mautic:Component.IndexLink) < prototype(Neos.Fusion:Component
                     {Translation.translate('emails.count', null, [], 'Module', 'Garagist.Mautic', props.count)}
                 </span>
             </div>
-            <div class="flex-1 min-w-0 px-3">
+            <div class="flex-1 min-w-0 px-3 font-medium text-slate-200">
                 <Neos.Fusion:Link.Action
-                    class="focus:outline-none font-medium text-slate-200"
+                    @if={props.ping}
+                    class="focus:outline-none !text-current"
                     href.action="node"
                     href.controller="Backend"
                     href.arguments.node={props.node}
@@ -27,6 +29,7 @@ prototype(Garagist.Mautic:Component.IndexLink) < prototype(Neos.Fusion:Component
                     <span class="absolute inset-0" aria-hidden="true"></span>
                     {props.title}
                 </Neos.Fusion:Link.Action>
+                {props.ping ? '' : props.title}
             </div>
         </div>
     `

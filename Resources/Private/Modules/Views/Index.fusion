@@ -41,6 +41,7 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
                 label="showPagesWithoutEmails"
             />
 
+            <p @if={!props.ping} class="my-8 text-2xl">{props._i18n.id('connection.failed').translate()}</p>
             <p @if={!props.hasPages} class="my-8">{props._i18n.id('newsletter.none').translate()}</p>
 
             <!-- There are pages with categories -->
@@ -55,11 +56,12 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
                         @if={item.main}
                         class="mb-4 text-xl"
                         show={null}
+                        ping={props.ping}
                         {...item.main}
                     />
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         <Neos.Fusion:Loop items={item.pages}>
-                            <Garagist.Mautic:Component.IndexLink {...item} />
+                            <Garagist.Mautic:Component.IndexLink ping={props.ping} {...item} />
                         </Neos.Fusion:Loop>
                     </div>
                 </div>
@@ -71,7 +73,7 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
                 class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
             >
                 <Neos.Fusion:Loop items={props.pages}>
-                    <Garagist.Mautic:Component.IndexLink {...item} />
+                    <Garagist.Mautic:Component.IndexLink ping={props.ping} {...item} />
                 </Neos.Fusion:Loop>
             </div>
 
