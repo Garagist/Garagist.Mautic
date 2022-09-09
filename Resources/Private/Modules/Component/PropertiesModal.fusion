@@ -13,6 +13,7 @@ prototype(Garagist.Mautic:Component.PropertiesModal) < prototype(Neos.Fusion:Com
     showDisabled = false
 
     chooseSegment = ${Configuration.Setting('Garagist.Mautic.segment.choose')}
+    chooseSegment.@process.convert = ${Type.isArray(value) ? value : Type.isInteger(value) ? [value] : null}
     allSegments = ${allSegments}
     prefilledSegments = ${prefilledSegments}
     lockPrefilledSegments = ${Configuration.Setting('Garagist.Mautic.segment.lockPrefilled')}

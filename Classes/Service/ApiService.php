@@ -208,7 +208,15 @@ class ApiService
         }
 
         $data = [];
-        $hideFormIds = $this->settings['forms']['hideIds'];
+        $hideFormIds = $this->settings['form']['hide'];
+
+        if (is_int($hideFormIds)) {
+            $hideFormIds = [$hideFormIds];
+        }
+
+        if (!is_array($hideFormIds)) {
+            $hideFormIds = [];
+        }
 
         foreach ($response['forms'] as $form) {
             $id = $form['id'];

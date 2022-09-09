@@ -9,40 +9,43 @@ Garagist:
       password: null
     publicUrl: null
     enableTracking: false
-    forms:
-      hideIds: []
+    form:
+      # Add here the IDs of the forms you want to hide
+      # You can pass an array (eg. [1, 2, 3]) or an integer
+      hide: null
 
-    # Add here the ID fo the newsletter category
-    newsletterCategoryId: null
+    category:
+      # Add here the ID of the category you want to use for the newsletter
+      newsletter: null
 
     # Settings for email segments
     segment:
-      # If an segment is prefilled from the choose dialog, the user can't change it
+      # If an segment is prefilled from the creation/edit dialog, the user can't unselect it
       lockPrefilled: true
 
       # The ID of the segment to use for the newsletter
-      # But you can also define an object to handle the segment in your own data provider
+      # But you can also define an array/object to handle the segment in your own data provider
       mapping: null
 
-      # Add here to segments to choose from on creation
-      # choose: [1, 2]
+      # Add here to segments to choose from on creation/edit dialog
+      # You can pass an array (eg. [1, 2, 3]) or an integer
       choose: null
 
-      # Add here the segment ID of the Mautic segment who contains not confirmed contacts
-      unconfirmed: null
+      # Add here the IDs of the segments you want to hide (eg. for unconfirmed contacts)
+      # You can pass an array (eg. [1, 2, 3]) or an integer
+      hide: null
 
-    # Make actions configurable
-    jobs:
-      transactions:
-        publishAndSend:
-          up:
-            - publish
-            - send
-          down:
-            - unpublish
-    actions:
-      publishAndSend: false
-      unpublishAndUpdate: false
+    # job:
+    #   transactions:
+    #     publishAndSend:
+    #       up:
+    #         - publish
+    #         - send
+    #       down:
+    #         - unpublish
+    action:
+      # publishAndSend: false
+      # unpublishAndUpdate: false
 
       delete: true
       publish: true

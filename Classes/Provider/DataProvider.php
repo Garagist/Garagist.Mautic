@@ -194,7 +194,7 @@ class DataProvider implements DataProviderInterface
             'title' => $title,
             'name' => join(' ❯ ', $name),
             'subject' => $subject,
-            'category' => $this->settings['newsletterCategoryId'],
+            'category' => (int)$this->settings['category']['newsletter'],
             'template' => 'blank',
             'isPublished' => 0,
             'customHtml' => $html,
@@ -256,24 +256,42 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
-     * Get all the segment IDs from Mautic, removes the unconfirmed segment
+     * Get all the segment IDs from Mautic
      *
      * @return array
      * @throws Exception
      */
     protected function getAllSegmentIDsFromMautic(array $segmentsFromMautic): array
     {
-        $segments = array_map(function ($n) {
+        $filteredSegments = $this->filterHiddenSegments($segmentsFromMautic);
+        return array_map(function ($n) {
             return $n->getId();
-        }, $segmentsFromMautic);
+        }, $filteredSegments);
+    }
 
-        $unconfirmedSegment = $this->settings['segment']['unconfirmed'];
-        if (!isset($unconfirmedSegment)) {
+    /**
+     * Filter hidden segments
+     *
+     * @param array $segments
+     * @return array
+     */
+    protected function filterHiddenSegments(array $segments): array
+    {
+        $hiddenSegments = $this->settings['segment']['hide'];
+        if (is_int($hiddenSegments)) {
+            $hiddenSegments = [$hiddenSegments];
+        }
+
+        if (!is_array($hiddenSegments)) {
             return $segments;
         }
 
-        return array_filter($segments, function ($n) use ($unconfirmedSegment) {
-            return $n !== $unconfirmedSegment;
+        return array_filter($segments, function ($segment) use ($hiddenSegments) {
+            $id = $segment;
+            if (!is_numeric($segment)) {
+                $id = $segment->getId();
+            }
+            return !in_array($id, $hiddenSegments);
         });
     }
 }
