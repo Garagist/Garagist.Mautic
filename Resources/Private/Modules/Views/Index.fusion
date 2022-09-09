@@ -2,12 +2,13 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
     ping = ${ping}
     pages = ${pages}
     categories = ${categories}
-    i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
     hasPages = ${Carbon.Array.check(this.pages)}
     hasCategories = ${Carbon.Array.check(this.categories)}
     showPagesWithoutEmails = ${this.hasPages && Array.some(this.pages, page => page.count > 0) ? 'false' : 'true'}
     logo = ${this.ping ? 'Logo.svg' : 'LogoInactive.svg'}
     mauticPublicUrl = ${Configuration.Setting('Garagist.Mautic.publicUrl')}
+
+    _i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
 
     renderer = afx`
         <main class="mautic" x-data={"{showPagesWithoutEmails:" + props.showPagesWithoutEmails + "}"}>
@@ -21,7 +22,7 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
                     <span class="sr-only">Mautic</span>
                     <span
                         class="inline-block"
-                        aria-label={props.i18n.id(props.ping ? 'status.active' : 'status.inactive').translate()}
+                        aria-label={props._i18n.id(props.ping ? 'status.active' : 'status.inactive').translate()}
                         x-tooltip
                     >
                         <img
@@ -33,14 +34,14 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
                     </span>
                 </Carbon.Eel:Tag>
             </h1>
-            <h2 class="sr-only">{props.i18n.id('newsletter.available').translate()}</h2>
+            <h2 class="sr-only">{props._i18n.id('newsletter.available').translate()}</h2>
             <Garagist.Mautic:Component.ToggleSwitch
                 @if={props.showPagesWithoutEmails == 'false'}
                 toggle="showPagesWithoutEmails"
                 label="showPagesWithoutEmails"
             />
 
-            <p @if={!props.hasPages}>{props.i18n.id('newsletter.none').translate()}</p>
+            <p @if={!props.hasPages}>{props._i18n.id('newsletter.none').translate()}</p>
 
             <!-- There are pages with categories -->
             <Neos.Fusion:Loop @if={props.hasCategories} items={props.categories}>
