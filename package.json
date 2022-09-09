@@ -17,7 +17,7 @@
     "@alpinejs/collapse": "^3.10.3",
     "alpinejs": "^3.10.3",
     "autoprefixer": "^10.4.8",
-    "concurrently": "^7.3.0",
+    "concurrently": "^7.4.0",
     "cssnano": "^5.1.13",
     "esbuild": "^0.15.7",
     "postcss": "^8.4.16",
