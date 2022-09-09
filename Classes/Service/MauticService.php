@@ -339,7 +339,6 @@ class MauticService
 
             $email->setPublished(true);
             $this->mauticEmailRepository->update($email);
-
             $this->fireTaskFinishedEvent($email);
             $this->mauticLogger->info(sprintf('Published email with identifier %s', $emailIdentifier));
         }

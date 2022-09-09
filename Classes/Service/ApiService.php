@@ -221,6 +221,32 @@ class ApiService
     }
 
     /**
+     * Get the list of all forms
+     *
+     * @return array
+     */
+    public function getForms(): array
+    {
+        $response = $this->validateResponse($this->formApi->getList('', 0, 0, 'id', 'ASC', true));
+
+        if ($response['total'] === 0) {
+            return [];
+        }
+
+        $data = [];
+        $hideFormIds = $this->settings['forms']['hideIds'];
+
+        foreach ($response['forms'] as $form) {
+            $id = $form['id'];
+            if (!in_array($id, $hideFormIds)) {
+                $data[$id] = $form['name'];
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * Ping the mautic service
      *
      * @return bool
