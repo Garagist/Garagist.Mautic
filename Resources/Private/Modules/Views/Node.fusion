@@ -72,9 +72,12 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                                     </span>
                                     <i @if={!item.isFailed} class="fas fa-check text-green-600"></i>
                                 </td>
-                                <td width="1%" class={["whitespace-nowrap !p-0", item.subject ? null : '!text-center']}>
+                                <td
+                                    @if={item.subject}
+                                    width="1%"
+                                    class="whitespace-nowrap !p-0"
+                                >
                                     <Neos.Fusion:Link.Action
-                                        @if={item.subject}
                                         class="neos-button neos-button-primary block text-left"
                                         href.action="detail"
                                         href.arguments={item.hrefArguments}
@@ -82,7 +85,14 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                                     >
                                         {item.subject}
                                     </Neos.Fusion:Link.Action>
-                                    {item.subject ? '' : '–'}
+                                </td>
+                                <td
+                                    @if={!item.subject}
+                                    width="1%"
+                                    class="whitespace-nowrap"
+                                    aria-label={'ID: ' + item.emailIdentifier}
+                                >
+                                    {props.title}
                                 </td>
                                 <td>{item.dateCreated}</td>
                                 <td>{item.dateSent}</td>
