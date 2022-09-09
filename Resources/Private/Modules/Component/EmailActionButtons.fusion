@@ -9,6 +9,15 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
     disabledClass = 'neos-button opacity-60 cursor-not-allowed !bg-transparent'
 
     renderer = afx`
+        <Garagist.Mautic:Component.PropertiesModal
+            @if={props.actions.edit}
+            subject={props.subject}
+            segments={props.segments}
+            canPublish={props.canPublish}
+            showDisabled={props.showDisabled}
+            disabledClass={props.disabledClass}
+            {...props.hrefArguments}
+        />
         <Neos.Fusion:Fragment @if={props.actions.publish}>
             <span
                 @if={props.showDisabled && !props.canPublish}

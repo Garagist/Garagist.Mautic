@@ -77,6 +77,12 @@
             <trans-unit id="subject" xml:space="preserve">
                 <source>Subject</source>
             </trans-unit>
+            <trans-unit id="email.edit" xml:space="preserve">
+                <source>Change receiver</source>
+            </trans-unit>
+            <trans-unit id="email.edit.withSegments" xml:space="preserve">
+                <source>Change subject and/or receiver</source>
+            </trans-unit>
             <trans-unit id="identifier" xml:space="preserve">
                 <source>Identifier</source>
             </trans-unit>

@@ -377,13 +377,13 @@ class BackendController extends AbstractModuleController
         $emails = $this->mauticService->getEmailsNodeIdentifier($node->getIdentifier());
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
         $prefilledSegments = $this->mauticService->getPrefilledSegments($node);
-        $segments = $this->apiService->getAllSegments();
+        $allSegments = $this->apiService->getAllSegments();
         $this->view->assignMultiple([
             'emails' => $emails,
             'node' => $node,
             'categoryNode' => $categoryNode,
             'prefilledSegments' => $prefilledSegments,
-            'segments' => $segments,
+            'allSegments' => $allSegments,
             'flashMessages' => $flashMessages,
         ]);
     }
@@ -400,14 +400,17 @@ class BackendController extends AbstractModuleController
         $categoryNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
         $mauticRecord = $this->apiService->findEmailByNeosIdentifier($email->getEmailIdentifier());
         $history = $this->mauticService->getAuditLog($email);
+        $prefilledSegments = $this->mauticService->getPrefilledSegments($node);
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
-
+        $allSegments = $this->apiService->getAllSegments();
         $this->view->assignMultiple([
             'email' => $email,
             'node' => $node,
             'categoryNode' => $categoryNode,
             'history' => $history,
             'mauticRecord' => $mauticRecord,
+            'allSegments' => $allSegments,
+            'prefilledSegments' => $prefilledSegments,
             'flashMessages' => $flashMessages,
         ]);
     }
@@ -474,6 +477,22 @@ class BackendController extends AbstractModuleController
 
         $this->addFlashMessage('', 'email.feedback.created', Message::SEVERITY_OK, [$title]);
         $this->redirect('node', null, null, ['node' => $node], 1);
+    }
+
+    public function editAction(NodeInterface $node, MauticEmail $email, string $subject, ?array $segments = null, ?string $redirect = null): void
+    {
+        if ($subject) {
+            $email->setProperty('subject', $subject);
+        }
+        if (is_array($segments) && count($segments)) {
+            $convertedSegments = [];
+            foreach ($segments as $value) {
+                $convertedSegments[] = (int)$value;
+            }
+            $email->setProperty('segments', $convertedSegments);
+        }
+        $this->mauticService->fireUpdateEmailEvent($email);
+        $this->redirectCommand($node, $email, $redirect);
     }
 
     /**

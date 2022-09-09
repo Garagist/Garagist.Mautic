@@ -49,3 +49,4 @@ Garagist:
       unpublish: true
       send: true
       update: true
+      edit: true

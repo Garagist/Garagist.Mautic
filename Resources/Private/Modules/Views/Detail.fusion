@@ -4,6 +4,7 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
     categoryNode = ${categoryNode}
     history = ${history}
     mauticRecord = ${mauticRecord}
+    prefilledSegments = ${prefilledSegments}
     i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
     flashMessages = ${flashMessages}
     title = ${q(node).property('title')}
@@ -65,6 +66,7 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                                 <td class="!p-0" x-data="actions(1)">
                                     <Garagist.Mautic:Component.EmailActionButtons
                                         detailView={true}
+                                        prefilledSegments={props.prefilledSegments}
                                         {...props.emailData}
                                     />
                                 </td>

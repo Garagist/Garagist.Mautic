@@ -12,20 +12,8 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
     }
 
     title = ${q(node).property('title')}
-    titleOverride = ${q(node).property('titleOverride')}
     i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
     categoryTitle = ${this.categoryNode ? q(this.categoryNode).property('title') : null}
-    chooseSegment = ${Configuration.Setting('Garagist.Mautic.segment.choose')}
-    segments = ${segments}
-    prefilledSegments = ${prefilledSegments}
-    lockPrefilledSegments = ${Configuration.Setting('Garagist.Mautic.segment.lockPrefilled')}
-
-    createAction = Neos.Fusion:UriBuilder {
-        action = 'create'
-        arguments.node = ${node}
-    }
-
-    placeholder = ${this.titleOverride || this.title}
 
     renderer = Neos.Fusion:Component {
         @apply.props = ${props}
@@ -122,14 +110,8 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                     </table>
                 </section>
             </main>
-            <div class="neos-footer">
-                <button
-                    href="#create"
-                    data-toggle="modal"
-                    class="neos-button neos-button-primary"
-                >
-                    {props.i18n.id('email.create').translate()}
-                </button>
+            <div class="neos-footer mautic">
+                <Garagist.Mautic:Component.PropertiesModal node={props.node} />
                 <Neos.Fusion:Link.Action
                     class="neos-button neos-button-secondary"
                     href.action="node"
@@ -138,15 +120,6 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                     {props.i18n.id('list.refresh')}
                 </Neos.Fusion:Link.Action>
             </div>
-            <Garagist.Mautic:Component.PropertiesModal
-                id="create"
-                action={props.createAction}
-                segments={props.segments}
-                chooseSegment={props.chooseSegment}
-                prefilledSegments={props.prefilledSegments}
-                placeholder={props.placeholder}
-                lockPrefilledSegments={props.lockPrefilledSegments}
-            />
         `
     }
 }
