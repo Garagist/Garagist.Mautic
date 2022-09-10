@@ -1,5 +1,4 @@
 prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:Component) {
-    i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
     action = ${Configuration.Setting('Garagist.Mautic.action')}
     detailView = false
 
@@ -7,6 +6,9 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
 
     _buttonClass = 'neos-button neos-button-primary'
     _disabledClass = 'neos-button opacity-60 cursor-not-allowed !bg-transparent'
+    _i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
+
+    @if.hasPing = ${ping}
 
     renderer = afx`
         <Garagist.Mautic:Component.PropertiesModal
@@ -21,7 +23,6 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
         <Neos.Fusion:Fragment @if={props.action.publish}>
             <span
                 @if={props.showDisabled && !props.canPublish}
-                aria-label={props.i18n.id('email.publish').translate()}
                 class={props._disabledClass}
             >
                 <i class="fas fa-upload"></i>
@@ -29,9 +30,9 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
             <Neos.Fusion:Link.Action
                 @if={props.canPublish}
                 class={props._buttonClass}
+                aria-label={props._i18n.id('email.publish').translate()}
                 href.action="publish"
                 href.arguments={props.hrefArguments}
-                aria-label={props.i18n.id('email.publish').translate()}
             >
                 <i class="fas fa-upload"></i>
             </Neos.Fusion:Link.Action>
@@ -39,8 +40,8 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
 
         <Neos.Fusion:Fragment @if={props.action.unpublish}>
             <span
+            aria-label={props._i18n.id('email.publish').translate()}
                 @if={props.showDisabled && !props.canUnpublish}
-                aria-label={props.i18n.id('email.unpublish').translate()}
                 class={props._disabledClass}
             >
                 <i class="fas fa-download"></i>
@@ -48,9 +49,9 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
             <Neos.Fusion:Link.Action
                 @if={props.canUnpublish}
                 class={props._buttonClass}
+                aria-label={props._i18n.id('email.unpublish').translate()}
                 href.action="unpublish"
                 href.arguments={props.hrefArguments}
-                aria-label={props.i18n.id('email.unpublish').translate()}
             >
                 <i class="fas fa-download"></i>
             </Neos.Fusion:Link.Action>
@@ -58,8 +59,8 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
 
         <Neos.Fusion:Fragment @if={props.action.send}>
             <span
+            aria-label={props._i18n.id('email.unpublish').translate()}
                 @if={props.showDisabled && !props.canSend}
-                aria-label={props.i18n.id('email.send').translate()}
                 class={props._disabledClass}
             >
                 <i class="fas fa-paper-plane"></i>
@@ -67,9 +68,9 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
             <Neos.Fusion:Link.Action
                 @if={props.canSend}
                 class="neos-button neos-button-success"
+                aria-label={props._i18n.id('email.send').translate()}
                 href.action="send"
                 href.arguments={props.hrefArguments}
-                aria-label={props.i18n.id('email.send').translate()}
             >
                 <i class="fas fa-paper-plane"></i>
             </Neos.Fusion:Link.Action>
@@ -77,8 +78,8 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
 
         <Neos.Fusion:Fragment @if={props.action.update}>
             <span
+            aria-label={props._i18n.id('email.send').translate()}
                 @if={props.showDisabled && !props.canUpdate}
-                aria-label={props.i18n.id('email.update').translate()}
                 class={props._disabledClass}
             >
                 <i class="fas fa-sync icon-white"></i>
@@ -86,9 +87,9 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
             <Neos.Fusion:Link.Action
                 @if={props.canUpdate}
                 class={props._buttonClass}
+                aria-label={props._i18n.id('email.update').translate()}
                 href.action="update"
                 href.arguments={props.hrefArguments}
-                aria-label={props.i18n.id('email.update').translate()}
             >
                 <i class="fas fa-sync icon-white"></i>
             </Neos.Fusion:Link.Action>
@@ -96,8 +97,8 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
 
         <Neos.Fusion:Fragment @if={props.action.publishAndSend}>
             <span
+            aria-label={props._i18n.id('email.update').translate()}
                 @if={props.showDisabled && !props.canPublishAndSend}
-                aria-label={props.i18n.id('email.send').translate()}
                 class={props._disabledClass}
             >
                 <i class="fas fa-paper-plane"></i>
@@ -105,9 +106,9 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
             <Neos.Fusion:Link.Action
                 @if={props.canPublishAndSend}
                 class="neos-button neos-button-success"
+                aria-label={props._i18n.id('email.send').translate()}
                 href.action="publishAndSend"
                 href.arguments={props.hrefArguments}
-                aria-label={props.i18n.id('email.publishAndSend').translate()}
             >
                 <i class="fas fa-paper-plane"></i>
             </Neos.Fusion:Link.Action>
@@ -115,8 +116,8 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
 
         <Neos.Fusion:Fragment @if={props.action.unpublishAndUpdate}>
             <span
+            aria-label={props._i18n.id('email.publishAndSend').translate()}
                 @if={props.showDisabled && !props.canUnpublishAndUpdate}
-                aria-label={props.i18n.id('email.update').translate()}
                 class={props._disabledClass}
             >
                 <i class="fas fa-sync icon-white"></i>
@@ -124,9 +125,9 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
             <Neos.Fusion:Link.Action
                 @if={props.canUnpublishAndUpdate}
                 class={props._buttonClass}
+                aria-label={props._i18n.id('email.update').translate()}
                 href.action="unpublishAndUpdate"
                 href.arguments={props.hrefArguments}
-                aria-label={props.i18n.id('email.unpublishAndUpdate').translate()}
             >
                 <i class="fas fa-sync icon-white"></i>
             </Neos.Fusion:Link.Action>
@@ -134,8 +135,8 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
 
         <Neos.Fusion:Fragment @if={props.action.delete}>
             <span
+            aria-label={props._i18n.id('email.unpublishAndUpdate').translate()}
                 @if={props.showDisabled && !props.canDelete}
-                aria-label={props.i18n.id('email.update').translate()}
                 class={props._disabledClass}
             >
                 <i class="fas fa-trash icon-white"></i>
@@ -143,9 +144,9 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
             <Neos.Fusion:Link.Action
                 @if={props.canDelete}
                 class="neos-button neos-button-danger"
+                aria-label={props._i18n.id('email.update').translate()}
                 href.action="delete"
                 href.arguments={props.hrefArguments}
-                aria-label={props.i18n.id('email.delete').translate()}
             >
                 <i class="fas fa-trash icon-white"></i>
             </Neos.Fusion:Link.Action>

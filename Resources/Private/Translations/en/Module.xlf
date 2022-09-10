@@ -13,7 +13,7 @@
                 <source>This module manages the newsletter with mautic. It shows the status and handle the actions.</source>
             </trans-unit>
             <trans-unit id="newsletter.headline" xml:space="preserve">
-                <source>Newsletter</source>
+                <source>Newsletter: </source>
             </trans-unit>
             <trans-unit id="newsletter.available" xml:space="preserve">
                 <source>Available newsletter</source>

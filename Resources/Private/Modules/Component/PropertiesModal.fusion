@@ -1,5 +1,4 @@
 prototype(Garagist.Mautic:Component.PropertiesModal) < prototype(Neos.Fusion:Component) {
-    node = null
     // If email is set the action will be edit, otherwise it will be create
     email = null
 
@@ -18,20 +17,20 @@ prototype(Garagist.Mautic:Component.PropertiesModal) < prototype(Neos.Fusion:Com
     prefilledSegments = ${prefilledSegments}
     lockPrefilledSegments = ${Configuration.Setting('Garagist.Mautic.segment.lockPrefilled')}
 
-    @if.hasNode = ${this.node}
+    @if.hasNodeAndPing = ${node && ping}
 
     _type = ${this.email ? 'edit' : 'create'}
 
     renderer = Neos.Fusion:Component {
         @apply.props = ${props}
-        _placeholder = ${q(props.node).property('titleOverride') || q(props.node).property('title')}
+        _placeholder = ${q(node).property('titleOverride') || q(node).property('title')}
         _i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
         _showSegments = ${Carbon.Array.check(props.chooseSegment) && Carbon.Array.check(props.allSegments)}
         _label = ${this._i18n.id('email.' + props._type + (props._type == 'edit' && this._showSegments ? '.withSegments'  : '')).translate()}
         _actionUri = Neos.Fusion:UriBuilder {
             action = ${props._type}
             arguments = Neos.Fusion:DataStructure {
-                node = ${props.node}
+                node = ${node}
                 email = ${props.email}
                 redirect = ${props.redirect}
             }

@@ -1,13 +1,6 @@
 Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
-    email = ${email}
-    node = ${node}
-    categoryNode = ${categoryNode}
-    history = ${history}
-    mauticRecord = ${mauticRecord}
-    prefilledSegments = ${prefilledSegments}
-    flashMessages = ${flashMessages}
     title = ${q(node).property('title')}
-    categoryTitle = ${this.categoryNode ? q(this.categoryNode).property('title') : null}
+    categoryTitle = ${categoryNode ? q(categoryNode).property('title') : null}
 
     emailData = Garagist.Mautic:Component.EmailData {
         node = ${node}
@@ -19,28 +12,22 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
 
     renderer = afx`
         <main class="mautic" x-data x-tooltips>
-            <Garagist.Mautic:Component.FlashMessages flashMessages={props.flashMessages} />
+            <Garagist.Mautic:Component.FlashMessages />
             <div class="space-y-4">
                 <h1 class="text-2xl">
+                    {props._i18n.id('newsletter.headline').translate()}
                     <Neos.Fusion:Link.Action
-                        href.action="node"
-                        href.arguments.node={props.node}
-                        class="hover:!underline focus:!underline"
-                        content={props._i18n.id('newsletter.headline').translate()}
-                    />
-                    {': '}
-                    <Neos.Fusion:Link.Action
-                        @if={props.categoryNode}
+                        @if={categoryNode}
                         href.action="link"
-                        href.arguments.node={props.categoryNode}
+                        href.arguments.node={categoryNode}
                         class="hover:!underline focus:!underline"
                         target="_blank"
                         content={props.categoryTitle}
                     />
-                    {props.categoryNode ? ' › ' : ''}
+                    {categoryNode ? ' › ' : ''}
                     <Neos.Fusion:Link.Action
                         href.action="link"
-                        href.arguments.node={props.node}
+                        href.arguments.node={node}
                         class="hover:!underline focus:!underline"
                         target="_blank"
                         content={props.title}
@@ -62,12 +49,11 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                                 <td>{props._i18n.id('recipients').translate()}</td>
                                 <td>{props.emailData.properties.recipients}</td>
                             </tr>
-                            <tr>
+                            <tr @if={ping}>
                                 <td>{props._i18n.id('actions').translate()}</td>
                                 <td class="!p-0" x-data="actions(1)">
                                     <Garagist.Mautic:Component.EmailActionButtons
                                         detailView={true}
-                                        prefilledSegments={props.prefilledSegments}
                                         {...props.emailData}
                                     />
                                 </td>
@@ -95,7 +81,7 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                                 <th>{props._i18n.id('message').translate()}</th>
                             </thead>
                             <tbody>
-                                <Neos.Fusion:Loop items={props.history}>
+                                <Neos.Fusion:Loop items={history}>
                                     <tr @if={item.type != 'Garagist.Mautic:MauticEmailTaskFinished' || item.error}>
                                         <td>{Date.format(item.date, 'd.m.Y H:m:s')}</td>
                                         <td>{Translation.translate(item.type, item.type, [], 'Module', 'Garagist.Mautic')}</td>
@@ -108,19 +94,19 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                 </section>
             </div>
 
-            <h2 class="text-xl mt-8 mb-4">{props._i18n.id('email.content').translate()}</h2>
-            <div class="grid gap-8 grid-flow-row auto-rows-auto grid-cols-1 lg:grid-cols-2">
+            <h2 @if={ping} class="text-xl mt-8 mb-4">{props._i18n.id('email.content').translate()}</h2>
+            <div @if={ping} class="grid gap-8 grid-flow-row auto-rows-auto grid-cols-1 lg:grid-cols-2">
                 <div>
                     <h3 class="text-md mb-4">{props._i18n.id('email.content.html').translate()}</h3>
                     <iframe
-                        srcdoc={props.mauticRecord.customHtml}
+                        srcdoc={mauticRecord.customHtml}
                         class="bg-white w-full h-[calc(100vh-150px)]"
                     ></iframe>
                 </div>
                 <div>
                     <h3 class="text-md mb-4">{props._i18n.id('email.content.plaintext').translate()}</h3>
                     <pre class="block bg-slate-200 text-neos-dark px-8 py-12 overflow-auto h-[calc(100vh-150px)] text-xs md:text-sm lg:text-xs xl:text-sm">
-                        {props.mauticRecord.plainText}
+                        {mauticRecord.plainText}
                     </pre>
                 </div>
             </div>
@@ -129,24 +115,24 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
             <Neos.Fusion:Link.Action
                 class="neos-button neos-button-primary"
                 href.action="node"
-                href.arguments.node={props.node}
+                href.arguments.node={node}
             >
                 {props._i18n.id('back').translate()}
             </Neos.Fusion:Link.Action>
             <Neos.Fusion:Link.Action
                 class="neos-button neos-button-secondary"
                 href.action="detail"
-                href.arguments.node={props.node}
-                href.arguments.email={props.email}
+                href.arguments.node={node}
+                href.arguments.email={email}
             >
                 {props._i18n.id('view.refresh')}
             </Neos.Fusion:Link.Action>
             <Neos.Fusion:Link.Action
-                @if={Array.last(props.history).error}
+                @if={Array.last(history).error && ping}
                 class="neos-button neos-button-warning"
                 href.action="unlock"
-                href.arguments.node={props.node}
-                href.arguments.email={props.email}
+                href.arguments.node={node}
+                href.arguments.email={email}
             >
                 {props._i18n.id('task.unlock').translate()}
             </Neos.Fusion:Link.Action>

@@ -1,48 +1,36 @@
 Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
-    emails = ${emails}
-    node = ${node}
-    categoryNode = ${categoryNode}
-    flashMessages = ${flashMessages}
-
-    severityMapping = Neos.Fusion:DataStructure {
-        OK = 'success'
-        Notice = 'notice'
-        Warning = 'warning'
-        Error = 'error'
-    }
-
     title = ${q(node).property('title')}
-    categoryTitle = ${this.categoryNode ? q(this.categoryNode).property('title') : null}
+    categoryTitle = ${categoryNode ? q(categoryNode).property('title') : null}
     _i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
 
     renderer = Neos.Fusion:Component {
         @apply.props = ${props}
         _emails = Neos.Fusion:Map {
-            items = ${props.emails}
+            items = ${emails}
             itemRenderer = Garagist.Mautic:Component.EmailData {
-                node = ${props.node}
+                node = ${node}
                 email = ${item}
             }
         }
 
         renderer = afx`
             <main class="mautic">
-                <Garagist.Mautic:Component.FlashMessages flashMessages={props.flashMessages} />
+                <Garagist.Mautic:Component.FlashMessages />
                 <section class='mautic-list'>
                     <h1 class="text-2xl mb-4">
-                        {props._i18n.id('newsletter.headline').translate()}{': '}
+                        {props._i18n.id('newsletter.headline').translate()}
                         <Neos.Fusion:Link.Action
-                            @if={props.categoryNode}
+                            @if={categoryNode}
                             href.action="link"
-                            href.arguments.node={props.categoryNode}
+                            href.arguments.node={categoryNode}
                             class="hover:!underline focus:!underline"
                             target="_blank"
                             content={props.categoryTitle}
                         />
-                        {props.categoryNode ? ' › ' : ''}
+                        {categoryNode ? ' › ' : ''}
                         <Neos.Fusion:Link.Action
                             href.action="link"
-                            href.arguments.node={props.node}
+                            href.arguments.node={node}
                             class="hover:!underline focus:!underline"
                             target="_blank"
                             content={props.title}
@@ -121,14 +109,20 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                 </section>
             </main>
             <div class="neos-footer mautic">
-                <Garagist.Mautic:Component.PropertiesModal node={props.node} />
+                <Neos.Fusion:Link.Action
+                    class="neos-button neos-button-neos-button-secondary"
+                    href.action="index"
+                >
+                    {props._i18n.id('back').translate()}
+                </Neos.Fusion:Link.Action>
                 <Neos.Fusion:Link.Action
                     class="neos-button neos-button-secondary"
                     href.action="node"
-                    href.arguments.node={props.node}
+                    href.arguments.node={node}
                 >
                     {props._i18n.id('list.refresh')}
                 </Neos.Fusion:Link.Action>
+                <Garagist.Mautic:Component.PropertiesModal />
             </div>
         `
     }

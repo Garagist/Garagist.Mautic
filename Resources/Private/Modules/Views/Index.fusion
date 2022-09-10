@@ -1,17 +1,15 @@
 Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
-    ping = ${ping}
-    pages = ${pages}
-    categories = ${categories}
-    hasPages = ${Carbon.Array.check(this.pages)}
-    hasCategories = ${Carbon.Array.check(this.categories)}
-    showPagesWithoutEmails = ${this.hasPages && Array.some(this.pages, page => page.count > 0) ? 'false' : 'true'}
-    logo = ${this.ping ? 'Logo.svg' : 'LogoInactive.svg'}
+    hasPages = ${Carbon.Array.check(pages)}
+    hasCategories = ${Carbon.Array.check(categories)}
+    showPagesWithoutEmails = ${this.hasPages && Array.some(pages, page => page.count > 0) ? 'false' : 'true'}
+    logo = ${ping ? 'Logo.svg' : 'LogoInactive.svg'}
     mauticPublicUrl = ${Configuration.Setting('Garagist.Mautic.publicUrl')}
 
     _i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
 
     renderer = afx`
         <main class="mautic" x-data={"{showPagesWithoutEmails:" + props.showPagesWithoutEmails + "}"}>
+            <Garagist.Mautic:Component.FlashMessages />
             <h1>
                 <Carbon.Eel:Tag
                     tagName={props.mauticPublicUrl ? 'a' : null}
@@ -22,7 +20,7 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
                     <span class="sr-only">Mautic</span>
                     <span
                         class="inline-block"
-                        aria-label={props._i18n.id(props.ping ? 'status.active' : 'status.inactive').translate()}
+                        aria-label={props._i18n.id(ping ? 'status.active' : 'status.inactive').translate()}
                         x-tooltip
                     >
                         <img
@@ -41,11 +39,10 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
                 label="showPagesWithoutEmails"
             />
 
-            <p @if={!props.ping} class="my-8 text-2xl">{props._i18n.id('connection.failed').translate()}</p>
             <p @if={!props.hasPages} class="my-8">{props._i18n.id('newsletter.none').translate()}</p>
 
             <!-- There are pages with categories -->
-            <Neos.Fusion:Loop @if={props.hasCategories} items={props.categories}>
+            <Neos.Fusion:Loop @if={props.hasCategories} items={categories}>
                 <div
                     class={[iterator.isFirst ? null : "xl:mt-16", "mt-12"]}
                     x-show={item.main.count || Array.some(item.pages, page => page.count > 0) ? null : 'showPagesWithoutEmails'}
@@ -56,12 +53,11 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
                         @if={item.main}
                         class="mb-4 text-xl"
                         show={null}
-                        ping={props.ping}
                         {...item.main}
                     />
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         <Neos.Fusion:Loop items={item.pages}>
-                            <Garagist.Mautic:Component.IndexLink ping={props.ping} {...item} />
+                            <Garagist.Mautic:Component.IndexLink {...item} />
                         </Neos.Fusion:Loop>
                     </div>
                 </div>
@@ -72,8 +68,8 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
                 @if={!props.hasCategories && props.hasPages}
                 class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
             >
-                <Neos.Fusion:Loop items={props.pages}>
-                    <Garagist.Mautic:Component.IndexLink ping={props.ping} {...item} />
+                <Neos.Fusion:Loop items={pages}>
+                    <Garagist.Mautic:Component.IndexLink {...item} />
                 </Neos.Fusion:Loop>
             </div>
 
