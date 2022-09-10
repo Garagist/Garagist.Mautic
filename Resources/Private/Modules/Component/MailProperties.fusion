@@ -1,4 +1,4 @@
-prototype(Garagist.Mautic:Component.PropertiesModal) < prototype(Neos.Fusion:Component) {
+prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Component) {
     // If email is set the action will be edit, otherwise it will be create
     email = null
 

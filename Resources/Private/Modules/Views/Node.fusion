@@ -122,7 +122,7 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                 >
                     {props._i18n.id('list.refresh')}
                 </Neos.Fusion:Link.Action>
-                <Garagist.Mautic:Component.PropertiesModal />
+                <Garagist.Mautic:Component.MailProperties />
             </div>
         `
     }

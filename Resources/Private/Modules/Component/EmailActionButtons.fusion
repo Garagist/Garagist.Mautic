@@ -11,7 +11,7 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
     @if.hasPing = ${ping}
 
     renderer = afx`
-        <Garagist.Mautic:Component.PropertiesModal
+        <Garagist.Mautic:Component.MailProperties
             @if={props.action.edit}
             subject={props.subject}
             segments={props.segments}
