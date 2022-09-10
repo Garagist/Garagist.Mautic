@@ -9,6 +9,7 @@ use Garagist\Mautic\Domain\Model\MauticEmail;
 use Garagist\Mautic\Service\ApiService;
 use Garagist\Mautic\Service\MauticService;
 use Garagist\Mautic\Service\NodeService;
+use Garagist\Mautic\Service\TestEmailService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
@@ -60,6 +61,12 @@ class BackendController extends AbstractModuleController
      * @var MauticService
      */
     protected $mauticService;
+
+    /**
+     * @Flow\Inject
+     * @var TestEmailService
+     */
+    protected $testEmailService;
 
     /**
      * @Flow\Inject
@@ -381,6 +388,7 @@ class BackendController extends AbstractModuleController
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
         $prefilledSegments = $this->mauticService->getPrefilledSegments($node);
         $allSegments = $this->apiService->getAllSegments();
+        $testEmailAddresses = $this->testEmailService->getTestEmailAdresses();
         $this->view->assignMultiple([
             'emails' => $emails,
             'node' => $node,
@@ -389,6 +397,7 @@ class BackendController extends AbstractModuleController
             'allSegments' => $allSegments,
             'flashMessages' => $flashMessages,
             'ping' => $ping,
+            'testEmailAddresses' => $testEmailAddresses,
         ]);
     }
 
@@ -408,6 +417,7 @@ class BackendController extends AbstractModuleController
         $prefilledSegments = $this->mauticService->getPrefilledSegments($node);
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
         $allSegments = $this->apiService->getAllSegments();
+        $testEmailAddresses = $this->testEmailService->getTestEmailAdresses();
         $this->view->assignMultiple([
             'email' => $email,
             'node' => $node,
@@ -418,6 +428,7 @@ class BackendController extends AbstractModuleController
             'prefilledSegments' => $prefilledSegments,
             'flashMessages' => $flashMessages,
             'ping' => $ping,
+            'testEmailAddresses' => $testEmailAddresses,
         ]);
     }
 
@@ -485,6 +496,16 @@ class BackendController extends AbstractModuleController
         $this->redirect('node', null, null, ['node' => $node], 1);
     }
 
+    /**
+     * Edit a mautic email
+     *
+     * @param NodeInterface $node
+     * @param MauticEmail $email
+     * @param string $subject
+     * @param array|null $segments
+     * @param string|null $redirect
+     * @return void
+     */
     public function editAction(NodeInterface $node, MauticEmail $email, string $subject, ?array $segments = null, ?string $redirect = null): void
     {
         if ($subject) {
@@ -498,6 +519,20 @@ class BackendController extends AbstractModuleController
             $email->setProperty('segments', $convertedSegments);
         }
         $this->mauticService->fireUpdateEmailEvent($email);
+        $this->redirectCommand($node, $email, $redirect);
+    }
+
+    /**
+     * Send test email
+     *
+     * @param NodeInterface $node
+     * @param MauticEmail $email
+     * @param array $addresses
+     * @param string|null $redirect
+     * @return void
+     */
+    public function testAction(NodeInterface $node, MauticEmail $email, array $addresses, ?string $redirect = null): void
+    {
         $this->redirectCommand($node, $email, $redirect);
     }
 

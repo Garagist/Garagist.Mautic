@@ -101,7 +101,7 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
                                                 {props.allSegments[item].name}
                                             </label>
                                         </Neos.Fusion:Loop>
-                                        <div x-show="!segments.length" x-transition class="neos-button neos-button-danger my-2 w-full">
+                                        <div x-show="!segments.length" x-transition class="bg-neos-red text-white p-4 my-2 w-full">
                                             {props._i18n.id('pleaseChooseMinimalOneItem').translate()}
                                         </div>
                                     </fieldset>

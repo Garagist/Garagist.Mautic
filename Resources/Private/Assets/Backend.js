@@ -62,4 +62,7 @@ Alpine.data("actions", (minItems) => ({
     },
 }));
 
+// Easier debuging
+window.Alpine = Alpine;
+
 docReady(() => Alpine.start());

@@ -57,6 +57,22 @@
                 <source>Send email</source>
                 <target>E-Mail senden</target>
             </trans-unit>
+            <trans-unit id="email.send.test" xml:space="preserve">
+                <source>Send test email</source>
+                <target>Test E-Mail senden</target>
+            </trans-unit>
+            <trans-unit id="enter.mailaddress" xml:space="preserve">
+                <source>Enter email address</source>
+                <target>E-Mail Adresse eingeben</target>
+            </trans-unit>
+            <trans-unit id="email.addresses" xml:space="preserve">
+                <source>Email addresses</source>
+                <target>E-Mail Adressen</target>
+            </trans-unit>
+            <trans-unit id="email.addresses.add" xml:space="preserve">
+                <source>Add email address</source>
+                <target>E-Mail Adresse hinzufügen</target>
+            </trans-unit>
             <trans-unit id="email.update" xml:space="preserve">
                 <source>Update email</source>
                 <target>E-Mail aktualisieren</target>
@@ -116,6 +132,10 @@
             <trans-unit id="recipients" xml:space="preserve">
                 <source>Receiver</source>
                 <target>Empfänger</target>
+            </trans-unit>
+            <trans-unit id="delete" xml:space="preserve">
+                <source>Delete</source>
+                <target>Löschen</target>
             </trans-unit>
             <trans-unit id="pleaseChooseMinimalOneItem" xml:space="preserve">
                 <source>Please choose at least one item</source>

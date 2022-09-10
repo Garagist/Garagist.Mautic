@@ -1,0 +1,131 @@
+prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Component) {
+    email = null
+
+    // Redirect after the action is done
+    redirect = null
+
+    addresses = ${testEmailAddresses}
+
+    @if.hasEmail = ${this.email}
+
+    renderer = Neos.Fusion:Component {
+        @apply.props = ${props}
+        _i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
+        _label = ${this._i18n.id('email.send.test').translate()}
+        _placeholder = ${this._i18n.id("enter.mailaddress").translate()}
+        _actionUri = Neos.Fusion:UriBuilder {
+            action = 'test'
+            arguments = Neos.Fusion:DataStructure {
+                node = ${node}
+                email = ${props.email}
+                redirect = ${props.redirect}
+            }
+        }
+
+        renderer = afx`
+            <button
+                x-id="['modal']"
+                x-data
+                :href="'#' + $id('modal')"
+                data-toggle="modal"
+                class="neos-button neos-button-primary"
+                aria-label={props._label}
+            >
+                <i class="fas fa-vial"></i>
+                <template x-teleport="body">
+                    <div :id="$id('modal')" class="mautic neos-hide">
+                        <div class="neos-modal-centered">
+                            <div
+                                x-data={"{action:'" + props._actionUri + "', placeholder:'" + props._placeholder + "', addresses:" + Json.stringify(props.addresses) + ", error:'', add:''}"}
+                                class="neos-modal-content"
+                            >
+                                <div class="neos-modal-header">
+                                    <button
+                                        data-dismiss="modal"
+                                        type="button"
+                                        class="neos-close neos-button"
+                                    ></button>
+                                    <div class="neos-header">
+                                        {props._label}
+                                    </div>
+
+                                    <fieldset class="mx-4">
+                                        <legend class="!p-0 !leading-5 !text-sm">
+                                            {props._i18n.id('email.addresses').translate()}
+                                        </legend>
+                                        <template x-for="(address, index) in addresses">
+                                            <div class="my-4" x-data="{error:''}">
+                                                <div class="flex">
+                                                    <input
+                                                        type="email"
+                                                        x-on:change="$el.value=$el.value.trim();error=$el.validationMessage"
+                                                        x-on:input="if(error){error=$el.validationMessage}"
+                                                        "x-model.lazy"="address"
+                                                        :value="address"
+                                                        :placeholder="placeholder"
+                                                        class="flex-1 block w-full"
+                                                        required
+                                                    />
+                                                    <button
+                                                        :disabled="addresses.length === 1"
+                                                        x-on:click="addresses.splice(index, 1)"
+                                                        aria-label={props._i18n.id('delete').translate()}
+                                                        type="button"
+                                                        class="neos-button hover:!bg-neos-red focus:!bg-neos-red"
+                                                    >
+                                                        <i class="fas fa-trash-alt icon-white"></i>
+                                                    </button>
+                                                </div>
+                                                <div x-show="error" x-text="error" x-transition class="bg-neos-red text-white p-4 my-2 w-full"></div>
+                                            </div>
+                                        </template>
+                                        <label for="add" class="mt-8">{props._i18n.id('email.addresses.add').translate()}</label>
+                                        <div class="flex">
+                                            <input
+                                                x-model="add"
+                                                x-on:change="error=$el.validationMessage"
+                                                x-on:input="if(error){error=$el.validationMessage}"
+                                                :placeholder="placeholder"
+                                                type="email"
+                                                id="add"
+                                                class="block w-full"
+                                                required
+                                            />
+                                            <button
+                                                x-on:click="if(!error&&add){addresses.push(add);add=''}"
+                                                aria-label={props._i18n.id('email.addresses.add').translate()}
+                                                type="button"
+                                                class="neos-button neos-button-secondary"
+                                            >
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <div x-show="error" x-text="error" x-transition class="bg-neos-red text-white p-4 my-2 w-full"></div>
+                                    </fieldset>
+                                </div>
+                                <div class="neos-modal-footer">
+                                    <button
+                                        data-dismiss="modal"
+                                        type="button"
+                                        class="neos-button"
+                                    >
+                                        {Translation.translate('cancel', null, [], 'Main', 'Neos.Neos')}
+                                    </button>
+                                    <a
+                                        :href="action + '&moduleArguments[addresses]=' + addresses"
+                                        :disabled="!addresses.length"
+                                        :class="!addresses.length&&'pointer-events-none'"
+                                        class="neos-button neos-button-primary"
+                                    >
+                                        {props._label}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="neos-modal-backdrop neos-in"></div>
+                    </div>
+                </template>
+            </button>
+        `
+    }
+}

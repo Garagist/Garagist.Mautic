@@ -20,6 +20,10 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
             disabledClass={props._disabledClass}
             {...props.hrefArguments}
         />
+        <Garagist.Mautic:Component.SendTestMail
+            @if={props.action.test}
+            {...props.hrefArguments}
+        />
         <Neos.Fusion:Fragment @if={props.action.publish}>
             <span
                 @if={props.showDisabled && !props.canPublish}

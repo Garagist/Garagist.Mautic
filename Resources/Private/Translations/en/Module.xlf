@@ -38,11 +38,23 @@
             <trans-unit id="email.publish" xml:space="preserve">
                 <source>Publish email</source>
             </trans-unit>
+            <trans-unit id="email.addresses" xml:space="preserve">
+                <source>Email addresses</source>
+            </trans-unit>
+            <trans-unit id="email.addresses.add" xml:space="preserve">
+                <source>Add email address</source>
+            </trans-unit>
+            <trans-unit id="enter.mailaddress" xml:space="preserve">
+                <source>Enter email address</source>
+            </trans-unit>
             <trans-unit id="email.unpublish" xml:space="preserve">
                 <source>Unpublish email</source>
             </trans-unit>
             <trans-unit id="email.send" xml:space="preserve">
                 <source>Send email</source>
+            </trans-unit>
+            <trans-unit id="email.send.test" xml:space="preserve">
+                <source>Send test email</source>
             </trans-unit>
             <trans-unit id="email.update" xml:space="preserve">
                 <source>Update email</source>
@@ -91,6 +103,9 @@
             </trans-unit>
             <trans-unit id="recipients" xml:space="preserve">
                 <source>Receiver</source>
+            </trans-unit>
+            <trans-unit id="delete" xml:space="preserve">
+                <source>Delete</source>
             </trans-unit>
             <trans-unit id="pleaseChooseMinimalOneItem" xml:space="preserve">
                 <source>Please choose at least one item</source>

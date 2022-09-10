@@ -18,6 +18,11 @@ Garagist:
       # Add here the ID of the category you want to use for the newsletter
       newsletter: null
 
+    testMail:
+      # Add here the email address you want to use for testing
+      # You can pass an array (eg. ['test@mail.example', 'user@mail.example']) or an string (eg. 'test@mail.example')
+      addresses: null
+
     # Settings for email segments
     segment:
       # If an segment is prefilled from the creation/edit dialog, the user can't unselect it
@@ -53,3 +58,4 @@ Garagist:
       send: true
       update: true
       edit: true
+      test: true
