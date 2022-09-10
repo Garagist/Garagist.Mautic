@@ -133,7 +133,8 @@ class BackendController extends AbstractModuleController
      */
     public function indexAction(): void
     {
-        $ping = $this->apiService->ping();
+        $ping = $this->ping();
+        $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
         $nodes = $this->nodeService->getNodesByType('Garagist.Mautic:Mixin.Email');
         $pages = [];
         $categoryList = [];
@@ -206,6 +207,7 @@ class BackendController extends AbstractModuleController
                 'pages' => $pages,
                 'categories' => $categories ?? null,
                 'ping' => $ping,
+                'flashMessages' => $flashMessages,
             ]
         );
     }
@@ -373,6 +375,7 @@ class BackendController extends AbstractModuleController
      */
     public function nodeAction(NodeInterface $node): void
     {
+        $ping = $this->ping();
         $categoryNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
         $emails = $this->mauticService->getEmailsNodeIdentifier($node->getIdentifier());
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
@@ -385,6 +388,7 @@ class BackendController extends AbstractModuleController
             'prefilledSegments' => $prefilledSegments,
             'allSegments' => $allSegments,
             'flashMessages' => $flashMessages,
+            'ping' => $ping,
         ]);
     }
 
@@ -397,6 +401,7 @@ class BackendController extends AbstractModuleController
      */
     public function detailAction(NodeInterface $node, MauticEmail $email): void
     {
+        $ping = $this->ping();
         $categoryNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
         $mauticRecord = $this->apiService->findEmailByNeosIdentifier($email->getEmailIdentifier());
         $history = $this->mauticService->getAuditLog($email);
@@ -412,6 +417,7 @@ class BackendController extends AbstractModuleController
             'allSegments' => $allSegments,
             'prefilledSegments' => $prefilledSegments,
             'flashMessages' => $flashMessages,
+            'ping' => $ping,
         ]);
     }
 
@@ -563,5 +569,20 @@ class BackendController extends AbstractModuleController
         }
 
         $this->redirect($redirect, null, null, ['node' => $node, 'email' => $email]);
+    }
+
+    /**
+     * Checks if a connection is possible to mautic
+     *
+     * @return boolean
+     */
+    private function ping(): bool
+    {
+        $ping = $this->apiService->ping();
+        if ($ping === false) {
+            $this->addFlashMessage('', 'connection.failed', Message::SEVERITY_ERROR);
+        }
+
+        return $ping;
     }
 }
