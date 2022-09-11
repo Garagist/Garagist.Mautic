@@ -23,7 +23,15 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
         }
 
         renderer = afx`
+            <span
+                @if={props.showDisabled && !props.active}
+                aria-label={props._label}
+                class={props.disabledClass}
+            >
+                <i class="fas fa-vial"></i>
+            </span>
             <button
+                @if={props.active}
                 x-id="['modal']"
                 x-data
                 :href="'#' + $id('modal')"
