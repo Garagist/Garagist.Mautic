@@ -148,7 +148,7 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
             <Neos.Fusion:Link.Action
                 @if={props.canDelete}
                 class="neos-button neos-button-danger"
-                aria-label={props._i18n.id('email.update').translate()}
+                aria-label={props._i18n.id('email.delete').translate()}
                 href.action="delete"
                 href.arguments={props.hrefArguments}
             >
