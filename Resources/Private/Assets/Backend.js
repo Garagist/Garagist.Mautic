@@ -24,7 +24,7 @@ const content = (element) => element.getAttribute("aria-label") || element.getAt
 // Directive: x-tooltip
 Alpine.directive("tooltip", (el, { expression }) => {
     tippy(el, {
-        placement: expression || "top",
+        zIndex: parseInt(expression) || 9999,
         content: content(el),
         delay,
     });
@@ -32,13 +32,14 @@ Alpine.directive("tooltip", (el, { expression }) => {
 
 // Directive: x-tooltips
 Alpine.directive("tooltips", (el, { expression }) => {
-    const placement = expression || "top";
+    const zIndex = parseInt(expression) || 9999;
     const instances = [...el.querySelectorAll("[aria-label]")].map((element) =>
-        tippy(element, { placement, content: content(element), delay })
+        tippy(element, { content: content(element), delay })
     );
     createSingleton(instances, {
         delay: 500,
         moveTransition: "transform 0.2s ease-out",
+        zIndex,
     });
 });
 
