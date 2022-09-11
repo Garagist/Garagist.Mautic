@@ -80,7 +80,7 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
             </Neos.Fusion:Link.Action>
         </Neos.Fusion:Fragment>
 
-        <Neos.Fusion:Fragment @if={props.action.update}>
+        <Neos.Fusion:Fragment @if={props.action.update && props.properties}>
             <span
             aria-label={props._i18n.id('email.send').translate()}
                 @if={props.showDisabled && !props.canUpdate}
