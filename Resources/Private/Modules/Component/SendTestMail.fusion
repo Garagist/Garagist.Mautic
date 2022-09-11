@@ -44,7 +44,8 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
                     <div :id="$id('modal')" class="mautic neos-hide">
                         <div class="neos-modal-centered">
                             <div
-                                x-data={"{action:'" + props._actionUri + "', placeholder:'" + props._placeholder + "', addresses:" + Json.stringify(props.addresses) + ", error:'', add:''}"}
+                                x-data={"{action:'" + props._actionUri + "', placeholder:'" + props._placeholder + "', addresses:" + Json.stringify(props.addresses) + ", error:'', add:'',errorIndex:{},hasError:false}"}
+                                x-effect="hasError=Object.values(errorIndex).some(error=>error)"
                                 class="neos-modal-content"
                             >
                                 <div class="neos-modal-header">
@@ -66,8 +67,9 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
                                                 <div class="flex">
                                                     <input
                                                         type="email"
-                                                        x-on:change="$el.value=$el.value.trim();error=$el.validationMessage"
-                                                        x-on:input="if(error){error=$el.validationMessage}"
+                                                        "x-on:keydown.space.prevent"
+                                                        x-on:change="error=$el.validationMessage"
+                                                        x-on:input="const msg=$el.validationMessage;if(error){error=msg}errorIndex[index]=!!msg"
                                                         "x-model.lazy"="address"
                                                         :value="address"
                                                         :placeholder="placeholder"
@@ -75,11 +77,11 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
                                                         required
                                                     />
                                                     <button
-                                                        :disabled="addresses.length === 1"
-                                                        x-on:click="addresses.splice(index, 1)"
+                                                        x-show="addresses.length>1"
+                                                        x-on:click="errorIndex[index]=false;error='';addresses.splice(index, 1);$el.blur()"
+                                                        class="neos-button hover:!bg-neos-red focus:!bg-neos-red focus:outline-none"
                                                         aria-label={props._i18n.id('delete').translate()}
                                                         type="button"
-                                                        class="neos-button hover:!bg-neos-red focus:!bg-neos-red"
                                                     >
                                                         <i class="fas fa-trash-alt icon-white"></i>
                                                     </button>
@@ -91,6 +93,8 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
                                         <div class="flex">
                                             <input
                                                 x-model="add"
+                                                "x-on:keydown.space.prevent"
+                                                "x-on:keydown.enter.prevent"="const msg=$el.validationMessage;if(msg){error=msg}else if(add&&!addresses.includes(add)){addresses.push(add);add=''}"
                                                 x-on:change="error=$el.validationMessage"
                                                 x-on:input="if(error){error=$el.validationMessage}"
                                                 :placeholder="placeholder"
@@ -100,10 +104,10 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
                                                 required
                                             />
                                             <button
-                                                x-on:click="if(!error&&add){addresses.push(add);add=''}"
+                                                x-on:click="if(!error&&add&&!addresses.includes(add)){addresses.push(add);add=''}"
                                                 aria-label={props._i18n.id('email.addresses.add').translate()}
                                                 type="button"
-                                                class="neos-button neos-button-secondary"
+                                                class="neos-button neos-button-secondary focus:outline-none focus:bg-neos-blue"
                                             >
                                                 <i class="fas fa-plus"></i>
                                             </button>
@@ -121,8 +125,7 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
                                     </button>
                                     <a
                                         :href="action + '&moduleArguments[addresses]=' + addresses"
-                                        :disabled="!addresses.length"
-                                        :class="!addresses.length&&'pointer-events-none'"
+                                        :class="(!addresses.length||Object.values(errorIndex).some(error=>error))&&'pointer-events-none opacity-60'"
                                         class="neos-button neos-button-primary"
                                     >
                                         {props._label}
