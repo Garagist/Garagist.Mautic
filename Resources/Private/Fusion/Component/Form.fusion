@@ -10,6 +10,6 @@ prototype(Garagist.Mautic:Component.Form) < prototype(Neos.Fusion:Component) {
     @if.hasUrlAndId = ${this.url && this.id}
 
     renderer = afx`
-        <script type="text/javascript" src={props.url + "/form/generate.js?id=" + props.id}></script>
+        <script type="text/javascript" src={props.url + "/form/generate.js?id=" + props.id} defer></script>
     `
 }
