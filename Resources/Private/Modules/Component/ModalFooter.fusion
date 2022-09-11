@@ -1,0 +1,20 @@
+prototype(Garagist.Mautic:Component.ModalFooter) < prototype(Neos.Fusion:Component) {
+    confirm = null
+    href = null
+    cancel = ${Translation.translate('cancel', null, [], 'Main', 'Neos.Neos')}
+    type = null
+
+    @if.hasConfirmAndHref = ${this.content || (this.confirm && this.href)}
+
+    renderer = afx`
+        <div class="neos-modal-footer">
+            <button data-dismiss="modal" type="button" class="neos-button">
+                {props.cancel}
+            </button>
+            <a @if={!props.content} href={props.href} class={"neos-button neos-button-" + (props.type || 'primary')}>
+                {props.confirm}
+            </a>
+            {props.content}
+        </div>
+    `
+}

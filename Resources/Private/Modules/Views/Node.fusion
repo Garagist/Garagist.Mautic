@@ -36,7 +36,7 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                             content={props.title}
                         />
                     </h1>
-                    <table class='neos-table' x-data x-tooltips>
+                    <table class="neos-table" x-data x-tooltips>
                         <thead>
                             <tr>
                                 <td>{props._i18n.id('status').translate()}</td>
@@ -90,6 +90,7 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                                             x-data={"actions(" + (item.properties ? "2" : "1") + ")"}
                                             class="neos-pull-right"
                                         >
+                                            <Garagist.Mautic:Component.EmailActionButtons {...item} />
                                             <Neos.Fusion:Link.Action
                                                 @if={item.properties}
                                                 class="neos-button neos-button-primary"
@@ -99,7 +100,6 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                                             >
                                                 <i class="fas fa-info icon-white"></i>
                                             </Neos.Fusion:Link.Action>
-                                            <Garagist.Mautic:Component.EmailActionButtons {...item} />
                                         </div>
                                     </td>
                                 </tr>

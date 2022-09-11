@@ -6,6 +6,8 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
 
     addresses = ${testEmailAddresses}
 
+    class = 'neos-button neos-button-primary'
+
     @if.hasEmail = ${this.email}
 
     renderer = Neos.Fusion:Component {
@@ -22,108 +24,74 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
         }
 
         renderer = afx`
-            <span
-                @if={props.showDisabled && !props.active}
-                aria-label={props._label}
-                class={props.disabledClass}
+            <Garagist.Mautic:Component.ActionButton
+                label={props._label}
+                icon="fa-vial"
+                showText={props.detailView}
             >
-                <i class="fas fa-vial"></i>
-            </span>
-            <button
-                @if={props.active}
-                x-id="['modal']"
-                x-data
-                :href="'#' + $id('modal')"
-                data-toggle="modal"
-                class="neos-button neos-button-primary"
-                aria-label={props._label}
-            >
-                <i class="fas fa-vial"></i>
-                <template x-teleport="body">
-                    <div :id="$id('modal')" class="mautic neos-hide">
-                        <div class="neos-modal-centered">
-                            <div
-                                x-data={"{action:'" + props._actionUri + "', addresses:" + Json.stringify(props.addresses) + ", error:'', add:''}"}
-                                class="neos-modal-content"
-                            >
-                                <div class="neos-modal-header">
+                <div
+                    x-data={"{action:'" + props._actionUri + "', addresses:" + Json.stringify(props.addresses) + ", error:'', add:''}"}
+                    class="neos-modal-content"
+                >
+                    <Garagist.Mautic:Component.ModalHeader
+                        content={props._label}
+                    />
+                    <div class="mx-4" x-show="addresses.length" x-transition>
+                        {props._i18n.id('email.addresses').translate()}
+                        <div class="flex flex-wrap gap-4 mt-2">
+                            <template x-for="(address, index) in addresses">
+                                <div class="flex items-center bg-neos-light">
+                                    <div class="py-2 px-4" x-text="address"></div>
                                     <button
-                                        data-dismiss="modal"
+                                        x-show="addresses.length>1"
+                                        x-on:click="addresses.splice(index, 1);$el.blur()"
+                                        class="flex items-center justify-center w-8 h-8 hover:bg-neos-red focus:bg-neos-red focus:outline-none"
+                                        aria-label={props._i18n.id('delete').translate()}
+                                        x-tooltip="10051"
                                         type="button"
-                                        class="neos-close neos-button"
-                                    ></button>
-                                    <div class="neos-header">
-                                        {props._label}
-                                    </div>
-
-                                    <div class="mx-4" x-show="addresses.length" x-transition>
-                                        {props._i18n.id('email.addresses').translate()}
-                                        <div class="flex flex-wrap gap-4 mt-2">
-                                            <template x-for="(address, index) in addresses">
-                                                <div class="flex items-center bg-neos-light">
-                                                    <div class="py-2 px-4" x-text="address"></div>
-                                                    <button
-                                                        x-show="addresses.length>1"
-                                                        x-on:click="addresses.splice(index, 1);$el.blur()"
-                                                        class="flex items-center justify-center w-8 h-8 hover:bg-neos-red focus:bg-neos-red focus:outline-none"
-                                                        aria-label={props._i18n.id('delete').translate()}
-                                                        x-tooltip="10051"
-                                                        type="button"
-                                                    >
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                </div>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <label for="add" class="mt-8 mx-4">{props._i18n.id('email.addresses.add').translate()}</label>
-                                    <div class="flex mx-4">
-                                        <input
-                                            x-model="add"
-                                            "x-on:keydown.space.prevent"
-                                            "x-on:keydown.enter.prevent"="const msg=$el.validationMessage;if(msg){error=msg}else if(add&&!addresses.includes(add)){addresses.push(add);add=''}"
-                                            x-on:change="error=$el.validationMessage"
-                                            x-on:input="if(error){error=$el.validationMessage}"
-                                            placeholder={props._i18n.id("enter.mailaddress").translate()}
-                                            type="email"
-                                            id="add"
-                                            class="block w-full"
-                                            required
-                                        />
-                                        <button
-                                            x-on:click="if(!error&&add&&!addresses.includes(add)){addresses.push(add);add=''}"
-                                            aria-label={props._i18n.id('email.addresses.add').translate()}
-                                            type="button"
-                                            class="neos-button neos-button-secondary focus:outline-none focus:bg-neos-blue"
-                                            x-tooltip="10051"
-                                        >
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
-                                    <div x-show="error" x-text="error" x-transition class="bg-neos-red text-white p-4 my-2 mx-4"></div>
-                                </div>
-                                <div class="neos-modal-footer">
-                                    <button
-                                        data-dismiss="modal"
-                                        type="button"
-                                        class="neos-button"
                                     >
-                                        {Translation.translate('cancel', null, [], 'Main', 'Neos.Neos')}
+                                        <i class="fas fa-times"></i>
                                     </button>
-                                    <a
-                                        :href="action + '&moduleArguments[addresses]=' + addresses"
-                                        :class="!addresses.length&&'pointer-events-none opacity-60'"
-                                        class="neos-button neos-button-primary"
-                                    >
-                                        {props._label}
-                                    </a>
                                 </div>
-                            </div>
+                            </template>
                         </div>
-                        <div class="neos-modal-backdrop neos-in"></div>
                     </div>
-                </template>
-            </button>
+                    <label for="add" class="mt-8 mx-4">{props._i18n.id('email.addresses.add').translate()}</label>
+                    <div class="flex mx-4">
+                        <input
+                            x-model="add"
+                            "x-on:keydown.space.prevent"
+                            "x-on:keydown.enter.prevent"="const msg=$el.validationMessage;if(msg){error=msg}else if(add&&!addresses.includes(add)){addresses.push(add);add=''}"
+                            x-on:change="error=$el.validationMessage"
+                            x-on:input="if(error){error=$el.validationMessage}"
+                            placeholder={props._i18n.id("enter.mailaddress").translate()}
+                            type="email"
+                            id="add"
+                            class="block w-full"
+                            required
+                        />
+                        <button
+                            x-on:click="if(!error&&add&&!addresses.includes(add)){addresses.push(add);add=''}"
+                            aria-label={props._i18n.id('email.addresses.add').translate()}
+                            type="button"
+                            class="neos-button neos-button-secondary focus:outline-none focus:bg-neos-blue"
+                            x-tooltip="10051"
+                        >
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div x-show="error" x-text="error" x-transition class="bg-neos-red text-white p-4 my-2 mx-4"></div>
+                    <Garagist.Mautic:Component.ModalFooter>
+                        <a
+                            :href="action + '&moduleArguments[addresses]=' + addresses"
+                            :class="!addresses.length&&'pointer-events-none opacity-60'"
+                            class="neos-button neos-button-primary"
+                        >
+                            {props._label}
+                        </a>
+                    </Garagist.Mautic:Component.ModalFooter>
+                </div>
+            </Garagist.Mautic:Component.ActionButton>
         `
     }
 }

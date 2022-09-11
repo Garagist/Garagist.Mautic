@@ -68,6 +68,12 @@
             <trans-unit id="email.delete" xml:space="preserve">
                 <source>Delete email</source>
             </trans-unit>
+            <trans-unit id="email.delete.headline" xml:space="preserve">
+                <source>Are you sure you want to delete this newsletter</source>
+            </trans-unit>
+            <trans-unit id="email.delete.text" xml:space="preserve">
+                <source>This email will be deleted in Neos as well as in Mautic. Statistics and content will no longer be available.</source>
+            </trans-unit>
             <trans-unit id="email.detail" xml:space="preserve">
                 <source>Details about this email</source>
             </trans-unit>
@@ -217,6 +223,9 @@
             </trans-unit>
             <trans-unit id="Garagist.Mautic:MauticEmailUpdate" xml:space="preserve">
                 <source>Email updated</source>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailTest" xml:space="preserve">
+                <source>Sent test email</source>
             </trans-unit>
         </body>
     </file>

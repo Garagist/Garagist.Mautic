@@ -21,10 +21,13 @@ prototype(Garagist.Mautic:Component.EmailData) < prototype(Neos.Fusion:Component
         task = ${props.email.task}
 
         isIdle = ${props.email.task == 'idle'}
+        isSended = ${props.email.dateSent}
         canPublish = ${this.isIdle && (props.email.dateModified != null && props.email.dateSend == null && !props.email.published)}
         canUnpublish = ${this.isIdle && (props.email.dateSent == null && props.email.published)}
+        canTest = ${this.canPublish || this.canUnpublish}
+        canEdit = ${this.canPublish}
         canSend = ${this.isIdle && (props.email.dateSent == null && props.email.published)}
-        canUpdate = ${this.isIdle && (props.email.dateSent == null && !props.email.published)}
+        canUpdate = ${this.isIdle && this.properties && (props.email.dateSent == null && !props.email.published)}
         canDelete= ${this.isIdle}
         canPublishAndSend = ${this.isIdle && (props.email.dateModified != null && props.email.dateSend == null)}
         canUnpublishAndUpdate = ${this.isIdle && (props.email.dateSent == null)}

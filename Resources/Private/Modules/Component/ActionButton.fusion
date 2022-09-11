@@ -1,0 +1,97 @@
+prototype(Garagist.Mautic:Component.ActionButton) < prototype(Neos.Fusion:Component) {
+    detailView = false
+    action = null
+    actionArguments = null
+
+    // True or neos button modifier (e.g. 'primary')
+    footer = false
+
+    confirm = false
+
+    // success or danger
+    type = null
+
+    showText = false
+    labelKey = null
+
+    icon = null
+
+    content = null
+
+    _iconBasis = 'flex items-center justify-center h-10 w-10 '
+
+    renderer = Neos.Fusion:Component {
+        @apply.props = ${props}
+        href = Neos.Fusion:ActionUri {
+            action = ${props.action}
+            arguments = ${props.actionArguments}
+        }
+        label = ${Translation.translate(props.labelKey, null, [], 'Module', 'Garagist.Mautic')}
+
+        _class = Neos.Fusion:Match {
+            @subject = ${props.showText ? 'text' : props.type}
+            @default = 'neos-button hover:!bg-neos-blue focus:!bg-neos-blue'
+            danger = 'neos-button hover:!bg-neos-red focus:!bg-neos-red'
+            success = 'neos-button hover:!bg-neos-green focus:!bg-neos-green'
+            text = 'group flex items-center justify-start'
+        }
+
+        _iconClass = Neos.Fusion:Match {
+            @subject = ${props.type}
+            @default = ${props._iconBasis + 'group-hover:bg-neos-blue group-focus:bg-neos-blue'}
+            danger = ${props._iconBasis + 'group-hover:bg-neos-red group-focus:bg-neos-red'}
+            success = ${props._iconBasis + 'group-hover:bg-neos-green group-focus:bg-neos-green'}
+        }
+
+        _footerClass = ${'neos-button neos-button-' + (Type.isString(props.footer) ? props.footer : 'secondary')}
+
+        renderer = afx`
+            <a
+                @if={!props.content && !props.confirm}
+                href={props.href}
+                class={props.footer ? props._footerClass : props._class}
+                aria-label={props.footer || props.showText ? null : props.label}
+            >
+                <i @if={!props.footer} class={["fas", props.icon, props.showText ? props._iconClass : null]}></i>
+                <span @if={props.showText && !props.footer} class="block pl-2">
+                    {props.label}
+                </span>
+                {props.footer ? props.label : ''}
+            </a>
+            <button
+                @if={props.content || props.confirm}
+                x-id="['modal']"
+                x-data
+                :href="'#' + $id('modal')"
+                data-toggle="modal"
+                class={props.footer ? props._footerClass : props._class}
+                aria-label={props.footer || props.showText ? null : props.label}
+            >
+                <i @if={!props.footer} class={["fas", props.icon, props.showText ? props._iconClass : null]}></i>
+                <span @if={props.showText && !props.footer} class="block pl-2">
+                    {props.label}
+                </span>
+                {props.footer ? props.label : ''}
+                <template x-teleport="body">
+                    <div :id="$id('modal')" class="mautic neos-hide">
+                        <div class="neos-modal-centered">
+                            {props.content}
+                            <div @if={props.confirm} class="neos-modal-content">
+                                <Garagist.Mautic:Component.ModalHeader
+                                    content={Translation.translate(props.labelKey + '.headline', props.label, [], 'Module', 'Garagist.Mautic')}
+                                />
+                                <p class="mx-4 empty:hidden">{Translation.translate(props.labelKey + '.text', props.label, [], 'Module', 'Garagist.Mautic')}</p>
+                                <Garagist.Mautic:Component.ModalFooter
+                                    type={props.type}
+                                    href={props.href}
+                                    confirm={props.label}
+                                />
+                            </div>
+                        </div>
+                        <div class="neos-modal-backdrop neos-in"></div>
+                    </div>
+                </template>
+            </button>
+        `
+    }
+}

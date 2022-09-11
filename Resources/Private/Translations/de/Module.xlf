@@ -89,6 +89,14 @@
                 <source>Delete email</source>
                 <target>E-Mail löschen</target>
             </trans-unit>
+            <trans-unit id="email.delete.headline" xml:space="preserve">
+                <source>Are you sure you want to delete this newsletter</source>
+                <target>Sind sie sicher dass sie diesen Newsletter löschen möchten?</target>
+            </trans-unit>
+            <trans-unit id="email.delete.text" xml:space="preserve">
+                <source>This email will be deleted in Neos as well as in Mautic. Statistics and content will no longer be available.</source>
+                <target>Dieses E-Mail wird in Neos sowie in Mautic gelöscht. Statiskien und die Inhalte sind nachher nicht mehr verfügbar.</target>
+            </trans-unit>
             <trans-unit id="email.detail" xml:space="preserve">
                 <source>Details about this email</source>
                 <target>Details über diese E-Mail</target>
@@ -292,6 +300,10 @@
             <trans-unit id="Garagist.Mautic:MauticEmailUpdate" xml:space="preserve">
                 <source>Email updated</source>
                 <target>E-Mail aktualisiert</target>
+            </trans-unit>
+            <trans-unit id="Garagist.Mautic:MauticEmailTest" xml:space="preserve">
+                <source>Sent test email</source>
+                <target>Test E-Mail versendet</target>
             </trans-unit>
         </body>
     </file>

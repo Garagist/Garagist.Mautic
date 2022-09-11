@@ -1,5 +1,6 @@
 Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
     title = ${q(node).property('title')}
+    action = ${Configuration.Setting('Garagist.Mautic.action')}
     categoryTitle = ${categoryNode ? q(categoryNode).property('title') : null}
 
     emailData = Garagist.Mautic:Component.EmailData {
@@ -44,6 +45,14 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                             <tr>
                                 <td>{props._i18n.id('subject').translate()}</td>
                                 <td>{props.emailData.subject}</td>
+                            </tr>
+                            <tr>
+                                <td>{props._i18n.id('createdOn').translate()}</td>
+                                <td>{props.emailData.dateCreated}</td>
+                            </tr>
+                            <tr @if={props.emailData.isSended}>
+                                <td>{props._i18n.id('sentOn').translate()}</td>
+                                <td>{props.emailData.dateSent}</td>
                             </tr>
                             <tr>
                                 <td>{props._i18n.id('recipients').translate()}</td>
@@ -113,7 +122,7 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
         </main>
         <div class="neos-footer">
             <Neos.Fusion:Link.Action
-                class="neos-button neos-button-primary"
+                class={"neos-button neos-button-" + (props.emailData.isSended ? 'primary' : 'secondary')}
                 href.action="node"
                 href.arguments.node={node}
             >
@@ -127,15 +136,38 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
             >
                 {props._i18n.id('view.refresh')}
             </Neos.Fusion:Link.Action>
-            <Neos.Fusion:Link.Action
-                @if={Array.last(history).error && ping}
-                class="neos-button neos-button-warning"
-                href.action="unlock"
-                href.arguments.node={node}
-                href.arguments.email={email}
-            >
-                {props._i18n.id('task.unlock').translate()}
-            </Neos.Fusion:Link.Action>
+            <Neos.Fusion:Fragment @if={ping && !props.emailData.isSended}>
+                <Neos.Fusion:Link.Action
+                    @if={Array.last(history).error}
+                    class="neos-button neos-button-warning"
+                    href.action="unlock"
+                    href.arguments.node={node}
+                    href.arguments.email={email}
+                >
+                    {props._i18n.id('task.unlock').translate()}
+                </Neos.Fusion:Link.Action>
+                <Garagist.Mautic:Component.ActionButton
+                    @if={props.action.publish && props.emailData.canPublish}
+                    action="publish"
+                    actionArguments={props.emailData.hrefArguments}
+                    label={props._i18n.id('email.publish').translate()}
+                    footer="primary"
+                />
+                <Garagist.Mautic:Component.ActionButton
+                    @if={props.action.send && props.emailData.canSend}
+                    action="send"
+                    actionArguments={props.emailData.hrefArguments}
+                    label={props._i18n.id('email.send').translate()}
+                    footer="success"
+                />
+                <Garagist.Mautic:Component.ActionButton
+                    @if={props.action.publishAndSend && props.canPublishAndSend}
+                    action="publishAndSend"
+                    actionArguments={props.emailData.hrefArguments}
+                    label={props._i18n.id('email.send').translate()}
+                    footer="success"
+                />
+            </Neos.Fusion:Fragment>
         </div>
     `
 }
