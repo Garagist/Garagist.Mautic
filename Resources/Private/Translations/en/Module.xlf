@@ -44,6 +44,9 @@
             <trans-unit id="email.addresses.add" xml:space="preserve">
                 <source>Add email address</source>
             </trans-unit>
+            <trans-unit id="email.addresses.alreadyDefined" xml:space="preserve">
+                <source>This email adress is already in the list of receivers</source>
+            </trans-unit>
             <trans-unit id="enter.mailaddress" xml:space="preserve">
                 <source>Enter email address</source>
             </trans-unit>
@@ -99,7 +102,7 @@
                 <source>Subject</source>
             </trans-unit>
             <trans-unit id="email.edit" xml:space="preserve">
-                <source>Change receiver</source>
+                <source>Change subject</source>
             </trans-unit>
             <trans-unit id="email.edit.withSegments" xml:space="preserve">
                 <source>Change subject and/or receiver</source>

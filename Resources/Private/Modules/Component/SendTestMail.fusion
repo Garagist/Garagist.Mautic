@@ -30,13 +30,15 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
             :class = "!addresses.length&&'pointer-events-none opacity-60'"
         }
 
+        _pushFunc = "{push:()=>{if(!error&&add&&!alreadyDefined){addresses.push(add.toLowerCase());add=''}}}"
+
         renderer = afx`
             <Garagist.Mautic:Component.ActionButton
                 label={props._label}
                 icon="fa-vial"
                 showText={props.detailView}
                 dialogTitle={this.label}
-                dialogXData={"{action:'" + props._actionUri + "', addresses:" + Json.stringify(props.addresses) + ", error:'', add:''}"}
+                dialogXData={"{action:'" + props._actionUri + "', addresses:" + Json.stringify(props.addresses) + ", error:'', add:'',alreadyDefined:false}"}
                 confirmLabel={this.label}
                 confirmAttributes={props._confirmAttributes}
                 initalFocusOnConfirm={props.hasAddresses}
@@ -62,14 +64,14 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
                     </div>
                 </div>
                 <label for="add">{props._i18n.id('email.addresses.add').translate()}</label>
-                <div class="flex !mt-2">
+                <div class="flex !mt-2" x-data={props._pushFunc}>
                     <input
                         x-model="add"
                         x-dialog:focus={!props.hasAddresses}
                         "x-on:keydown.space.prevent"
-                        "x-on:keydown.enter.prevent"="const msg=$el.validationMessage;if(msg){error=msg}else if(add&&!addresses.includes(add)){addresses.push(add);add=''}"
+                        "x-on:keydown.enter.prevent"="const msg=$el.validationMessage;if(msg){error=msg}else{push()}"
                         x-on:change="error=$el.validationMessage"
-                        x-on:input="if(error){error=$el.validationMessage}"
+                        x-on:input="if(error){error=$el.validationMessage}alreadyDefined=addresses.includes(add.toLowerCase())"
                         placeholder={props._i18n.id("enter.mailaddress").translate()}
                         type="email"
                         id="add"
@@ -77,7 +79,7 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
                         required
                     />
                     <button
-                        x-on:click="if(!error&&add&&!addresses.includes(add)){addresses.push(add);add=''}"
+                        x-on:click="push"
                         aria-label={props._i18n.id('email.addresses.add').translate()}
                         type="button"
                         class="neos-button neos-button-secondary focus:outline-none focus:bg-neos-blue"
@@ -87,6 +89,7 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
                     </button>
                 </div>
                 <div x-show="error" x-text="error" x-transition class="bg-neos-red text-white p-4"></div>
+                <div x-show="alreadyDefined" x-transition class="bg-neos-orange text-white p-4">{props._i18n.id('email.addresses.alreadyDefined').translate()}</div>
             </Garagist.Mautic:Component.ActionButton>
         `
     }
