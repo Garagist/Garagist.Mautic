@@ -45,7 +45,7 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
                     {props._i18n.id('email.addresses').translate()}
                     <div class="flex flex-wrap gap-4 mt-2">
                         <template x-for="(address, index) in addresses">
-                            <div class="flex items-center bg-neos-light">
+                            <div class="flex items-center bg-neos-gray-light">
                                 <div class="py-2 px-4" x-text="address"></div>
                                 <button
                                     x-show="addresses.length>1"

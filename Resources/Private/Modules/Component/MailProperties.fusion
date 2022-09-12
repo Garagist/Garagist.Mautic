@@ -77,7 +77,7 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
                                 type="checkbox"
                                 class="peer sr-only"
                             />
-                            <i class="fas fa-check w-5 h-5 mr-2 overflow-hidden relative bg-neos-light border border-neos-lightest text-neos-lighter flex items-center justify-center group-hover:border-neos-blue-light group-focus-within:border-neos-blue-light peer-checked:text-white peer-checked:bg-neos-blue-light peer-checked:border-neos-blue-light"></i>
+                            <i class="fas fa-check w-5 h-5 mr-2 overflow-hidden relative bg-neos-gray-light border border-neos-subtle-light text-neos-subtle flex items-center justify-center group-hover:border-neos-blue-light group-focus-within:border-neos-blue-light peer-checked:text-white peer-checked:bg-neos-blue-light peer-checked:border-neos-blue-light"></i>
                             <span>{props.allSegments[item].name}</span>
                         </label>
                     </Neos.Fusion:Loop>

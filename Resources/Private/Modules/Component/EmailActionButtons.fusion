@@ -2,7 +2,7 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
     action = ${Configuration.Setting('Garagist.Mautic.action')}
     detailView = false
 
-    _buttonClass = 'whitespace-nowrap neos-button !bg-neos '
+    _buttonClass = 'whitespace-nowrap neos-button !bg-gray-medium '
     _default = 'hover:!bg-neos-blue focus:!bg-neos-blue'
 
     @if.hasPing = ${ping}
@@ -34,6 +34,7 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
                 labelKey = 'email.update'
                 action = 'update'
                 icon = 'fa-sync'
+                type = 'warning'
             }
             publish = Neos.Fusion:DataStructure {
                 @if.set = ${props.action.publish && props.canPublish}

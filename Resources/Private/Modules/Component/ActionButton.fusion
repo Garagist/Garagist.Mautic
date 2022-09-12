@@ -9,7 +9,7 @@ prototype(Garagist.Mautic:Component.ActionButton) < prototype(Neos.Fusion:Compon
     confirm = false
     initalFocusOnConfirm = ${this.confirm}
 
-    // success or danger
+    // success, warning or danger
     type = null
 
     showText = false
@@ -33,6 +33,7 @@ prototype(Garagist.Mautic:Component.ActionButton) < prototype(Neos.Fusion:Compon
             @subject = ${props.showText ? 'text' : props.type}
             @default = 'neos-button hover:!bg-neos-blue focus:!bg-neos-blue'
             danger = 'neos-button hover:!bg-neos-red focus:!bg-neos-red'
+            warning = 'neos-button hover:!bg-neos-orange focus:!bg-neos-orange'
             success = 'neos-button hover:!bg-neos-green focus:!bg-neos-green'
             text = 'group flex items-center justify-start'
         }
@@ -41,6 +42,7 @@ prototype(Garagist.Mautic:Component.ActionButton) < prototype(Neos.Fusion:Compon
             @subject = ${props.type}
             @default = ${props._iconBasis + 'group-hover:bg-neos-blue group-focus:bg-neos-blue'}
             danger = ${props._iconBasis + 'group-hover:bg-neos-red group-focus:bg-neos-red'}
+            warning = ${props._iconBasis + 'group-hover:bg-neos-orange group-focus:bg-neos-orange'}
             success = ${props._iconBasis + 'group-hover:bg-neos-green group-focus:bg-neos-green'}
         }
 
