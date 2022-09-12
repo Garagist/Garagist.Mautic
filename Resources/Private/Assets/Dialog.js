@@ -26,30 +26,14 @@ export default function (Alpine) {
     });
 }
 
-function handleFocus(el, Alpine) {
-    Alpine.bind(el, {
-        "x-init"() {
-            this.$watch("__isOpenState", () => {
-                if (!this.__isOpenState) {
-                    return;
-                }
-                setTimeout(() => {
-                    el.focus();
-                }, 0);
-            });
-        },
-    });
-}
-
 function handleRoot(el, Alpine) {
     Alpine.bind(el, {
+        "x-effect"() {
+            this.$dispatch("alpine-dialog", this.__isOpenState);
+        },
         "x-data"() {
             return {
                 init() {
-                    this.$watch("__isOpenState", () => {
-                        this.$dispatch("alpine-dialog", this.__isOpenState);
-                    });
-
                     // If the user chose to use :open and @close instead of x-model.
                     Alpine.bound(el, "open") !== undefined &&
                         Alpine.effect(() => {
@@ -87,6 +71,19 @@ function handleRoot(el, Alpine) {
         },
         role: "dialog",
         "aria-modal": "true",
+    });
+}
+
+function handleFocus(el, Alpine) {
+    Alpine.bind(el, {
+        "x-effect"() {
+            if (!this.__isOpenState) {
+                return;
+            }
+            setTimeout(() => {
+                el.focus();
+            }, 0);
+        },
     });
 }
 
