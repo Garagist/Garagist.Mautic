@@ -61,10 +61,12 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                             <tr @if={ping}>
                                 <td>{props._i18n.id('actions').translate()}</td>
                                 <td class="!p-0" x-data="actions(1)">
-                                    <Garagist.Mautic:Component.EmailActionButtons
-                                        detailView={true}
-                                        {...props.emailData}
-                                    />
+                                    <div class="flex flex-col items-start">
+                                        <Garagist.Mautic:Component.EmailActionButtons
+                                            detailView={true}
+                                            {...props.emailData}
+                                        />
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

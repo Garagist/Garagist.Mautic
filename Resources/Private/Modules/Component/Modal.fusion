@@ -1,0 +1,74 @@
+prototype(Garagist.Mautic:Component.Modal) < prototype(Neos.Fusion:Component) {
+    title = null
+    description = null
+    content = null
+
+    confirmAttributes = Neos.Fusion:DataStructure {
+
+    }
+    initalFocusOnConfirm = false
+    confirmLabel = 'OK'
+    confirmType = null
+
+    xData = null
+
+
+    renderer = afx`
+        <template x-teleport="body">
+            <div class="mautic">
+                <div
+                    x-dialog
+                    x-model="open"
+                    style="display:none"
+                    class="fixed inset-0 overflow-y-auto z-[10050]"
+                >
+                    <div x-dialog:overlay "x-transition.opacity" class="fixed inset-0 bg-black bg-opacity-50"></div>
+                    <div class="relative min-h-screen flex items-center justify-center p-4">
+                        <div
+                            x-data={props.xData}
+                            x-dialog:panel
+                            x-transition
+                            class="relative max-w-2xl w-full bg-neos-dark border border-neos-light shadow-lg overflow-y-auto p-4 space-y-4"
+                        >
+                            <!-- Header -->
+                            <div class="flex gap-4">
+                                <button
+                                    x-on:click="$dialog.close()"
+                                    class="flex items-center justify-center w-10 h-10 hover:bg-neos-blue focus:bg-neos-blue focus:outline-none -mt-4 -mr-4"
+                                    aria-label={Translation.translate('close', null, [], 'Module', 'Garagist.Mautic')}
+                                    x-tooltip="10051"
+                                    type="button"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512" class="w-5 h-5 fill-current">
+                                        <path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"/>
+                                    </svg>
+                                </button>
+                                <h2 x-dialog:title class="text-base flex-1 order-first">{props.title}</h2>
+                            </div>
+
+                            <!-- Content -->
+                            <p @if={props.description} x-dialog:description>
+                                {props.description}
+                            </p>
+                            {props.content}
+
+                            <!-- Footer -->
+                             <div class="flex align-baseline justify-end gap-2">
+                                <button x-on:click="$dialog.close()" type="button" class="neos-button">
+                                    {Translation.translate('cancel', null, [], 'Main', 'Neos.Neos')}
+                                </button>
+                                <a
+                                    x-dialog:focus={!!props.initalFocusOnConfirm}
+                                    class={"neos-button neos-button-" + (props.confirmType || 'primary')}
+                                    {...props.confirmAttributes}
+                                >
+                                    {props.confirmLabel}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    `
+}

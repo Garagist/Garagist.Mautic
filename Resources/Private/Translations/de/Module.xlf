@@ -95,7 +95,7 @@
             </trans-unit>
             <trans-unit id="email.delete.text" xml:space="preserve">
                 <source>This email will be deleted in Neos as well as in Mautic. Statistics and content will no longer be available.</source>
-                <target>Dieses E-Mail wird in Neos sowie in Mautic gelöscht. Statiskien und die Inhalte sind nachher nicht mehr verfügbar.</target>
+                <target>Dieses E-Mail wird in Neos sowie in Mautic gelöscht. Statistiken und die Inhalte sind nachher nicht mehr verfügbar.</target>
             </trans-unit>
             <trans-unit id="email.detail" xml:space="preserve">
                 <source>Details about this email</source>
@@ -220,6 +220,10 @@
             <trans-unit id="list.refresh" xml:space="preserve">
                 <source>Refresh list</source>
                 <target>Liste aktualisieren</target>
+            </trans-unit>
+            <trans-unit id="close" xml:space="preserve">
+                <source>Close</source>
+                <target>Schließen</target>
             </trans-unit>
             <trans-unit id="metadata" xml:space="preserve">
                 <source>Metadata</source>

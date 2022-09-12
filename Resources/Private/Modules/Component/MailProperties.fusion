@@ -17,14 +17,17 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
     @if.hasNodeAndPing = ${node && ping}
     class = 'neos-button neos-button-primary'
 
-    _type = ${this.email ? 'edit' : 'create'}
+    _isEdit = ${!!this.email}
+    _type = ${this._isEdit ? 'edit' : 'create'}
+    _showSegments = ${Carbon.Array.check(this.chooseSegment) && Carbon.Array.check(this.allSegments)}
 
     renderer = Neos.Fusion:Component {
         @apply.props = ${props}
         _placeholder = ${q(node).property('titleOverride') || q(node).property('title')}
+        _subject = ${props.subject == this._placeholder ? '' : props.subject}
         _i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
-        _showSegments = ${Carbon.Array.check(props.chooseSegment) && Carbon.Array.check(props.allSegments)}
-        _label = ${this._i18n.id('email.' + props._type + (props._type == 'edit' && this._showSegments ? '.withSegments'  : '')).translate()}
+
+        _label = ${this._i18n.id('email.' + props._type + (props._isEdit && props._showSegments ? '.withSegments'  : '')).translate()}
         _actionUri = Neos.Fusion:UriBuilder {
             action = ${props._type}
             arguments = Neos.Fusion:DataStructure {
@@ -34,63 +37,54 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
             }
         }
 
+        _confirmAttributes = Neos.Fusion:DataStructure {
+            :href = ${"action + '&moduleArguments[subject]='+(subject||placeholder)" + (props._showSegments ? "+'&moduleArguments[segments]='+segments" : '')}
+            :class = "segments&&!segments.length&&'pointer-events-none opacity-60'"
+        }
+
         renderer = afx`
             <Garagist.Mautic:Component.ActionButton
                 label={props._label}
                 icon="fa-pencil-alt"
                 showText={props.detailView}
-                footer={props._type == 'create' ? 'primary' : false}
+                footer={props._isEdit ? false : 'primary'}
+                dialogTitle={this.label}
+                dialogXData={"{action:'" + props._actionUri + "', subject:'" + props._subject + "', placeholder:'" + props._placeholder + "'" + (props._showSegments ? ", segments:" + Json.stringify(props.segments || props.prefilledSegments) : "") + "}"}
+                confirmLabel={this.label}
+                initalFocusOnConfirm={!props._isEdit}
+                confirmAttributes={props._confirmAttributes}
             >
-                <div
-                    x-data={"{action:'" + props._actionUri + "', subject:'" + props.subject + "', placeholder:'" + props._placeholder + "', segments:" + Json.stringify(props.segments || props.prefilledSegments) + "}"}
-                    class="neos-modal-content"
-                >
-                    <Garagist.Mautic:Component.ModalHeader
-                        content={props._label}
+                <fieldset>
+                    <label for="subject">{props._i18n.id('subject').translate()}</label>
+                    <input
+                        type="text"
+                        x-dialog:focus={props._isEdit}
+                        x-model="subject"
+                        id="subject"
+                        :placeholder="placeholder"
+                        class="block w-full"
                     />
-                    <fieldset class="mx-4">
-                        <label for="subject">{props._i18n.id('subject').translate()}</label>
-                        <input
-                            type="text"
-                            x-model="subject"
-                            id="subject"
-                            :placeholder="placeholder"
-                            class="block w-full"
-                        />
-                    </fieldset>
-                    <fieldset
-                        @if={props._showSegments}
-                        class="mx-4"
-                    >
-                        <legend class="!p-0 !leading-5 !text-sm">
-                            {props._i18n.id('recipients').translate()}
-                        </legend>
-                        <Neos.Fusion:Loop items={props.chooseSegment}>
-                            <label class={[props.lockPrefilledSegments && Array.indexOf(props.prefilledSegments, item) != -1 ? "pointer-events-none" : null, "neos-checkbox !block mt-2 cursor-pointer"]}>
-                                <input
-                                    x-model="segments"
-                                    value={item}
-                                    type="checkbox"
-                                />
-                                <span></span>
-                                {props.allSegments[item].name}
-                            </label>
-                        </Neos.Fusion:Loop>
-                        <div x-show="!segments.length" x-transition class="bg-neos-red text-white p-4 my-2 w-full">
-                            {props._i18n.id('pleaseChooseMinimalOneItem').translate()}
-                        </div>
-                    </fieldset>
-                    <Garagist.Mautic:Component.ModalFooter>
-                        <a
-                            :href="action + '&moduleArguments[subject]=' + (subject||placeholder) + '&moduleArguments[segments]=' + segments"
-                            :disabled={props._showSegments ? "!segments.length" : null}
-                            :class={props._showSegments ? "!segments.length&&'pointer-events-none'" : null}
-                            class="neos-button neos-button-primary"
-                        >
-                            {props._label}
-                        </a>
-                    </Garagist.Mautic:Component.ModalFooter>
-                </div>
+                </fieldset>
+                <fieldset @if={props._showSegments} class="mx-4">
+                    <legend class="!p-0 !leading-5 !text-sm">
+                        {props._i18n.id('recipients').translate()}
+                    </legend>
+                    <Neos.Fusion:Loop items={props.chooseSegment}>
+                        <label class={[props.lockPrefilledSegments && Array.indexOf(props.prefilledSegments, item) != -1 ? "pointer-events-none" : null, "!p-0 !flex items-center justify-start mt-2 cursor-pointer group"]}>
+                            <input
+                                x-model="segments"
+                                value={item}
+                                type="checkbox"
+                                class="peer sr-only"
+                            />
+                            <i class="fas fa-check w-5 h-5 mr-2 overflow-hidden relative bg-neos-light border border-neos-lightest text-neos-lighter flex items-center justify-center group-hover:border-neos-blue-light group-focus-within:border-neos-blue-light peer-checked:text-white peer-checked:bg-neos-blue-light peer-checked:border-neos-blue-light"></i>
+                            <span>{props.allSegments[item].name}</span>
+                        </label>
+                    </Neos.Fusion:Loop>
+                    <div x-show="!segments.length" x-transition class="bg-neos-red text-white p-4 my-2 w-full">
+                        {props._i18n.id('pleaseChooseMinimalOneItem').translate()}
+                    </div>
+                </fieldset>
             </Garagist.Mautic:Component.ActionButton>
         `
     }

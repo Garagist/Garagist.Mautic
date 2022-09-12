@@ -1,8 +1,12 @@
 import Alpine from "alpinejs";
 import collapse from "@alpinejs/collapse";
+import focus from "@alpinejs/focus";
+import dialog from "./Dialog";
 import tippy, { createSingleton } from "tippy.js";
 
 Alpine.plugin(collapse);
+Alpine.plugin(focus);
+Alpine.plugin(dialog);
 
 if (window.name == "email-module") {
     document.documentElement.classList.add("email-module-integrated");

@@ -7,6 +7,7 @@ prototype(Garagist.Mautic:Component.ActionButton) < prototype(Neos.Fusion:Compon
     footer = false
 
     confirm = false
+    initalFocusOnConfirm = ${this.confirm}
 
     // success or danger
     type = null
@@ -45,6 +46,8 @@ prototype(Garagist.Mautic:Component.ActionButton) < prototype(Neos.Fusion:Compon
 
         _footerClass = ${'neos-button neos-button-' + (Type.isString(props.footer) ? props.footer : 'secondary')}
 
+        confirmAttributes = Neos.Fusion:DataStructure
+
         renderer = afx`
             <a
                 @if={!props.content && !props.confirm}
@@ -60,10 +63,8 @@ prototype(Garagist.Mautic:Component.ActionButton) < prototype(Neos.Fusion:Compon
             </a>
             <button
                 @if={props.content || props.confirm}
-                x-id="['modal']"
-                x-data
-                :href="'#' + $id('modal')"
-                data-toggle="modal"
+                x-data="{open:false}"
+                x-on:click="open=true"
                 class={props.footer ? props._footerClass : props._class}
                 aria-label={props.footer || props.showText ? null : props.label}
             >
@@ -72,25 +73,16 @@ prototype(Garagist.Mautic:Component.ActionButton) < prototype(Neos.Fusion:Compon
                     {props.label}
                 </span>
                 {props.footer ? props.label : ''}
-                <template x-teleport="body">
-                    <div :id="$id('modal')" class="mautic neos-hide">
-                        <div class="neos-modal-centered">
-                            {props.content}
-                            <div @if={props.confirm} class="neos-modal-content">
-                                <Garagist.Mautic:Component.ModalHeader
-                                    content={Translation.translate(props.labelKey + '.headline', props.label, [], 'Module', 'Garagist.Mautic')}
-                                />
-                                <p class="mx-4 empty:hidden">{Translation.translate(props.labelKey + '.text', props.label, [], 'Module', 'Garagist.Mautic')}</p>
-                                <Garagist.Mautic:Component.ModalFooter
-                                    type={props.type}
-                                    href={props.href}
-                                    confirm={props.label}
-                                />
-                            </div>
-                        </div>
-                        <div class="neos-modal-backdrop neos-in"></div>
-                    </div>
-                </template>
+                <Garagist.Mautic:Component.Modal
+                    title={props.dialogTitle || Translation.translate(props.labelKey + '.headline', props.label, [], 'Module', 'Garagist.Mautic')}
+                    description={props.confirm ? Translation.translate(props.labelKey + '.text', props.label, [], 'Module', 'Garagist.Mautic') : null}
+                    confirmType={props.type}
+                    initalFocusOnConfirm={props.initalFocusOnConfirm}
+                    xData={props.dialogXData}
+                    content={props.content}
+                    confirmLabel={props.label}
+                    confirmAttributes={props.action ? {href: props.href}  : props.confirmAttributes}
+                />
             </button>
         `
     }
