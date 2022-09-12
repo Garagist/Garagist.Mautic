@@ -58,4 +58,4 @@ Garagist:
       send: true
       update: true
       edit: true
-      test: true
+      test: false
