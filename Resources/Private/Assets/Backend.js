@@ -58,11 +58,27 @@ const rafTimeOut = (callback, delay) => {
     raf(timeoutFunc);
 };
 
+let dialogIsOpen = false;
+
+document.addEventListener("alpine-dialog", ({ detail }) => {
+    dialogIsOpen = detail;
+});
+
 Alpine.data("actions", (minItems) => ({
     init() {
         const items = this.$root.querySelectorAll("a,button").length;
         if (items < minItems) {
-            rafTimeOut(() => window.location.reload(), 5000);
+            rafTimeOut(() => {
+                if (!dialogIsOpen) {
+                    window.location.reload();
+                    return;
+                }
+                document.addEventListener("alpine-dialog", ({ detail }) => {
+                    if (!detail) {
+                        window.location.reload();
+                    }
+                });
+            }, 5000);
         }
     },
 }));

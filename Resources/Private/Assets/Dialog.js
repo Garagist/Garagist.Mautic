@@ -46,6 +46,10 @@ function handleRoot(el, Alpine) {
         "x-data"() {
             return {
                 init() {
+                    this.$watch("__isOpenState", () => {
+                        this.$dispatch("alpine-dialog", this.__isOpenState);
+                    });
+
                     // If the user chose to use :open and @close instead of x-model.
                     Alpine.bound(el, "open") !== undefined &&
                         Alpine.effect(() => {
