@@ -9,7 +9,7 @@ prototype(Garagist.Mautic:Component.IndexLink) < prototype(Neos.Fusion:Component
             x-show={props.show}
             x-transition={!!props.show}
             style={props.show ? "display:none" : null}
-            class={[props.class, "relative rounded bg-gray-medium shadow-sm flex items-center hover:bg-neos-gray-darker focus-within:bg-neos-gray-darker"]}
+            class={[props.class, "relative rounded bg-neos-gray-medium shadow-sm flex items-center hover:bg-neos-gray-darker focus-within:bg-neos-gray-darker"]}
         >
             <div class={[props.count ? "bg-green-800" : "bg-red-800" ,"leading-none flex-shrink-0 h-16 w-16 rounded-l flex flex-col items-center justify-center"]}>
                 <span class="text-lg">{props.count}</span>

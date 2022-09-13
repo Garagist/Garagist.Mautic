@@ -2,7 +2,7 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
     action = ${Configuration.Setting('Garagist.Mautic.action')}
     detailView = false
 
-    _buttonClass = 'whitespace-nowrap neos-button !bg-gray-medium '
+    _buttonClass = 'whitespace-nowrap neos-button !bg-neos-gray-medium '
     _default = 'hover:!bg-neos-blue focus:!bg-neos-blue'
 
     @if.hasPing = ${ping}
