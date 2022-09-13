@@ -74,19 +74,6 @@ function handleRoot(el, Alpine) {
     });
 }
 
-function handleFocus(el, Alpine) {
-    Alpine.bind(el, {
-        "x-effect"() {
-            if (!this.__isOpenState) {
-                return;
-            }
-            setTimeout(() => {
-                el.focus();
-            }, 0);
-        },
-    });
-}
-
 function handleOverlay(el, Alpine) {
     Alpine.bind(el, {
         "x-init"() {
@@ -129,6 +116,19 @@ function handleDescription(el, Alpine) {
     Alpine.bind(el, {
         ":id"() {
             return this.$id("alpine-dialog-description");
+        },
+    });
+}
+
+function handleFocus(el, Alpine) {
+    Alpine.bind(el, {
+        "x-effect"() {
+            if (!this.__isOpenState) {
+                return;
+            }
+            setTimeout(() => {
+                el.focus();
+            }, 0);
         },
     });
 }
