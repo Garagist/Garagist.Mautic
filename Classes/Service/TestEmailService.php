@@ -39,6 +39,6 @@ class TestEmailService
             $testEmailAdresses = array_merge($testEmailAdresses, $this->addressesFromSettings);
         }
 
-        return array_unique($testEmailAdresses);
+        return array_unique(array_map('strtolower', $testEmailAdresses));
     }
 }
