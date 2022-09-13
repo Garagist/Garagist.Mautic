@@ -155,19 +155,17 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                     label={props._i18n.id('email.publish').translate()}
                     footer="primary"
                 />
-                <Garagist.Mautic:Component.ActionButton
+                <Garagist.Mautic:Component.SendMail
                     @if={props.action.send && props.emailData.canSend}
                     action="send"
-                    actionArguments={props.emailData.hrefArguments}
-                    label={props._i18n.id('email.send').translate()}
                     footer="success"
+                    {...props.emailData.hrefArguments}
                 />
-                <Garagist.Mautic:Component.ActionButton
+                <Garagist.Mautic:Component.SendMail
                     @if={props.action.publishAndSend && props.canPublishAndSend}
                     action="publishAndSend"
-                    actionArguments={props.emailData.hrefArguments}
-                    label={props._i18n.id('email.send').translate()}
                     footer="success"
+                    {...props.emailData.hrefArguments}
                 />
             </Neos.Fusion:Fragment>
         </div>

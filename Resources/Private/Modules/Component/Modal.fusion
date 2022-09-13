@@ -12,6 +12,8 @@ prototype(Garagist.Mautic:Component.Modal) < prototype(Neos.Fusion:Component) {
 
     xData = null
 
+    maxWidth = null
+
 
     renderer = afx`
         <template x-teleport="body">
@@ -28,6 +30,7 @@ prototype(Garagist.Mautic:Component.Modal) < prototype(Neos.Fusion:Component) {
                             x-data={props.xData}
                             x-dialog:panel
                             x-transition
+                            style={props.maxWidth ? 'max-width: ' + props.maxWidth : null}
                             class="relative max-w-2xl w-full bg-neos-gray-dark border border-neos-gray-light shadow-lg overflow-y-auto p-4 space-y-4"
                         >
                             <!-- Header -->

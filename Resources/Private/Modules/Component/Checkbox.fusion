@@ -1,0 +1,18 @@
+prototype(Garagist.Mautic:Component.Checkbox) < prototype(Neos.Fusion:Component) {
+    xModel = null
+    value = null
+    label = null
+
+    renderer = afx`
+        <label class={Carbon.String.merge(props.class, "!p-0 !flex items-center justify-start mt-2 cursor-pointer group")}>
+            <input
+                x-model={props.xModel}
+                value={props.value}
+                type="checkbox"
+                class="peer sr-only"
+            />
+            <i class="fas fa-check w-5 h-5 mr-2 overflow-hidden relative bg-neos-gray-light border border-neos-subtle-light text-neos-subtle flex items-center justify-center group-hover:border-neos-blue-light group-focus-within:border-neos-blue-light peer-checked:text-white peer-checked:bg-neos-blue-light peer-checked:border-neos-blue-light"></i>
+            <span>{props.label}</span>
+        </label>
+    `
+}

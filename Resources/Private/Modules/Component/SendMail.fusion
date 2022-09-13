@@ -1,0 +1,71 @@
+prototype(Garagist.Mautic:Component.SendMail) < prototype(Neos.Fusion:Component) {
+    email = null
+
+    // Redirect after the action is done
+    redirect = null
+    action = 'send'
+
+    class = 'neos-button neos-button-primary'
+    footer = false
+
+    @if.hasEmail = ${this.email}
+
+    renderer = Neos.Fusion:Component {
+        @apply.props = ${props}
+        _i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
+        _label = ${this._i18n.id('email.send').translate()}
+        _actionUri = Neos.Fusion:UriBuilder {
+            action = ${props.action}
+            arguments = Neos.Fusion:DataStructure {
+                node = ${node}
+                email = ${props.email}
+                redirect = ${props.redirect}
+            }
+        }
+
+        _confirmAttributes = Neos.Fusion:DataStructure {
+            :href = "action+'&moduleArguments[date]='+date"
+        }
+
+        _sendDateLabel = ${this._i18n.id('email.send.date').translate()}
+        _locale = Neos.Fusion:Match {
+            @subject = ${Carbon.Backend.language()}
+            @default = 'en'
+            de = 'de'
+        }
+
+        renderer = afx`
+            <Garagist.Mautic:Component.ActionButton
+                label={props._label}
+                icon="fa-paper-plane"
+                showText={props.detailView}
+                dialogTitle={this.label}
+                dialogXData={"{action:'" + props._actionUri + "',date:'now',sendLater:false,pickr:null}"}
+                confirmLabel={this.label}
+                confirmAttributes={props._confirmAttributes}
+                footer={props.footer}
+                initalFocusOnConfirm={true}
+                type="success"
+                dialogMaxWidth="382px"
+            >
+                <Garagist.Mautic:Component.Checkbox
+                    xModel="sendLater"
+                    label={props._i18n.id('email.send.later').translate()}
+                    value={true}
+                />
+
+                <div x-show="sendLater" x-transition x-effect="date=sendLater&&pickr?pickr:'now'" class="!my-8">
+                    <label for="date">{props._sendDateLabel}</label>
+                    <input
+                        x-show="sendLater"
+                        x-model="pickr"
+                        x-flatpickr={"{locale:'" + props._locale + "'}"}
+                        placeholder={props._sendDateLabel}
+                        id="date"
+                        class="block w-full !opacity-100 pointer-events-none max-w-l"
+                    />
+                </div>
+            </Garagist.Mautic:Component.ActionButton>
+        `
+    }
+}

@@ -42,26 +42,28 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
                 action = 'publish'
                 icon = 'fa-upload'
             }
-            send = Neos.Fusion:DataStructure {
-                @if.set = ${props.action.send && props.canSend}
-                labelKey = 'email.send'
-                action = 'send'
-                icon = 'fa-paper-plane'
-                type = 'success'
-            }
+            send = afx`
+                <Garagist.Mautic:Component.SendMail
+                    @if={props.action.send && props.canSend}
+                    action='send'
+                    detailView={props.detailView}
+                    {...props.hrefArguments}
+                />
+            `
             unpublish = Neos.Fusion:DataStructure {
                 @if.set = ${props.action.unpublish && props.canUnpublish}
                 labelKey = 'email.unpublish'
                 action = 'unpublish'
                 icon = 'fa-download'
             }
-            publishAndSend = Neos.Fusion:DataStructure {
-                @if.set = ${props.action.publishAndSend && props.canPublishAndSend}
-                labelKey = 'email.send'
-                action = 'publishAndSend'
-                icon = 'fa-paper-plane'
-                type = 'success'
-            }
+            publishAndSend = afx`
+                <Garagist.Mautic:Component.SendMail
+                    @if={props.action.publishAndSend && props.canPublishAndSend}
+                    action='publishAndSend'
+                    detailView={props.detailView}
+                    {...props.hrefArguments}
+                />
+            `
             unpublishAndUpdate = Neos.Fusion:DataStructure {
                 @if.set = ${props.action.unpublishAndUpdate && props.canUnpublishAndUpdate}
                 labelKey = 'email.update'

@@ -56,6 +56,12 @@
             <trans-unit id="email.send" xml:space="preserve">
                 <source>Send email</source>
             </trans-unit>
+            <trans-unit id="email.send.later" xml:space="preserve">
+                <source>Send email at a later date</source>
+            </trans-unit>
+            <trans-unit id="email.send.date" xml:space="preserve">
+                <source>Set date and time</source>
+            </trans-unit>
             <trans-unit id="email.send.test" xml:space="preserve">
                 <source>Send test email</source>
             </trans-unit>

@@ -80,6 +80,7 @@ prototype(Garagist.Mautic:Component.ActionButton) < prototype(Neos.Fusion:Compon
                     description={props.confirm ? Translation.translate(props.labelKey + '.text', props.label, [], 'Module', 'Garagist.Mautic') : null}
                     confirmType={props.type}
                     initalFocusOnConfirm={props.initalFocusOnConfirm}
+                    maxWidth={props.dialogMaxWidth}
                     xData={props.dialogXData}
                     content={props.content}
                     confirmLabel={props.label}

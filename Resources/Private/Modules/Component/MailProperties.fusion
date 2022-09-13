@@ -70,16 +70,12 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
                         {props._i18n.id('recipients').translate()}
                     </legend>
                     <Neos.Fusion:Loop items={props.chooseSegment}>
-                        <label class={[props.lockPrefilledSegments && Array.indexOf(props.prefilledSegments, item) != -1 ? "pointer-events-none" : null, "!p-0 !flex items-center justify-start mt-2 cursor-pointer group"]}>
-                            <input
-                                x-model="segments"
-                                value={item}
-                                type="checkbox"
-                                class="peer sr-only"
-                            />
-                            <i class="fas fa-check w-5 h-5 mr-2 overflow-hidden relative bg-neos-gray-light border border-neos-subtle-light text-neos-subtle flex items-center justify-center group-hover:border-neos-blue-light group-focus-within:border-neos-blue-light peer-checked:text-white peer-checked:bg-neos-blue-light peer-checked:border-neos-blue-light"></i>
-                            <span>{props.allSegments[item].name}</span>
-                        </label>
+                        <Garagist.Mautic:Component.Checkbox
+                            class={props.lockPrefilledSegments && Array.indexOf(props.prefilledSegments, item) != -1 ? "pointer-events-none" : null}
+                            xModel="segments"
+                            value={item}
+                            label={props.allSegments[item].name}
+                        />
                     </Neos.Fusion:Loop>
                     <div x-show="!segments.length" x-transition class="bg-neos-red text-white p-4 my-2 w-full">
                         {props._i18n.id('pleaseChooseMinimalOneItem').translate()}

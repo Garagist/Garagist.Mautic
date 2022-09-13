@@ -61,6 +61,14 @@
                 <source>Send test email</source>
                 <target>Test E-Mail senden</target>
             </trans-unit>
+            <trans-unit id="email.send.later" xml:space="preserve">
+                <source>Send email at a later date</source>
+                <target>E-Mail zu einem späteren Zeitpunkt senden</target>
+            </trans-unit>
+            <trans-unit id="email.send.date" xml:space="preserve">
+                <source>Set date and time</source>
+                <target>Zeitpunkt festlegen</target>
+            </trans-unit>
             <trans-unit id="enter.mailaddress" xml:space="preserve">
                 <source>Enter email address</source>
                 <target>E-Mail Adresse eingeben</target>

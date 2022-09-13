@@ -21,6 +21,7 @@
     "concurrently": "^7.4.0",
     "cssnano": "^5.1.13",
     "esbuild": "^0.15.7",
+    "flatpickr": "^4.6.13",
     "postcss": "^8.4.16",
     "postcss-cli": "^10.0.0",
     "postcss-import": "^15.0.0",

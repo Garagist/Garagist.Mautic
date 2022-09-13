@@ -3,6 +3,8 @@ import collapse from "@alpinejs/collapse";
 import focus from "@alpinejs/focus";
 import dialog from "./Dialog";
 import tippy, { createSingleton } from "tippy.js";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/l10n/de.js";
 
 Alpine.plugin(collapse);
 Alpine.plugin(focus);
@@ -45,6 +47,27 @@ Alpine.directive("tooltips", (el, { expression }) => {
         moveTransition: "transform 0.2s ease-out",
         zIndex,
     });
+});
+
+flatpickr.l10ns.default.firstDayOfWeek = 1;
+Alpine.directive("flatpickr", (el, { expression }, { evaluate }) => {
+    const date = new Date();
+    let options = expression ? evaluate(expression) : {};
+    options = {
+        enableTime: true,
+        dateFormat: "Z",
+        altFormat: "j. F Y H:i",
+        altInput: true,
+        minDate: date,
+        defaultDate: date,
+        time_24hr: true,
+        weekNumbers: true,
+        inline: true,
+        static: true,
+        ...options,
+    };
+
+    flatpickr(el, options);
 });
 
 const dateNow = Date.now;

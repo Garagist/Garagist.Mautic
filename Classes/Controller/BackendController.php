@@ -320,8 +320,9 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    public function sendAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
+    public function sendAction(NodeInterface $node, MauticEmail $email, string $date, ?string $redirect = null): void
     {
+        // todo use $date, 'now' is send it immediately
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
             $this->mauticService->fireSendEmailEvent($email);
@@ -544,8 +545,9 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    public function publishAndSendAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
+    public function publishAndSendAction(NodeInterface $node, MauticEmail $email, string $date, ?string $redirect = null): void
     {
+        // todo use $date, 'now' is send it immediately
         if (!$email->isPublished()) {
             $this->publishAction($node, $email, 'none');
         }

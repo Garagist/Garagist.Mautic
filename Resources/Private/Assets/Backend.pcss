@@ -2,6 +2,73 @@
 @import "tailwindcss/components";
 @import "tippy.js/dist/tippy.css";
 @import "tailwindcss/utilities";
+@import "flatpickr/dist/themes/dark.css";
+
+/* flatpickr */
+.flatpickr-calendar,
+.flatpickr-days {
+  width: auto !important;
+}
+
+.flatpickr-calendar.flatpickr-calendar {
+  &.flatpickr-calendar,
+  & .flatpickr-month,
+  & input.cur-year,
+  & .flatpickr-monthDropdown-months,
+  & .flatpickr-weekday {
+    background: none !important;
+  }
+
+  & input.cur-year {
+    border: none !important;
+    border-radius: 0;
+    box-sizing: border-box;
+    color: inherit !important;
+    font-family: inherit;
+    font-size: inherit;
+    height: auto;
+    line-height: inherit;
+    margin: 0;
+    padding: 0;
+  }
+
+  & .flatpickr-monthDropdown-months {
+    appearance: menulist;
+    border: none !important;
+    border-radius: 0;
+    box-sizing: border-box;
+    color: inherit !important;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 300;
+    height: auto;
+    line-height: inherit;
+    margin: 0;
+    outline: none;
+    padding: 0;
+    text-align: right;
+  }
+
+  & .flatpickr-current-month {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+}
+
+.flatpickr-calendar {
+  margin-top: 10px;
+}
+
+.flatpickr-day.selected {
+  background: var(--blue);
+}
+
+.flatpickr-day {
+  border-radius: 0;
+}
 
 /* Alpine JS */
 [x-cloak] {
