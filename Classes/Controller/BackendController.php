@@ -512,14 +512,17 @@ class BackendController extends AbstractModuleController
         if ($subject) {
             $email->setProperty('subject', $subject);
         }
-        if (is_array($segments) && count($segments)) {
+        $hasSegments = is_array($segments) && count($segments);
+        if ($hasSegments) {
             $convertedSegments = [];
             foreach ($segments as $value) {
                 $convertedSegments[] = (int)$value;
             }
             $email->setProperty('segments', $convertedSegments);
         }
+        $feedback = $hasSegments ? 'email.feedback.edited.withSegments' : 'email.feedback.edited';
         $this->mauticService->fireUpdateEmailEvent($email);
+        $this->addFlashMessage('', $feedback, Message::SEVERITY_OK, []);
         $this->redirectCommand($node, $email, $redirect);
     }
 

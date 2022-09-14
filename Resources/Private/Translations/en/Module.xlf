@@ -158,6 +158,12 @@
             <trans-unit id="email.feedback.updated.failed" xml:space="preserve">
                 <source>The email could not be updated</source>
             </trans-unit>
+            <trans-unit id="email.feedback.edited" xml:space="preserve">
+                <source>The subject has been changed</source>
+            </trans-unit>
+            <trans-unit id="email.feedback.edited.withSegments" xml:space="preserve">
+                <source>The subject and/or the receivers has been changed</source>
+            </trans-unit>
             <trans-unit id="email.feedback.published" xml:space="preserve">
                 <source>The email has been published</source>
             </trans-unit>

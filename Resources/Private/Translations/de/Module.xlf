@@ -205,6 +205,14 @@
                 <source>The email has been updated</source>
                 <target>Die E-Mail wurde aktualisiert</target>
             </trans-unit>
+            <trans-unit id="email.feedback.edited" xml:space="preserve">
+                <source>The subject has been changed</source>
+                <target>Der Betreff wurde geändert</target>
+            </trans-unit>
+            <trans-unit id="email.feedback.edited.withSegments" xml:space="preserve">
+                <source>The subject and/or the receivers has been changed</source>
+                <target>Der Betreff und/oder die Empfänger wurde geändert</target>
+            </trans-unit>
             <trans-unit id="email.feedback.updated.failed" xml:space="preserve">
                 <source>The email could not be updated</source>
                 <target>Die E-Mail konnte nicht aktualisiert werden</target>
