@@ -69,6 +69,22 @@
                 <source>Set date and time</source>
                 <target>Zeitpunkt festlegen</target>
             </trans-unit>
+            <trans-unit id="email.send.now.all" xml:space="preserve">
+                <source><![CDATA[The email is sent to the recipients <strong>immediately</strong>]]></source>
+                <target><![CDATA[Das E-Mail wird <strong>sofort</strong> an die Empfänger versendet]]></target>
+            </trans-unit>
+            <trans-unit id="email.send.now.segments" xml:space="preserve">
+                <source><![CDATA[The email will be sent <strong>immediately</strong> to the following recipients:]]></source>
+                <target><![CDATA[Das E-Mail wird <strong>sofort</strong> an folgende Empfänger versendet:]]></target>
+            </trans-unit>
+            <trans-unit id="email.send.later.all" xml:space="preserve">
+                <source><![CDATA[The email will be sent to the recipients on <strong x-text="formattedDate" class="block"></strong>]]></source>
+                <target><![CDATA[Das E-Mail wird am <strong x-text="formattedDate" class="block"></strong> an die Empfänger versendet]]></target>
+            </trans-unit>
+            <trans-unit id="email.send.later.segments" xml:space="preserve">
+                <source><![CDATA[The email will be sent on <strong x-text="formattedDate" class="block"></strong> to the following recipients:]]></source>
+                <target><![CDATA[Das E-Mail wird am <strong x-text="formattedDate" class="block"></strong> an folgende Empfänger versendet:]]></target>
+            </trans-unit>
             <trans-unit id="enter.mailaddress" xml:space="preserve">
                 <source>Enter email address</source>
                 <target>E-Mail Adresse eingeben</target>

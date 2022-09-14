@@ -56,14 +56,32 @@
     justify-content: center;
     gap: 10px;
   }
+
+  & .flatpickr-months .flatpickr-next-month:hover svg,
+  & .flatpickr-months .flatpickr-prev-month:hover svg {
+    fill: theme(colors.neos.blue);
+  }
 }
 
 .flatpickr-calendar {
   margin-top: 10px;
 }
 
-.flatpickr-day.selected {
-  background: var(--blue);
+.flatpickr-day {
+  &:hover,
+  &:focus {
+    background: theme(colors.neos.gray-light);
+    border-color: theme(colors.neos.gray-light);
+  }
+
+  &.today {
+    border-color: theme(colors.neos.gray-lighter);
+  }
+
+  &.selected {
+    background: theme(colors.neos.blue) !important;
+    border-color: theme(colors.neos.blue) !important;
+  }
 }
 
 .flatpickr-day {

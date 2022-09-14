@@ -24,6 +24,7 @@ module.exports = {
                 "subtle-light": "var(--textSubtleLight)",
                 subtle: "var(--textSubtle)",
 
+                "gray-lighter": "var(--grayLighter)",
                 "gray-light": "var(--grayLight)",
                 "gray-medium": "var(--grayMedium)",
                 "gray-dark": "var(--grayDark)",

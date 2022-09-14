@@ -47,6 +47,7 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
                     @if={props.action.send && props.canSend}
                     action='send'
                     detailView={props.detailView}
+                    segments={props.segments}
                     {...props.hrefArguments}
                 />
             `
@@ -61,6 +62,7 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
                     @if={props.action.publishAndSend && props.canPublishAndSend}
                     action='publishAndSend'
                     detailView={props.detailView}
+                    segments={props.segments}
                     {...props.hrefArguments}
                 />
             `

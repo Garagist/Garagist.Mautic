@@ -56,8 +56,6 @@ Alpine.directive("flatpickr", (el, { expression }, { evaluate }) => {
     options = {
         enableTime: true,
         dateFormat: "Z",
-        altFormat: "j. F Y H:i",
-        altInput: true,
         minDate: date,
         defaultDate: date,
         time_24hr: true,

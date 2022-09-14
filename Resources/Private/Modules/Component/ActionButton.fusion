@@ -82,6 +82,7 @@ prototype(Garagist.Mautic:Component.ActionButton) < prototype(Neos.Fusion:Compon
                     initalFocusOnConfirm={props.initalFocusOnConfirm}
                     maxWidth={props.dialogMaxWidth}
                     xData={props.dialogXData}
+                    xEffect={props.dialogxEffect}
                     content={props.content}
                     confirmLabel={props.label}
                     confirmAttributes={props.action ? {href: props.href}  : props.confirmAttributes}

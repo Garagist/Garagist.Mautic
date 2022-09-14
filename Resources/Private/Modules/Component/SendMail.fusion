@@ -7,6 +7,7 @@ prototype(Garagist.Mautic:Component.SendMail) < prototype(Neos.Fusion:Component)
 
     class = 'neos-button neos-button-primary'
     footer = false
+    allSegments = ${allSegments}
 
     @if.hasEmail = ${this.email}
 
@@ -33,6 +34,8 @@ prototype(Garagist.Mautic:Component.SendMail) < prototype(Neos.Fusion:Component)
             @default = 'en'
             de = 'de'
         }
+        _hasSegments = ${Carbon.Array.check(props.segments)}
+        // class in xlf file: 'block' Don't remove this as it is needed for tailwindcss to get the needed class name
 
         renderer = afx`
             <Garagist.Mautic:Component.ActionButton
@@ -40,7 +43,8 @@ prototype(Garagist.Mautic:Component.SendMail) < prototype(Neos.Fusion:Component)
                 icon="fa-paper-plane"
                 showText={props.detailView}
                 dialogTitle={this.label}
-                dialogXData={"{action:'" + props._actionUri + "',date:'now',sendLater:false,pickr:null}"}
+                dialogXData={"{action:'" + props._actionUri + "',locale:'" + props._locale + "',date:'now',sendLater:false,pickr:null,formattedDate:''}"}
+                dialogxEffect="if(date!='now'){formattedDate=new Date(date).toLocaleDateString(locale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })}"
                 confirmLabel={this.label}
                 confirmAttributes={props._confirmAttributes}
                 footer={props.footer}
@@ -48,21 +52,30 @@ prototype(Garagist.Mautic:Component.SendMail) < prototype(Neos.Fusion:Component)
                 type="success"
                 dialogMaxWidth="382px"
             >
+                <p x-dialog:description @if={!props._hasSegments}>
+                    <span x-show="date=='now'">{props._i18n.id('email.send.now.all').translate()}</span>
+                    <span x-show="date!='now'">{props._i18n.id('email.send.later.all').translate()}</span>
+                </p>
+                <p x-dialog:description @if={props._hasSegments}>
+                    <span x-show="date=='now'">{props._i18n.id('email.send.now.segments').translate()} </span>
+                    <span x-show="date!='now'">{props._i18n.id('email.send.later.segments').translate()} </span>
+                    <Neos.Fusion:Loop items={props.segments} @glue=", " content={props.allSegments[item].name} />
+                </p>
                 <Garagist.Mautic:Component.Checkbox
                     xModel="sendLater"
                     label={props._i18n.id('email.send.later').translate()}
                     value={true}
                 />
 
-                <div x-show="sendLater" x-transition x-effect="date=sendLater&&pickr?pickr:'now'" class="!my-8">
-                    <label for="date">{props._sendDateLabel}</label>
+                <div x-show="sendLater" x-transition x-effect="date=sendLater&&pickr?pickr:'now'" class="!mb-8">
+                    <label for="date" class="sr-only">{props._sendDateLabel}</label>
                     <input
                         x-show="sendLater"
                         x-model="pickr"
-                        x-flatpickr={"{locale:'" + props._locale + "'}"}
+                        x-flatpickr="{locale}"
                         placeholder={props._sendDateLabel}
                         id="date"
-                        class="block w-full !opacity-100 pointer-events-none max-w-l"
+                        class="sr-only"
                     />
                 </div>
             </Garagist.Mautic:Component.ActionButton>
