@@ -28,6 +28,7 @@ prototype(Garagist.Mautic:Component.EmailData) < prototype(Neos.Fusion:Component
         canEdit = ${this.canPublish}
         canSend = ${this.isIdle && (props.email.dateSent == null && props.email.published)}
         canUpdate = ${this.isIdle && this.properties && (props.email.dateSent == null && !props.email.published)}
+        canResend = ${this.isIdle && this.isSended}
         canDelete= ${this.isIdle}
         canPublishAndSend = ${this.isIdle && (props.email.dateModified != null && props.email.dateSend == null)}
         canUnpublishAndUpdate = ${this.isIdle && (props.email.dateSent == null)}

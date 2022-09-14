@@ -59,3 +59,4 @@ Garagist:
       update: true
       edit: true
       test: false
+      resend: false

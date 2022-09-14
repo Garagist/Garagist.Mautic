@@ -57,6 +57,10 @@
                 <source>Send email</source>
                 <target>E-Mail senden</target>
             </trans-unit>
+            <trans-unit id="email.resend" xml:space="preserve">
+                <source>Resend email</source>
+                <target>E-Mail erneut senden</target>
+            </trans-unit>
             <trans-unit id="email.send.test" xml:space="preserve">
                 <source>Send test email</source>
                 <target>Test E-Mail senden</target>

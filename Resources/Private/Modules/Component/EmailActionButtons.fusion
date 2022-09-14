@@ -4,6 +4,7 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
 
     _buttonClass = 'whitespace-nowrap neos-button !bg-neos-gray-medium '
     _default = 'hover:!bg-neos-blue focus:!bg-neos-blue'
+    _canResend = ${this.action.resend && this.canResend}
 
     @if.hasPing = ${ping}
 
@@ -24,7 +25,7 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
             `
             sendTestMail = afx`
                 <Garagist.Mautic:Component.SendTestMail
-                    @if={props.action.test && props.canTest}
+                    @if={(props.action.test && props.canTest) || (props.action.test && props._canResend)}
                     detailView={props.detailView}
                     {...props.hrefArguments}
                 />
@@ -44,8 +45,9 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
             }
             send = afx`
                 <Garagist.Mautic:Component.SendMail
-                    @if={props.action.send && props.canSend}
+                    @if={(props.action.send && props.canSend) || props._canResend}
                     action='send'
+                    resend={props.canResend}
                     detailView={props.detailView}
                     segments={props.segments}
                     {...props.hrefArguments}

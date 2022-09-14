@@ -14,7 +14,7 @@ prototype(Garagist.Mautic:Component.SendMail) < prototype(Neos.Fusion:Component)
     renderer = Neos.Fusion:Component {
         @apply.props = ${props}
         _i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
-        _label = ${this._i18n.id('email.send').translate()}
+        _label = ${this._i18n.id(props.resend ? 'email.resend' : 'email.send').translate()}
         _actionUri = Neos.Fusion:UriBuilder {
             action = ${props.action}
             arguments = Neos.Fusion:DataStructure {
