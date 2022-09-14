@@ -67,7 +67,7 @@ prototype(Garagist.Mautic:Component.SendMail) < prototype(Neos.Fusion:Component)
                     value={true}
                 />
 
-                <div x-show="sendLater" x-transition x-effect="date=sendLater&&pickr?pickr:'now'" class="!mb-8">
+                <div x-show="sendLater" x-collapse x-effect="date=sendLater&&pickr?pickr:'now'">
                     <label for="date" class="sr-only">{props._sendDateLabel}</label>
                     <input
                         x-show="sendLater"
@@ -77,6 +77,8 @@ prototype(Garagist.Mautic:Component.SendMail) < prototype(Neos.Fusion:Component)
                         id="date"
                         class="sr-only"
                     />
+                    <!-- Spacer for a smoother animation -->
+                    <div aria-hidden="true"  class="h-4"></div>
                 </div>
             </Garagist.Mautic:Component.ActionButton>
         `
