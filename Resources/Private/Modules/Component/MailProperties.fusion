@@ -54,7 +54,7 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
                 initalFocusOnConfirm={!props._isEdit}
                 confirmAttributes={props._confirmAttributes}
             >
-                <fieldset>
+                <fieldset class="!p-0">
                     <label for="subject">{props._i18n.id('subject').translate()}</label>
                     <input
                         type="text"
@@ -65,7 +65,7 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
                         class="block w-full"
                     />
                 </fieldset>
-                <fieldset @if={props._showSegments} class="mx-4">
+                <fieldset @if={props._showSegments} class="!p-0 !mt-8">
                     <legend class="!p-0 !leading-5 !text-sm">
                         {props._i18n.id('recipients').translate()}
                     </legend>
@@ -77,7 +77,7 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
                             label={props.allSegments[item].name}
                         />
                     </Neos.Fusion:Loop>
-                    <div x-show="!segments.length" x-transition class="bg-neos-red text-white p-4 my-2 w-full">
+                    <div x-show="!segments.length" x-transition class="bg-neos-red text-white p-4 mt-4 mb-2 w-full">
                         {props._i18n.id('pleaseChooseMinimalOneItem').translate()}
                     </div>
                 </fieldset>
