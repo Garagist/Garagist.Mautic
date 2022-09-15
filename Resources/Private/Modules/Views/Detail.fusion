@@ -140,7 +140,7 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
             </Neos.Fusion:Link.Action>
             <Neos.Fusion:Fragment @if={ping}>
                 <Neos.Fusion:Link.Action
-                    @if={Array.last(history).error}
+                    @if={props.emailData.isFailed}
                     class="neos-button neos-button-warning"
                     href.action="unlock"
                     href.arguments.node={node}
