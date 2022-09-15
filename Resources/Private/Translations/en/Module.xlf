@@ -69,13 +69,13 @@
                 <source><![CDATA[The email is sent to the recipients <strong>immediately</strong>]]></source>
             </trans-unit>
             <trans-unit id="email.send.now.segments" xml:space="preserve">
-                <source><![CDATA[The email will be sent <strong>immediately</strong> to the following recipients:]]></source>
+                <source><![CDATA[The email will be sent <strong>immediately</strong> to the following recipients: ]]></source>
             </trans-unit>
             <trans-unit id="email.send.later.all" xml:space="preserve">
                 <source><![CDATA[The email will be sent to the recipients on <strong x-text="formattedDate" class="block"></strong>]]></source>
             </trans-unit>
             <trans-unit id="email.send.later.segments" xml:space="preserve">
-                <source><![CDATA[The email will be sent on <strong x-text="formattedDate" class="block"></strong> to the following recipients:]]></source>
+                <source><![CDATA[The email will be sent on <strong x-text="formattedDate" class="block"></strong> to the following recipients: ]]></source>
             </trans-unit>
             <trans-unit id="email.send.test" xml:space="preserve">
                 <source>Send test email</source>
