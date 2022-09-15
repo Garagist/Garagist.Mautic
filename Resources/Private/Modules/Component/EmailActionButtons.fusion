@@ -74,6 +74,13 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
                 action = 'unpublishAndUpdate'
                 icon = 'fa-sync'
             }
+            unlock =  Neos.Fusion:DataStructure {
+                @if.set = ${props.isFailed}
+                labelKey = 'task.unlock'
+                action = 'unlock'
+                type = 'warning'
+                icon = 'fa-unlock'
+            }
             delete = Neos.Fusion:DataStructure {
                 @if.set = ${props.action.delete && props.canDelete}
                 labelKey = 'email.delete'
