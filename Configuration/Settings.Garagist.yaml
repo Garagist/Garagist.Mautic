@@ -58,5 +58,8 @@ Garagist:
       send: true
       update: true
       edit: true
+
+      # Disabled for now, as it need the implementation
+      sendLater: false
       test: false
       resend: false
