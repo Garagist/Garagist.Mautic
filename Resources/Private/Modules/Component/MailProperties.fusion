@@ -57,8 +57,9 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
             subject = ${props.subject == props._placeholder ? '' : props.subject}
             placeholder = ${props._placeholder}
             previewText = ${props.previewText == props.previewTextPlaceholder ? '' : props.previewText}
-            previewTextPlaceholder = ${props.previewTextPlaceholder}
-            segments = ${props._showSegments ? (props.segments || props.prefilledSegments) : null}
+            previewTextPlaceholder = ${props.previewTextPlaceholder || ''}
+            segments = ${props.segments || props.prefilledSegments}
+            segments.@if.show = ${props._showSegments}
         }
 
         renderer = afx`
@@ -95,7 +96,7 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
                             <br />
                         </span>
                     </div>
-                    <small class="block">{Translation.translate('properties.mauticPreviewText.ui.help.message', null, [], 'NodeTypes/Mixin/Email', 'Garagist.Mautic')}</small>
+                    <div class="block my-2 opacity-60">{Translation.translate('properties.mauticPreviewText.ui.help.message', null, [], 'NodeTypes/Mixin/Email', 'Garagist.Mautic')}</div>
                 </fieldset>
                 <fieldset @if={props._showSegments} class="!p-0 !mt-8">
                     <legend class="!p-0 !leading-5 !text-sm">
