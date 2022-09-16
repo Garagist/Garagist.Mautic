@@ -61,6 +61,10 @@
                 <source>Resend email</source>
                 <target>E-Mail erneut senden</target>
             </trans-unit>
+            <trans-unit id="email.need.refresh" xml:space="preserve">
+                <source>In case of a change, the email must be updated afterwards.</source>
+                <target>Bei einer Änderung muss im Anschluss noch die E-Mail aktualisiert werden.</target>
+            </trans-unit>
             <trans-unit id="email.send.test" xml:space="preserve">
                 <source>Send test email</source>
                 <target>Test E-Mail senden</target>

@@ -97,6 +97,7 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
                         </span>
                     </div>
                     <div class="block my-2 opacity-60">{Translation.translate('properties.mauticPreviewText.ui.help.message', null, [], 'NodeTypes/Mixin/Email', 'Garagist.Mautic')}</div>
+                    <div @if={props._isEdit} class="block my-2 opacity-60">{Translation.translate('email.need.refresh', null, [], 'Module', 'Garagist.Mautic')}</div>
                 </fieldset>
                 <fieldset @if={props._showSegments} class="!p-0 !mt-8">
                     <legend class="!p-0 !leading-5 !text-sm">

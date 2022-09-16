@@ -59,6 +59,9 @@
             <trans-unit id="email.resend" xml:space="preserve">
                 <source>Resend email</source>
             </trans-unit>
+            <trans-unit id="email.need.refresh" xml:space="preserve">
+                <source>In case of a change, the email must be updated afterwards.</source>
+            </trans-unit>
             <trans-unit id="email.send.later" xml:space="preserve">
                 <source>Send email at a later date</source>
             </trans-unit>
