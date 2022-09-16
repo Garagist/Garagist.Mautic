@@ -1,8 +1,8 @@
 Garagist:
   Mautic:
     routeArgument:
-      htmlTemplate: emailHtml
-      plaintextTemplate: emailPlain
+      htmlTemplate: email
+      plaintextTemplate: plaintext
     api:
       baseUrl: null
       userName: null
