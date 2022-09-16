@@ -9,6 +9,8 @@ Garagist:
       password: null
     publicUrl: null
     enableTracking: false
+    mail:
+      trackingPixel: '<img src="{tracking_pixel}" alt="" />'
     form:
       # Add here the IDs of the forms you want to hide
       # You can pass an array (eg. [1, 2, 3]) or an integer
