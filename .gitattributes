@@ -12,3 +12,4 @@
 /package.json export-ignore
 /tailwind.config.js export-ignore
 /yarn.lock export-ignore
+/Resources/Private/Editor export-ignore
