@@ -248,8 +248,12 @@ class DataProvider implements DataProviderInterface
      */
     public function filterSegments(MauticEmail $email, array $segmentsFromMautic): array
     {
-        $segments = $this->getChoosenSegments($email) ?? $this->getAllSegmentIDsFromMautic($segmentsFromMautic);
-        return $segments;
+        $choosenSegments = $this->getChoosenSegments($email);
+        if (is_array($choosenSegments) && count($choosenSegments)) {
+            return $choosenSegments;
+        }
+
+        return $this->getAllSegmentIDsFromMautic($segmentsFromMautic);
     }
 
     /**
@@ -282,8 +286,11 @@ class DataProvider implements DataProviderInterface
     protected function getAllSegmentIDsFromMautic(array $segmentsFromMautic): array
     {
         $filteredSegments = $this->filterHiddenSegments($segmentsFromMautic);
-        return array_map(function ($n) {
-            return $n->getId();
+        return array_map(function ($entry) {
+            if (is_array($entry)) {
+                return $entry['id'];
+            }
+            return $entry->getId();
         }, $filteredSegments);
     }
 
@@ -307,7 +314,11 @@ class DataProvider implements DataProviderInterface
         return array_filter($segments, function ($segment) use ($hiddenSegments) {
             $id = $segment;
             if (!is_numeric($segment)) {
-                $id = $segment->getId();
+                if (is_array($segment)) {
+                    $id = $segment['id'];
+                } else {
+                    $id = $segment->getId();
+                }
             }
             return !in_array($id, $hiddenSegments);
         });

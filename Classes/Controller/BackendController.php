@@ -483,8 +483,10 @@ class BackendController extends AbstractModuleController
         $controllerContext = $this->controllerContext;
         $title = $node->getProperty('title');
         $convertedSegments = [];
-        foreach ($segments as $value) {
-            $convertedSegments[] = (int)$value;
+        if (is_array($segments)) {
+            foreach ($segments as $segment) {
+                $convertedSegments[] = (int)$segment;
+            }
         }
 
         if (!$subject) {
