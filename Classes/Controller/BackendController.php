@@ -227,8 +227,11 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    public function updateAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
-    {
+    public function updateAction(
+        NodeInterface $node,
+        MauticEmail $email,
+        ?string $redirect = null,
+    ): void {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
             $this->mauticService->fireUpdateEmailEvent($email);
@@ -258,8 +261,11 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    public function publishAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
-    {
+    public function publishAction(
+        NodeInterface $node,
+        MauticEmail $email,
+        ?string $redirect = null,
+    ): void {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
             $this->mauticService->firePublishEmailEvent($email);
@@ -289,8 +295,11 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    public function unpublishAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
-    {
+    public function unpublishAction(
+        NodeInterface $node,
+        MauticEmail $email,
+        ?string $redirect = null,
+    ): void {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
             $this->mauticService->fireUnpublishEmailEvent($email);
@@ -320,9 +329,13 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    public function sendAction(NodeInterface $node, MauticEmail $email, string $date, ?string $redirect = null): void
-    {
-        // todo use $date, 'now' is send it immediately
+    public function sendAction(
+        NodeInterface $node,
+        MauticEmail $email,
+        string $date,
+        ?string $redirect = null,
+    ): void {
+        // TODO use $date, 'now' is send it immediately
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
             $this->mauticService->fireSendEmailEvent($email);
@@ -352,8 +365,11 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    public function unlockAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
-    {
+    public function unlockAction(
+        NodeInterface $node,
+        MauticEmail $email,
+        ?string $redirect = null,
+    ): void {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::TASK_FAILED) {
             $this->mauticService->setTask($email, MauticEmail::IDLE);
@@ -409,8 +425,10 @@ class BackendController extends AbstractModuleController
      * @param MauticEmail $email
      * @return void
      */
-    public function detailAction(NodeInterface $node, MauticEmail $email): void
-    {
+    public function detailAction(
+        NodeInterface $node,
+        MauticEmail $email,
+    ): void {
         $ping = $this->ping();
         $categoryNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
         $mauticRecord = $this->apiService->findEmailByNeosIdentifier($email->getEmailIdentifier());
@@ -455,8 +473,11 @@ class BackendController extends AbstractModuleController
      * @param string|null $subject
      * @return void
      */
-    public function createAction(NodeInterface $node, ?string $subject = null, ?array $segments = null): void
-    {
+    public function createAction(
+        NodeInterface $node,
+        ?string $subject = null,
+        ?array $segments = null,
+    ): void {
         $linkingService = $this->linkingService;
         $controllerContext = $this->controllerContext;
         $title = $node->getProperty('title');
@@ -507,8 +528,13 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    public function editAction(NodeInterface $node, MauticEmail $email, string $subject, ?array $segments = null, ?string $redirect = null): void
-    {
+    public function editAction(
+        NodeInterface $node,
+        MauticEmail $email,
+        string $subject,
+        ?array $segments = null,
+        ?string $redirect = null,
+    ): void {
         if ($subject) {
             $email->setProperty('subject', $subject);
         }
@@ -535,8 +561,13 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    public function testAction(NodeInterface $node, MauticEmail $email, array $addresses, ?string $redirect = null): void
-    {
+    public function testAction(
+        NodeInterface $node,
+        MauticEmail $email,
+        array $addresses,
+        ?string $redirect = null,
+    ): void {
+        // TODO Implement testAction
         $this->redirectCommand($node, $email, $redirect);
     }
 
@@ -548,9 +579,13 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    public function publishAndSendAction(NodeInterface $node, MauticEmail $email, string $date, ?string $redirect = null): void
-    {
-        // todo use $date, 'now' is send it immediately
+    public function publishAndSendAction(
+        NodeInterface $node,
+        MauticEmail $email,
+        string $date,
+        ?string $redirect = null,
+    ): void {
+        // TODO use $date, 'now' is send it immediately
         if (!$email->isPublished()) {
             $this->publishAction($node, $email, 'none');
         }
@@ -565,8 +600,11 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    public function unpublishAndUpdateAction(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
-    {
+    public function unpublishAndUpdateAction(
+        NodeInterface $node,
+        MauticEmail $email,
+        ?string $redirect = null,
+    ): void {
         if ($email->isPublished()) {
             $this->unpublishAction($node, $email, 'none');
         }
@@ -581,8 +619,10 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    public function deleteAction(NodeInterface $node, MauticEmail $email): void
-    {
+    public function deleteAction(
+        NodeInterface $node,
+        MauticEmail $email,
+    ): void {
         $title = $email->getProperty('subject') ?? $node->getProperty('title');
         $this->mauticService->fireDeleteEmailEvent($email);
 
@@ -599,8 +639,11 @@ class BackendController extends AbstractModuleController
      * @param string|null $redirect
      * @return void
      */
-    private function redirectCommand(NodeInterface $node, MauticEmail $email, ?string $redirect = null): void
-    {
+    private function redirectCommand(
+        NodeInterface $node,
+        MauticEmail $email,
+        ?string $redirect = null,
+    ): void {
         if (!isset($redirect)) {
             $redirect = 'node';
         }
