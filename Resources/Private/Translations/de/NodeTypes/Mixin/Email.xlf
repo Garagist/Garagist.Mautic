@@ -13,7 +13,7 @@
             </trans-unit>
             <trans-unit id="properties.mauticPreviewText.ui.help.message" xml:space="preserve">
                 <source>Here you can set the preview that will be displayed in the recipient's inbox.</source>
-                <source>Hier können Sie die Vorschau eingeben, die im Posteingang des Empfängers angezeigt wird.</source>
+                <target>Hier können Sie die Vorschau eingeben, die im Posteingang des Empfängers angezeigt wird.</target>
             </trans-unit>
         </body>
     </file>
