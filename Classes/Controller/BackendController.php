@@ -544,9 +544,7 @@ class BackendController extends AbstractModuleController
             $email->setProperty('subject', $subject);
         }
         $previewText = $this->mauticService->cleanPreviewText($previewText);
-        if ($previewText) {
-            $email->setProperty('previewText', $previewText);
-        }
+        $email->setProperty('previewText', $previewText);
         $hasSegments = is_array($segments) && count($segments);
         if ($hasSegments) {
             $convertedSegments = [];
