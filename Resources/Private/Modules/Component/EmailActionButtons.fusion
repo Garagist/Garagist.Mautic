@@ -17,6 +17,7 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
                 <Garagist.Mautic:Component.MailProperties
                     @if={props.action.edit && props.canEdit}
                     subject={props.subject}
+                    previewText={props.previewText}
                     segments={props.segments}
                     class={props._buttonClass + props._default}
                     detailView={props.detailView}

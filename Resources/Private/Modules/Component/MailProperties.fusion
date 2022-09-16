@@ -6,6 +6,8 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
     redirect = null
 
     subject = null
+    previewText = null
+    previewTextPlaceholder = Garagist.Mautic:Component.PreviewText
     segments = null
 
     chooseSegment = ${Configuration.Setting('Garagist.Mautic.segment.choose')}
@@ -20,11 +22,12 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
     _isEdit = ${!!this.email}
     _type = ${this._isEdit ? 'edit' : 'create'}
     _showSegments = ${Carbon.Array.check(this.chooseSegment) && Carbon.Array.check(this.allSegments)}
+    _placeholder = ${q(node).property('titleOverride') || q(node).property('title')}
 
     renderer = Neos.Fusion:Component {
         @apply.props = ${props}
-        _placeholder = ${q(node).property('titleOverride') || q(node).property('title')}
-        _subject = ${props.subject == this._placeholder ? '' : props.subject}
+
+        _subject = ${props.subject == props._placeholder ? '' : props.subject}
         _i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
 
         _label = ${this._i18n.id('email.' + props._type + (props._isEdit && props._showSegments ? '.withSegments'  : '')).translate()}
@@ -38,8 +41,24 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
         }
 
         _confirmAttributes = Neos.Fusion:DataStructure {
-            :href = ${"action + '&moduleArguments[subject]='+(subject||placeholder)" + (props._showSegments ? "+'&moduleArguments[segments]='+segments" : '')}
+            :href = ${"action + '&moduleArguments[subject]='+(subject||placeholder)+'&moduleArguments[previewText]='+(previewText||previewTextPlaceholder)" + (props._showSegments ? "+'&moduleArguments[segments]='+segments" : '')}
             :class = "segments&&!segments.length&&'pointer-events-none opacity-60'"
+        }
+
+        _xData = Neos.Fusion:DataStructure {
+            action = Neos.Fusion:UriBuilder {
+                action = ${props._type}
+                arguments = Neos.Fusion:DataStructure {
+                    node = ${node}
+                    email = ${props.email}
+                    redirect = ${props.redirect}
+                }
+            }
+            subject = ${props.subject == props._placeholder ? '' : props.subject}
+            placeholder = ${props._placeholder}
+            previewText = ${props.previewText == props.previewTextPlaceholder ? '' : props.previewText}
+            previewTextPlaceholder = ${props.previewTextPlaceholder}
+            segments = ${props._showSegments ? (props.segments || props.prefilledSegments) : null}
         }
 
         renderer = afx`
@@ -49,7 +68,7 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
                 showText={props.detailView}
                 footer={props._isEdit ? false : 'primary'}
                 dialogTitle={this.label}
-                dialogXData={"{action:'" + props._actionUri + "', subject:'" + props._subject + "', placeholder:'" + props._placeholder + "'" + (props._showSegments ? ", segments:" + Json.stringify(props.segments || props.prefilledSegments) : "") + "}"}
+                dialogXData={Json.stringify(props._xData)}
                 confirmLabel={this.label}
                 initalFocusOnConfirm={!props._isEdit}
                 confirmAttributes={props._confirmAttributes}
@@ -64,6 +83,19 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
                         :placeholder="placeholder"
                         class="block w-full"
                     />
+                </fieldset>
+                <fieldset class="!p-0">
+                    <label for="preview">
+                        {Translation.translate('properties.mauticPreviewText', null, [], 'NodeTypes/Mixin/Email', 'Garagist.Mautic')}
+                    </label>
+                    <div class="auto-grow-textarea">
+                        <textarea x-model="previewText" :placeholder="previewTextPlaceholder"></textarea>
+                        <span>
+                            <span x-text="previewText || previewTextPlaceholder"></span>
+                            <br />
+                        </span>
+                    </div>
+                    <small class="block">{Translation.translate('properties.mauticPreviewText.ui.help.message', null, [], 'NodeTypes/Mixin/Email', 'Garagist.Mautic')}</small>
                 </fieldset>
                 <fieldset @if={props._showSegments} class="!p-0 !mt-8">
                     <legend class="!p-0 !leading-5 !text-sm">

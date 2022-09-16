@@ -7,6 +7,14 @@
                 <source>Show emails</source>
                 <target>Zeige E-Mails</target>
             </trans-unit>
+            <trans-unit id="properties.mauticPreviewText" xml:space="preserve">
+                <source>Preview text</source>
+                <target>Vorschautext</target>
+            </trans-unit>
+            <trans-unit id="properties.mauticPreviewText.ui.help.message" xml:space="preserve">
+                <source>Here you can set the preview that will be displayed in the recipient's inbox.</source>
+                <source>Hier können Sie die Vorschau eingeben, die im Posteingang des Empfängers angezeigt wird.</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

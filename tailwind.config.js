@@ -1,4 +1,5 @@
 const colors = require("tailwindcss/colors");
+const plugin = require("tailwindcss/plugin");
 
 module.exports = {
     content: ["Resources/Private/{Assets,Fusion,Modules}/**/*.{js,fusion,pcss}"],
@@ -32,6 +33,7 @@ module.exports = {
             },
         },
         fontFamily: {
+            inherit: "inherit",
             sans: [
                 '"Noto Sans"',
                 "sans-serif",
@@ -42,4 +44,35 @@ module.exports = {
             ],
         },
     },
+    plugins: [
+        plugin(function ({ addUtilities }) {
+            addUtilities({
+                ".auto-grow-textarea": {
+                    display: "grid",
+
+                    "& > *": {
+                        "grid-area": "1 / 1 / 2 / 2",
+                        width: "100%",
+                        display: "block",
+                        padding: "14px !important",
+                        "border-width": "2px",
+                        font: "inherit",
+                        "line-height": "1.4",
+                    },
+
+                    "& > span": {
+                        "white-space": "pre-wrap",
+                        visibility: "hidden",
+                        "border-color": "transparent",
+                        "border-style": "solid",
+                    },
+
+                    "& > textarea": {
+                        resize: "none",
+                        overflow: "hidden",
+                    },
+                },
+            });
+        }),
+    ],
 };

@@ -139,10 +139,15 @@ class DataProvider implements DataProviderInterface
     public function getHtml(MauticEmail $email): string
     {
         $content = $this->mauticService->getNewsletterTemplate($email->getProperty('htmlUrl'));
+        $previewText = $email->getProperty('previewText');
+        if ($previewText) {
+            $content = preg_replace('/<body([^>]*)>/i', '<body$1><div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;"> ' . $previewText . ' </div>', $content);
+        }
         $trackingPixel = $this->settings['mail']['trackingPixel'];
         if ($trackingPixel) {
             $content = str_replace('</body>', $trackingPixel . '</body>', $content);
         }
+
         return $this->personalizationService->mautic($content);
     }
 

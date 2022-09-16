@@ -280,6 +280,32 @@ class MauticService
     }
 
     /**
+     * Clean preview text for email
+     *
+     * @param string|null $text
+     * @return string|null
+     */
+    public function cleanPreviewText(?string $text = null): string
+    {
+        return $this->cleanString($text);
+    }
+
+    /**
+     * Get preview text for email
+     *
+     * @param NodeInterface $node
+     * @return string|null
+     */
+    public function getPreviewTextPlaceholder(NodeInterface $node): string
+    {
+        $mauticPreviewText = $this->cleanString($node->getProperty('mauticPreviewText'));
+        if ($mauticPreviewText) {
+            return $mauticPreviewText;
+        }
+        return $this->cleanString($node->getProperty('metaDescription'));
+    }
+
+    /**
      * @param NodeInterface $node
      * @return array
      */
@@ -488,5 +514,32 @@ class MauticService
         }
 
         return $history;
+    }
+
+    /**
+     * Remove double whitespaces and newlines from string
+     *
+     * @param string|null $string
+     * @return string
+     */
+    protected function cleanString(?string $string = null): string
+    {
+        if (!$string) {
+            return '';
+        }
+        $space = ' ';
+        $string = (string) str_replace('&nbsp;', $space, $string);
+
+        return trim(
+            preg_replace(
+                '/\s\s+/',
+                $space,
+                str_replace(
+                    ' ',
+                    $space,
+                    $string
+                )
+            )
+        );
     }
 }

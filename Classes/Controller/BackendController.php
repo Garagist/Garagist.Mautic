@@ -477,6 +477,7 @@ class BackendController extends AbstractModuleController
         NodeInterface $node,
         ?string $subject = null,
         ?array $segments = null,
+        ?string $previewText = null,
     ): void {
         $linkingService = $this->linkingService;
         $controllerContext = $this->controllerContext;
@@ -493,6 +494,7 @@ class BackendController extends AbstractModuleController
 
         $properties = [
             "subject" => $subject,
+            "previewText" => $this->mauticService->cleanPreviewText($previewText),
             "segments" => $convertedSegments,
             "htmlUrl" => $linkingService->createNodeUri(
                 $controllerContext,
@@ -533,10 +535,15 @@ class BackendController extends AbstractModuleController
         MauticEmail $email,
         string $subject,
         ?array $segments = null,
+        ?string $previewText = null,
         ?string $redirect = null,
     ): void {
         if ($subject) {
             $email->setProperty('subject', $subject);
+        }
+        $previewText = $this->mauticService->cleanPreviewText($previewText);
+        if ($previewText) {
+            $email->setProperty('previewText', $previewText);
         }
         $hasSegments = is_array($segments) && count($segments);
         if ($hasSegments) {

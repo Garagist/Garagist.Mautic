@@ -43,16 +43,20 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                                 <td>{props.emailData.emailIdentifier}</td>
                             </tr>
                             <tr>
-                                <td>{props._i18n.id('subject').translate()}</td>
-                                <td>{props.emailData.subject}</td>
-                            </tr>
-                            <tr>
                                 <td>{props._i18n.id('createdOn').translate()}</td>
                                 <td>{props.emailData.dateCreated}</td>
                             </tr>
                             <tr @if={props.emailData.isSended}>
                                 <td>{props._i18n.id('sentOn').translate()}</td>
                                 <td>{props.emailData.dateSent}</td>
+                            </tr>
+                            <tr>
+                                <td>{props._i18n.id('subject').translate()}</td>
+                                <td>{props.emailData.subject}</td>
+                            </tr>
+                            <tr>
+                                <td>{Translation.translate('properties.mauticPreviewText', null, [], 'NodeTypes/Mixin/Email', 'Garagist.Mautic')}</td>
+                                <td>{props.emailData.previewText}</td>
                             </tr>
                             <tr>
                                 <td>{props._i18n.id('recipients').translate()}</td>

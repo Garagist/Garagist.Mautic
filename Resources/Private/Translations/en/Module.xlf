@@ -123,10 +123,10 @@
                 <source>Subject</source>
             </trans-unit>
             <trans-unit id="email.edit" xml:space="preserve">
-                <source>Change subject</source>
+                <source>Change subject and/or preview text</source>
             </trans-unit>
             <trans-unit id="email.edit.withSegments" xml:space="preserve">
-                <source>Change subject and/or receiver</source>
+                <source>Change subject, preview text and/or receiver</source>
             </trans-unit>
             <trans-unit id="identifier" xml:space="preserve">
                 <source>Identifier</source>
@@ -162,10 +162,10 @@
                 <source>The email could not be updated</source>
             </trans-unit>
             <trans-unit id="email.feedback.edited" xml:space="preserve">
-                <source>The subject has been changed</source>
+                <source>The subject and/or the preview text has been changed</source>
             </trans-unit>
             <trans-unit id="email.feedback.edited.withSegments" xml:space="preserve">
-                <source>The subject and/or the receivers has been changed</source>
+                <source>The subject, the preview text and/or the receivers has been changed</source>
             </trans-unit>
             <trans-unit id="email.feedback.published" xml:space="preserve">
                 <source>The email has been published</source>

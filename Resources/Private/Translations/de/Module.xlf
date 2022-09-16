@@ -158,12 +158,12 @@
                 <target>Betreff</target>
             </trans-unit>
             <trans-unit id="email.edit" xml:space="preserve">
-                <source>Change subject</source>
-                <target>Betreff ändern</target>
+                <source>Change subject and/or preview text</source>
+                <target>Betreff und/oder Vorschautext ändern</target>
             </trans-unit>
             <trans-unit id="email.edit.withSegments" xml:space="preserve">
-                <source>Change subject and/or receiver</source>
-                <target>Betreff und/oder Empfänger ändern</target>
+                <source>Change subject, preview text and/or receiver</source>
+                <target>Betreff, Vorschautext und/oder Empfänger ändern</target>
             </trans-unit>
             <trans-unit id="identifier" xml:space="preserve">
                 <source>Identifier</source>
@@ -210,12 +210,12 @@
                 <target>Die E-Mail wurde aktualisiert</target>
             </trans-unit>
             <trans-unit id="email.feedback.edited" xml:space="preserve">
-                <source>The subject has been changed</source>
-                <target>Der Betreff wurde geändert</target>
+                <source>The subject and/or the preview text has been changed</source>
+                <target>Der Betreff und/oder der Vorschautext wurde geändert</target>
             </trans-unit>
             <trans-unit id="email.feedback.edited.withSegments" xml:space="preserve">
-                <source>The subject and/or the receivers has been changed</source>
-                <target>Der Betreff und/oder die Empfänger wurde geändert</target>
+                <source>The subject, the preview text and/or the receivers has been changed</source>
+                <target>Der Betreff, der Vorschautext und/oder die Empfänger wurde geändert</target>
             </trans-unit>
             <trans-unit id="email.feedback.updated.failed" xml:space="preserve">
                 <source>The email could not be updated</source>

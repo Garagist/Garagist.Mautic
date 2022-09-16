@@ -1,0 +1,20 @@
+prototype(Garagist.Mautic:Component.PreviewText) < prototype(Neos.Fusion:Component) {
+    node = ${node}
+    mauticPreviewText = ${q(this.node).property('mauticPreviewText')}
+    metaDescription = ${q(this.node).property('metaDescription')}
+
+    renderer = Neos.Fusion:Case {
+        hasMauticPreviewText {
+            @position = 'end'
+            @context.mauticPreviewText = ${Carbon.String.removeNbsp(props.mauticPreviewText || '')}
+            condition = ${!!mauticPreviewText}
+            renderer = ${mauticPreviewText}
+        }
+        hasMetaDescription {
+            @position = 'after hasMauticPreviewText'
+            @context.metaDescription = ${Carbon.String.removeNbsp(props.metaDescription || '')}
+            condition = ${!!metaDescription}
+            renderer = ${metaDescription}
+        }
+    }
+}
