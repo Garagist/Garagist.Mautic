@@ -50,7 +50,6 @@ class MauticService
      */
     protected $mauticEmailRepository;
 
-
     /**
      * @Flow\Inject
      * @var PersistenceManager
@@ -79,6 +78,12 @@ class MauticService
      * @var DataProviderInterface
      */
     protected $dataProvider;
+
+    /**
+     * @Flow\Inject
+     * @var TestEmailService
+     */
+    protected $testEmailService;
 
     protected function initializeObject(): void
     {
@@ -435,6 +440,22 @@ class MauticService
             $this->mauticLogger->info(sprintf('Sending email with identifier %s was successful', $emailIdentifier));
         } catch (Exception $e) {
             $this->mauticLogger->error(sprintf('Sending email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
+        }
+    }
+
+    public function sendExampleEmail(MauticEmail $email, array $recipients=[])
+    {
+        $emailIdentifier = $email->getEmailIdentifier();
+
+        if(empty($recipients)) {
+            $recipients = $this->testEmailService->getTestEmailRecipients();
+        }
+
+        try {
+            $result = $this->apiService->sendTestEmail($emailIdentifier, $recipients);
+            \Neos\Flow\var_dump($result);
+        } catch (Exception $e) {
+            $this->mauticLogger->error(sprintf('Sending test email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
         }
     }
 

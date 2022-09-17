@@ -32,15 +32,22 @@ class MauticCommandController extends CommandController
         var_dump($this->apiService->findEmailByNeosIdentifier($neosIdentifier));
     }
 
-    public function segmentsCommand(string $neosIdentifier)
+    public function segmentsCommand(string $emailIdentifier)
     {
-        $email = $this->mauticService->getByEmailIdentifier($neosIdentifier);
+        $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
         var_dump($this->mauticService->getSegmentsForEmail($email));
     }
 
-    public function streamCommand(string $neosIdentifier)
+    public function streamCommand(string $emailIdentifier)
     {
-        $email = $this->mauticService->getByEmailIdentifier($neosIdentifier);
+        $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
         var_dump($this->mauticService->getAuditLog($email));
+    }
+
+    public function sendTestEmailCommand(string $emailIdentifier, string $recipients) {
+        $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
+        $this->mauticService->sendExampleEmail($email, explode(',',$recipients));
+
+        var_dump($email);
     }
 }

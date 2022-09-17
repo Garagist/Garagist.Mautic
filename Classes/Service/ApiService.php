@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Garagist\Mautic\Service;
 
+use Garagist\Mautic\Api\Emails;
 use Mautic\Api\Contacts;
-use Mautic\Api\Emails;
 use Mautic\Api\Forms;
 use Mautic\Auth\ApiAuth;
 use Mautic\Auth\AuthInterface;
@@ -81,7 +81,7 @@ class ApiService
 
         $api = new MauticApi();
         $url = $this->settings['api']['baseUrl'] . '/api/';
-        $this->emailApi = $api->newApi("emails", $auth, $url);
+        $this->emailApi = new Emails($auth, $url);
         $this->contactApi = $api->newApi("contacts", $auth, $url);
         $this->formApi = $api->newApi("forms", $auth, $url);
     }
@@ -184,6 +184,33 @@ class ApiService
         }
 
         throw new Exception('Email could not be send because it does not exist or ist not published');
+    }
+
+    /**
+     * @param string $emailIdentifier
+     * @param array $recipients
+     * @return array
+     * @throws Exception
+     */
+    public function sendTestEmail(string $emailIdentifier, array $recipients): array
+    {
+        $mauticIdentifier = $this->isEmailPublished($emailIdentifier);
+
+        if ($mauticIdentifier) {
+            //TODO: new contacts, that are in the same list, will be added as pending contacts at any point in time. Therefore it's hard to say when a send out is done
+            //array(3)
+            // string "success" (7) => integer 1
+            // string "sentCount" (9) => integer 0
+            // string "failedRecipients" (16) => integer 0
+
+            $response = $this->validateResponse($this->emailApi->sendExample($mauticIdentifier, $recipients));
+
+            \Neos\Flow\var_dump($response);
+            exit;
+            return $response;
+        }
+
+        throw new Exception('TestEmail could not be send because it does not exist or ist not published');
     }
 
     /**
