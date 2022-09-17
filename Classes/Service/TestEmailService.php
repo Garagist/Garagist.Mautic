@@ -14,9 +14,9 @@ class TestEmailService
 {
     /**
      * @var array|string
-     * @Flow\InjectConfiguration(path="testMail.addresses")
+     * @Flow\InjectConfiguration(path="testMail.recipients")
      */
-    protected $addressesFromSettings;
+    protected $recipientsFromSettings;
 
     /**
      * @Flow\Inject
@@ -24,21 +24,23 @@ class TestEmailService
      */
     protected $userService;
 
-    public function getTestEmailAdresses(): array
+    public function getTestEmailRecipients(): array
     {
-        $testEmailAdresses = [];
-        foreach ($this->userService->getCurrentUser()->getElectronicAddresses() as $electronicAddress) {
-            if ($electronicAddress->getType() == 'Email') {
-                $testEmailAdresses[] = $electronicAddress->getIdentifier();
+        $testEmailRecipients = [];
+        if ($this->userService->getCurrentUser()) {
+            foreach ($this->userService->getCurrentUser()->getElectronicAddresses() as $electronicAddress) {
+                if ($electronicAddress->getType() == 'Email') {
+                    $testEmailRecipients[] = $electronicAddress->getIdentifier();
+                }
             }
         }
-        if (is_string($this->addressesFromSettings)) {
-            $testEmailAdresses[] = $this->addressesFromSettings;
+        if (is_string($this->recipientsFromSettings)) {
+            $testEmailRecipients[] = $this->recipientsFromSettings;
         }
-        if (is_array($this->addressesFromSettings)) {
-            $testEmailAdresses = array_merge($testEmailAdresses, $this->addressesFromSettings);
+        if (is_array($this->recipientsFromSettings)) {
+            $testEmailRecipients = array_merge($testEmailRecipients, $this->recipientsFromSettings);
         }
 
-        return array_unique(array_map('strtolower', $testEmailAdresses));
+        return array_unique(array_map('strtolower', $testEmailRecipients));
     }
 }

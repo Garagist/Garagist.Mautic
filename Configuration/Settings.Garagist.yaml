@@ -23,7 +23,7 @@ Garagist:
     testMail:
       # Add here the email address you want to use for testing
       # You can pass an array (eg. ['test@mail.example', 'user@mail.example']) or an string (eg. 'test@mail.example')
-      addresses: null
+      recipients: null
 
     # Settings for email segments
     segment:

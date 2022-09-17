@@ -405,7 +405,7 @@ class BackendController extends AbstractModuleController
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
         $prefilledSegments = $this->mauticService->getPrefilledSegments($node);
         $allSegments = $this->apiService->getAllSegments();
-        $testEmailAddresses = $this->testEmailService->getTestEmailAdresses();
+        $testEmailAddresses = $this->testEmailService->getTestEmailRecipients();
         $this->view->assignMultiple([
             'emails' => $emails,
             'node' => $node,
@@ -436,7 +436,7 @@ class BackendController extends AbstractModuleController
         $prefilledSegments = $this->mauticService->getPrefilledSegments($node);
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
         $allSegments = $this->apiService->getAllSegments();
-        $testEmailAddresses = $this->testEmailService->getTestEmailAdresses();
+        $testEmailAddresses = $this->testEmailService->getTestEmailRecipients();
         $this->view->assignMultiple([
             'email' => $email,
             'node' => $node,
