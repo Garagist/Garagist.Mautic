@@ -63,6 +63,7 @@ class MauticEmail
 
     /**
      * @var string
+     * @ORM\Column(unique=true)
      */
     protected $emailIdentifier;
 
