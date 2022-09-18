@@ -206,7 +206,7 @@ class ApiService
             return $response;
         }
 
-        throw new Exception('TestEmail could not be send because it does not exist or ist not published');
+        throw new Exception('TestEmail could not be send because it does not exist');
     }
 
     /**
