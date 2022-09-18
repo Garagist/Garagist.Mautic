@@ -4,7 +4,7 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
     // Redirect after the action is done
     redirect = null
 
-    addresses = ${testEmailAddresses}
+    recipients = ${testEmailRecipients}
 
     class = 'neos-button neos-button-primary'
 
@@ -23,14 +23,14 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
             }
         }
 
-        hasAddresses = ${Carbon.Array.check(props.addresses)}
+        _hasRecipients = ${Carbon.Array.check(props.recipients)}
 
         _confirmAttributes = Neos.Fusion:DataStructure {
-            :href = "action+'&moduleArguments[addresses]='+addresses"
-            :class = "!addresses.length&&'pointer-events-none opacity-60'"
+            :href = "action+'&moduleArguments[recipients]='+recipients"
+            :class = "!recipients.length&&'pointer-events-none opacity-60'"
         }
 
-        _pushFunc = "{push:()=>{if(!error&&add&&!alreadyDefined){addresses.push(add.toLowerCase());add=''}}}"
+        _pushFunc = "{push:()=>{if(!error&&add&&!alreadyDefined){recipients.push(add.toLowerCase());add=''}}}"
 
         renderer = afx`
             <Garagist.Mautic:Component.ActionButton
@@ -38,20 +38,20 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
                 icon="fa-vial"
                 showText={props.detailView}
                 dialogTitle={this.label}
-                dialogXData={"{action:'" + props._actionUri + "', addresses:" + Json.stringify(props.addresses) + ", error:'', add:'',alreadyDefined:false}"}
+                dialogXData={"{action:'" + props._actionUri + "', recipients:" + Json.stringify(props.recipients) + ", error:'', add:'',alreadyDefined:false}"}
                 confirmLabel={this.label}
                 confirmAttributes={props._confirmAttributes}
-                initalFocusOnConfirm={props.hasAddresses}
+                initalFocusOnConfirm={props._hasRecipients}
             >
-                <div x-show="addresses.length" x-transition>
+                <div x-show="recipients.length" x-transition>
                     {props._i18n.id('email.addresses').translate()}
                     <div class="flex flex-wrap gap-4 mt-2">
-                        <template x-for="(address, index) in addresses">
+                        <template x-for="(address, index) in recipients">
                             <div class="flex items-center bg-neos-gray-light">
                                 <div class="py-2 px-4" x-text="address"></div>
                                 <button
-                                    x-show="addresses.length>1"
-                                    x-on:click="addresses.splice(index, 1);$el.blur()"
+                                    x-show="recipients.length>1"
+                                    x-on:click="recipients.splice(index, 1);$el.blur()"
                                     class="flex items-center justify-center w-8 h-8 hover:bg-neos-red focus:bg-neos-red focus:outline-none"
                                     aria-label={props._i18n.id('delete').translate()}
                                     x-tooltip="10051"
@@ -67,11 +67,11 @@ prototype(Garagist.Mautic:Component.SendTestMail) < prototype(Neos.Fusion:Compon
                 <div class="flex !mt-2" x-data={props._pushFunc}>
                     <input
                         x-model="add"
-                        x-dialog:focus={!props.hasAddresses}
+                        x-dialog:focus={!props._hasRecipients}
                         "x-on:keydown.space.prevent"
                         "x-on:keydown.enter.prevent"="const msg=$el.validationMessage;if(msg){error=msg}else{push()}"
                         x-on:change="error=$el.validationMessage"
-                        x-on:input="if(error){error=$el.validationMessage}alreadyDefined=addresses.includes(add.toLowerCase())"
+                        x-on:input="if(error){error=$el.validationMessage}alreadyDefined=recipients.includes(add.toLowerCase())"
                         placeholder={props._i18n.id("enter.mailaddress").translate()}
                         type="email"
                         id="add"

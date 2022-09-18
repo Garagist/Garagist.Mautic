@@ -405,7 +405,7 @@ class BackendController extends AbstractModuleController
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
         $prefilledSegments = $this->mauticService->getPrefilledSegments($node);
         $allSegments = $this->apiService->getAllSegments();
-        $testEmailAddresses = $this->testEmailService->getTestEmailRecipients();
+        $testEmailRecipients = $this->testEmailService->getTestEmailRecipients();
         $this->view->assignMultiple([
             'emails' => $emails,
             'node' => $node,
@@ -414,7 +414,7 @@ class BackendController extends AbstractModuleController
             'allSegments' => $allSegments,
             'flashMessages' => $flashMessages,
             'ping' => $ping,
-            'testEmailAddresses' => $testEmailAddresses,
+            'testEmailRecipients' => $testEmailRecipients,
         ]);
     }
 
@@ -436,7 +436,7 @@ class BackendController extends AbstractModuleController
         $prefilledSegments = $this->mauticService->getPrefilledSegments($node);
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
         $allSegments = $this->apiService->getAllSegments();
-        $testEmailAddresses = $this->testEmailService->getTestEmailRecipients();
+        $testEmailRecipients = $this->testEmailService->getTestEmailRecipients();
         $this->view->assignMultiple([
             'email' => $email,
             'node' => $node,
@@ -447,7 +447,7 @@ class BackendController extends AbstractModuleController
             'prefilledSegments' => $prefilledSegments,
             'flashMessages' => $flashMessages,
             'ping' => $ping,
-            'testEmailAddresses' => $testEmailAddresses,
+            'testEmailRecipients' => $testEmailRecipients,
         ]);
     }
 
@@ -564,14 +564,14 @@ class BackendController extends AbstractModuleController
      *
      * @param NodeInterface $node
      * @param MauticEmail $email
-     * @param array $addresses
+     * @param array $recipients
      * @param string|null $redirect
      * @return void
      */
     public function testAction(
         NodeInterface $node,
         MauticEmail $email,
-        array $addresses,
+        array $recipients,
         ?string $redirect = null
     ): void {
         // TODO Implement testAction
