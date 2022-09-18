@@ -197,16 +197,12 @@ class ApiService
         $mauticIdentifier = $this->isEmailPublished($emailIdentifier);
 
         if ($mauticIdentifier) {
-            //TODO: new contacts, that are in the same list, will be added as pending contacts at any point in time. Therefore it's hard to say when a send out is done
             //array(3)
             // string "success" (7) => integer 1
-            // string "sentCount" (9) => integer 0
-            // string "failedRecipients" (16) => integer 0
+            // string "recipients" (16) => integer 0
 
             $response = $this->validateResponse($this->emailApi->sendExample($mauticIdentifier, $recipients));
 
-            \Neos\Flow\var_dump($response);
-            exit;
             return $response;
         }
 

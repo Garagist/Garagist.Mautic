@@ -443,7 +443,12 @@ class MauticService
         }
     }
 
-    public function sendExampleEmail(MauticEmail $email, array $recipients=[])
+    /**
+     * @param MauticEmail $email
+     * @param array $recipients
+     * @return void
+     */
+    public function sendExampleEmail(MauticEmail $email, array $recipients=[]): void
     {
         $emailIdentifier = $email->getEmailIdentifier();
 
@@ -452,8 +457,7 @@ class MauticService
         }
 
         try {
-            $result = $this->apiService->sendTestEmail($emailIdentifier, $recipients);
-            \Neos\Flow\var_dump($result);
+            $this->apiService->sendTestEmail($emailIdentifier, $recipients);
         } catch (Exception $e) {
             $this->mauticLogger->error(sprintf('Sending test email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
         }
