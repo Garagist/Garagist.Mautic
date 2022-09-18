@@ -576,11 +576,13 @@ class BackendController extends AbstractModuleController
     ): void {
         // TODO Implement testAction
 
-        $this->mauticService->sendExampleEmail($email, $addresses);
+        $this->mauticService->sendExampleEmail($email, $recipients);
 
         $lastRecipient = array_pop($recipients);
         $translationKey = 'email.sent.test.' . (count($recipients) ? 'multiple' : 'one');
         $this->addFlashMessage('', $translationKey, Message::SEVERITY_OK, [$lastRecipient, implode(', ', $recipients)]);
+
+        $this->redirectCommand($node, $email, $redirect);
     }
 
     /**
