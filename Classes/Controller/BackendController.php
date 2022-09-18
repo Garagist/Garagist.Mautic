@@ -575,6 +575,10 @@ class BackendController extends AbstractModuleController
         ?string $redirect = null
     ): void {
         // TODO Implement testAction
+
+        $lastRecipient = array_pop($recipients);
+        $translationKey = 'email.sent.test.' . (count($recipients) ? 'multiple' : 'one');
+        $this->addFlashMessage('', $translationKey, Message::SEVERITY_OK, [$lastRecipient, implode(', ', $recipients)]);
         $this->redirectCommand($node, $email, $redirect);
     }
 

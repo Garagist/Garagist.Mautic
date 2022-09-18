@@ -83,6 +83,12 @@
             <trans-unit id="email.send.test" xml:space="preserve">
                 <source>Send test email</source>
             </trans-unit>
+            <trans-unit id="email.sent.test.one" xml:space="preserve">
+                <source>Sent test email to {0}</source>
+            </trans-unit>
+            <trans-unit id="email.sent.test.multiple" xml:space="preserve">
+                <source>Sent test email to {1} and {0}</source>
+            </trans-unit>
             <trans-unit id="email.update" xml:space="preserve">
                 <source>Update email</source>
             </trans-unit>

@@ -69,6 +69,14 @@
                 <source>Send test email</source>
                 <target>Test E-Mail senden</target>
             </trans-unit>
+            <trans-unit id="email.sent.test.one" xml:space="preserve">
+                <source>Sent test email to {0}</source>
+                <target>Test E-Mail wurde an {0} gesendet</target>
+            </trans-unit>
+            <trans-unit id="email.sent.test.multiple" xml:space="preserve">
+                <source>Sent test email to {1} and {0}</source>
+                <target>Test E-Mail wurde an {1} und {0} gesendet</target>
+            </trans-unit>
             <trans-unit id="email.send.later" xml:space="preserve">
                 <source>Send email at a later date</source>
                 <target>E-Mail zu einem späteren Zeitpunkt senden</target>
