@@ -17,6 +17,6 @@ class Emails extends \Mautic\Api\Emails
      */
     public function sendExample(int $id, array $recipients)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/test', ['recipients' => $recipients], 'POST');
+        return $this->makeRequest($this->endpoint.'/'.$id.'/example', ['recipients' => $recipients], 'POST');
     }
 }

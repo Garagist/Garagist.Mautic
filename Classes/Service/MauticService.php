@@ -471,7 +471,7 @@ class MauticService
     public function syncEmail(MauticEmail $email): void
     {
         $emailIdentifier = $email->getEmailIdentifier();
-        $emailRecord = $this->apiService->findEmailByNeosIdentifier($emailIdentifier);
+        $emailRecord = $this->apiService->findMauticRecordByEmailIdentifier($emailIdentifier);
         if ($emailRecord != null) {
             $email->setPublished($emailRecord['isPublished']);
             $this->mauticEmailRepository->update($email);

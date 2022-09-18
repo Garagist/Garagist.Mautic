@@ -431,7 +431,7 @@ class BackendController extends AbstractModuleController
     ): void {
         $ping = $this->ping();
         $categoryNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
-        $mauticRecord = $this->apiService->findEmailByNeosIdentifier($email->getEmailIdentifier());
+        $mauticRecord = $this->apiService->findMauticRecordByEmailIdentifier($email->getEmailIdentifier());
         $history = $this->mauticService->getAuditLog($email);
         $prefilledSegments = $this->mauticService->getPrefilledSegments($node);
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();

@@ -87,16 +87,16 @@ class ApiService
     }
 
     /**
-     * @param string $nodeIdentifier
-     * @throws NodeException|Exception
+     * @param string $emailIdentifier
      * @return void
+     *@throws NodeException|Exception
      */
-    public function deleteEmail(string $nodeIdentifier): void
+    public function deleteEmail(string $emailIdentifier): void
     {
-        $emailRecord = $this->findEmailByNeosIdentifier($nodeIdentifier);
+        $emailRecord = $this->findMauticRecordByEmailIdentifier($emailIdentifier);
         if ($emailRecord) {
             $response = $this->emailApi->delete($emailRecord['id']);
-            $this->mauticLogger->info(sprintf('Delete mautic record with identifier %s', $nodeIdentifier));
+            $this->mauticLogger->info(sprintf('Delete mautic record with identifier %s', $emailIdentifier));
             $this->handleError($response);
         }
     }
@@ -105,17 +105,17 @@ class ApiService
      * @throws NodeException|Exception
      * @return array
      */
-    public function alterEmail(string $nodeIdentifier, array $data): array
+    public function alterEmail(string $emailIdentifier, array $data): array
     {
 
-        $emailRecord = $this->findEmailByNeosIdentifier($nodeIdentifier);
+        $emailRecord = $this->findMauticRecordByEmailIdentifier($emailIdentifier);
 
         if ($emailRecord) { //match found -> update
             $response = $this->emailApi->edit($emailRecord['id'], $data);
-            $this->mauticLogger->info(sprintf('Edit mautic record with identifier %s', $nodeIdentifier));
+            $this->mauticLogger->info(sprintf('Edit mautic record with identifier %s', $emailIdentifier));
         } else { // no match found -> create
             $response = $this->emailApi->create($data);
-            $this->mauticLogger->info(sprintf('Create new mautic record with identifier %s', $nodeIdentifier));
+            $this->mauticLogger->info(sprintf('Create new mautic record with identifier %s', $emailIdentifier));
         }
 
         $this->handleError($response);
@@ -138,23 +138,23 @@ class ApiService
     }
 
     /**
-     * @param string $nodeIdentifier
+     * @param string $emailIdentifier
      * @return int|null
      */
-    public function isEmailPublished(string $nodeIdentifier)
+    public function isEmailPublished(string $emailIdentifier)
     {
-        $emailRecord = $this->findEmailByNeosIdentifier($nodeIdentifier);
+        $emailRecord = $this->findMauticRecordByEmailIdentifier($emailIdentifier);
 
         return $emailRecord['isPublished'] === true ? (int) $emailRecord['id'] : null;
     }
 
     /**
-     * @param string $neosIdentifier
+     * @param string $emailIdentifier
      * @return mixed|null
      */
-    public function findEmailByNeosIdentifier(string $neosIdentifier)
+    public function findMauticRecordByEmailIdentifier(string $emailIdentifier)
     {
-        $match = $this->validateResponse($this->emailApi->getList($neosIdentifier));
+        $match = $this->validateResponse($this->emailApi->getList($emailIdentifier));
         if ($match['total'] === 1) { //match found
             return array_pop($match['emails']);
         }
@@ -194,14 +194,14 @@ class ApiService
      */
     public function sendTestEmail(string $emailIdentifier, array $recipients): array
     {
-        $mauticIdentifier = $this->isEmailPublished($emailIdentifier);
+        $emailRecord = $this->findMauticRecordByEmailIdentifier($emailIdentifier);
 
-        if ($mauticIdentifier) {
+        if (!empty($emailRecord['id'])) {
             //array(3)
             // string "success" (7) => integer 1
             // string "recipients" (16) => integer 0
 
-            $response = $this->validateResponse($this->emailApi->sendExample($mauticIdentifier, $recipients));
+            $response = $this->validateResponse($this->emailApi->sendExample($emailRecord['id'], $recipients));
 
             return $response;
         }
