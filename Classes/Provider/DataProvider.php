@@ -287,10 +287,7 @@ class DataProvider implements DataProviderInterface
     {
         $filteredSegments = $this->filterHiddenSegments($segmentsFromMautic);
         return array_map(function ($entry) {
-            if (is_array($entry)) {
-                return $entry['id'];
-            }
-            return $entry->getId();
+            return $entry['id'];
         }, $filteredSegments);
     }
 
@@ -314,11 +311,7 @@ class DataProvider implements DataProviderInterface
         return array_filter($segments, function ($segment) use ($hiddenSegments) {
             $id = $segment;
             if (!is_numeric($segment)) {
-                if (is_array($segment)) {
-                    $id = $segment['id'];
-                } else {
-                    $id = $segment->getId();
-                }
+                $id = $segment['id'];
             }
             return !in_array($id, $hiddenSegments);
         });
