@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Garagist\Mautic\Manager;
 
+use Garagist\Mautic\Service\TaskService;
 use Neos\Flow\Annotations as Flow;
 use Garagist\Mautic\Event\MauticEmailCreate;
 use Garagist\Mautic\Event\MauticEmailPublish;
@@ -26,15 +27,15 @@ final class MauticProcessManager implements EventListenerInterface
 {
     /**
      * @Flow\Inject
-     * @var ApiService
-     */
-    protected $apiService;
-
-    /**
-     * @Flow\Inject
      * @var MauticService
      */
     protected $mauticService;
+
+    /**
+     * @Flow\Inject
+     * @var TaskService
+     */
+    protected $taskService;
 
     /**
      * @var EventStore
@@ -71,7 +72,7 @@ final class MauticProcessManager implements EventListenerInterface
                 $event->getNodeIdentifier(),
                 $event->getProperties()
             );
-            $this->mauticService->fireUpdateEmailEvent($email);
+            $this->taskService->fireUpdateEmailEvent($email);
             $this->mauticLogger->info(sprintf('Creating email with identifier %s', $emailIdentifier));
         } catch (Exception $e) {
             $this->mauticLogger->error(sprintf('Creating email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
@@ -113,7 +114,7 @@ final class MauticProcessManager implements EventListenerInterface
         $emailIdentifier = $event->getEmailIdentifier();
         $this->mauticLogger->info(sprintf('Sent email with identifier %s', $emailIdentifier));
         $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
-        $this->mauticService->finishTask($email);
+        $this->taskService->finishTask($email);
     }
 
     /**
@@ -186,6 +187,6 @@ final class MauticProcessManager implements EventListenerInterface
             $this->mauticLogger->error(sprintf('Task "%s" finished with an error! Email %s - Reason: %s', $task, $emailIdentifier, $error));
         }
         $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
-        $this->mauticService->finishTask($email, $error !== '');
+        $this->taskService->finishTask($email, $error !== '');
     }
 }

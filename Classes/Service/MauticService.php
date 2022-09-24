@@ -46,6 +46,12 @@ class MauticService
 
     /**
      * @Flow\Inject
+     * @var TaskService
+     */
+    protected $taskService;
+
+    /**
+     * @Flow\Inject
      * @var MauticEmailRepository
      */
     protected $mauticEmailRepository;
@@ -91,118 +97,6 @@ class MauticService
     }
 
     /**
-     * @param string $nodeIdentifier
-     * @param array $properties
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
-     */
-    public function fireCreateEmailEvent(string $nodeIdentifier, array $properties): void
-    {
-        $event = new MauticEmailCreate(Algorithms::generateUUID(), $nodeIdentifier, $properties);
-        $streamName = StreamName::fromString('email-' . $event->getEmailIdentifier());
-
-        $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
-    }
-
-    /**
-     * @param MauticEmail $email
-     * @return void
-     */
-    public function fireUpdateEmailEvent(MauticEmail $email): void
-    {
-        $this->setTask($email, MauticEmail::TASK_UPDATE);
-        $emailIdentifier = $email->getEmailIdentifier();
-        $event = new MauticEmailUpdate($emailIdentifier, $email->getNodeIdentifier(), $email->getProperties());
-        $streamName = StreamName::fromString('email-' . $emailIdentifier);
-        $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
-    }
-
-    /**
-     * @param MauticEmail $email
-     * @param string $error
-     * @return void
-     */
-    public function fireTaskFinishedEvent(MauticEmail $email, string $error = ''): void
-    {
-        $event = new MauticEmailTaskFinished($email->getEmailIdentifier(), $email->getNodeIdentifier(), $email->getTask(), $error);
-        $streamName = StreamName::fromString('email-' . $email->getEmailIdentifier());
-
-        $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
-    }
-
-    /**
-     * @param MauticEmail $email
-     * @throws Exception
-     * @throws ExceptionInterface
-     */
-    public function fireSendEmailEvent(MauticEmail $email): void
-    {
-        $this->setTask($email, MauticEmail::TASK_SEND);
-        $emailIdentifier = $email->getEmailIdentifier();
-        $mauticIdentifier = $this->apiService->isEmailPublished($emailIdentifier);
-        if ($mauticIdentifier) {
-            $event = new MauticEmailSend($emailIdentifier, $mauticIdentifier);
-            $streamName = StreamName::fromString('email-' . $emailIdentifier);
-
-            $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
-        } else {
-            throw new Exception(sprintf("The email with identifier %s could not be send because it's not published.", $emailIdentifier));
-        }
-    }
-
-    /**
-     * @param MauticEmail $email
-     * @return void
-     */
-    public function firePublishEmailEvent(MauticEmail $email): void
-    {
-        $this->setTask($email, MauticEmail::TASK_PUBLISH);
-        $emailIdentifier = $email->getEmailIdentifier();
-        $event = new MauticEmailPublish($emailIdentifier, $email->getNodeIdentifier());
-        $streamName = StreamName::fromString('email-' . $emailIdentifier);
-        $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
-    }
-
-    /**
-     * @param MauticEmail $email
-     * @return void
-     */
-    public function fireUnpublishEmailEvent(MauticEmail $email): void
-    {
-        $this->setTask($email, MauticEmail::TASK_UNPUBLISH);
-        $emailIdentifier = $email->getEmailIdentifier();
-        $event = new MauticEmailUnpublish($emailIdentifier, $email->getNodeIdentifier());
-        $streamName = StreamName::fromString('email-' . $emailIdentifier);
-        $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
-    }
-
-    /**
-     * @param MauticEmail $email
-     * @return void
-     */
-    public function fireDeleteEmailEvent(MauticEmail $email): void
-    {
-        $this->setTask($email, MauticEmail::TASK_DELETE);
-        $emailIdentifier = $email->getEmailIdentifier();
-        $event = new MauticEmailDelete($emailIdentifier);
-        $streamName = StreamName::fromString('email-' . $emailIdentifier);
-        $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
-    }
-
-    /**
-     * @param MauticEmail $email
-     * @throws Exception
-     * @throws ExceptionInterface
-     */
-    public function fireSyncEmailEvent(MauticEmail $email): void
-    {
-        $emailIdentifier = $email->getEmailIdentifier();
-        $event = new MauticEmailSync($emailIdentifier, $email->getNodeIdentifier());
-        $streamName = StreamName::fromString('email-' . $emailIdentifier);
-        $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
-    }
-
-    /**
      * @param string $emailIdentifier
      * @param string $nodeIdentifier
      * @param array $properties
@@ -230,33 +124,6 @@ class MauticService
         $this->persistenceManager->persistAll();
 
         return $email;
-    }
-
-    /**
-     * @param MauticEmail $email
-     * @param boolean $failed
-     * @return void
-     */
-    public function finishTask(MauticEmail $email, bool $failed = false): void
-    {
-        if (!$failed) {
-            $this->syncEmail($email);
-        }
-        $this->setTask($email, $failed ? MauticEmail::TASK_FAILED : MauticEmail::IDLE);
-    }
-
-    /**
-     * @param MauticEmail $email
-     * @param string $task
-     * @return void
-     */
-    public function setTask(MauticEmail $email, string $task): void
-    {
-        $email->setTask($task);
-        $this->mauticEmailRepository->update($email);
-        $this->persistenceManager->persistAll();
-
-        $this->mauticLogger->info(sprintf('Set currently running task "%s" for email with identifier %s', $task, $email->getEmailIdentifier()));
     }
 
     /**
@@ -344,10 +211,10 @@ class MauticService
             $data = $this->dataProvider->getData($email, $segmentsIds);
             $this->apiService->alterEmail($emailIdentifier, $data);
             $email->setDateModified(new DateTime());
-            $this->fireTaskFinishedEvent($email);
+            $this->taskService->fireTaskFinishedEvent($email);
             $this->mauticLogger->info(sprintf('Update email with identifier %s', $emailIdentifier));
         } catch (Exception $e) {
-            $this->fireTaskFinishedEvent($email, sprintf('Update email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
+            $this->taskService->fireTaskFinishedEvent($email, sprintf('Update email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
         }
     }
 
@@ -370,7 +237,7 @@ class MauticService
 
             $email->setPublished(true);
             $this->mauticEmailRepository->update($email);
-            $this->fireTaskFinishedEvent($email);
+            $this->taskService->fireTaskFinishedEvent($email);
             $this->mauticLogger->info(sprintf('Published email with identifier %s', $emailIdentifier));
         }
 
@@ -390,7 +257,7 @@ class MauticService
 
         $email->setPublished(false);
         $this->mauticEmailRepository->update($email);
-        $this->fireTaskFinishedEvent($email);
+        $this->taskService->fireTaskFinishedEvent($email);
 
         return true;
     }
@@ -407,9 +274,9 @@ class MauticService
         try {
             $this->apiService->deleteEmail($emailIdentifier);
             $email->setDeleted(true);
-            $this->fireTaskFinishedEvent($email, '');
+            $this->taskService->fireTaskFinishedEvent($email, '');
         } catch (Exception $e) {
-            $this->fireTaskFinishedEvent($email, sprintf('Delete email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
+            $this->taskService->fireTaskFinishedEvent($email, sprintf('Delete email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
         }
     }
 

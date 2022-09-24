@@ -9,6 +9,7 @@ use Garagist\Mautic\Domain\Model\MauticEmail;
 use Garagist\Mautic\Service\ApiService;
 use Garagist\Mautic\Service\MauticService;
 use Garagist\Mautic\Service\NodeService;
+use Garagist\Mautic\Service\TaskService;
 use Garagist\Mautic\Service\TestEmailService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Error\Messages\Message;
@@ -61,6 +62,12 @@ class BackendController extends AbstractModuleController
      * @var MauticService
      */
     protected $mauticService;
+
+    /**
+     * @Flow\Inject
+     * @var TaskService
+     */
+    protected $taskService;
 
     /**
      * @Flow\Inject
@@ -234,7 +241,7 @@ class BackendController extends AbstractModuleController
     ): void {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
-            $this->mauticService->fireUpdateEmailEvent($email);
+            $this->taskService->fireUpdateEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
                 'email.feedback.updated',
@@ -268,7 +275,7 @@ class BackendController extends AbstractModuleController
     ): void {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
-            $this->mauticService->firePublishEmailEvent($email);
+            $this->taskService->firePublishEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
                 'email.feedback.published',
@@ -302,7 +309,7 @@ class BackendController extends AbstractModuleController
     ): void {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
-            $this->mauticService->fireUnpublishEmailEvent($email);
+            $this->taskService->fireUnpublishEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
                 'email.feedback.unpublished',
@@ -338,7 +345,7 @@ class BackendController extends AbstractModuleController
         // TODO use $date, 'now' is send it immediately
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::IDLE) {
-            $this->mauticService->fireSendEmailEvent($email);
+            $this->taskService->fireSendEmailEvent($email);
             $this->addFlashMessage(
                 'email.feedback.identifier',
                 'email.feedback.sent',
@@ -372,7 +379,7 @@ class BackendController extends AbstractModuleController
     ): void {
         $identifier = $email->getEmailIdentifier();
         if ($email->getTask() == MauticEmail::TASK_FAILED) {
-            $this->mauticService->setTask($email, MauticEmail::IDLE);
+            $this->taskService->setTask($email, MauticEmail::IDLE);
             $this->addFlashMessage(
                 'email.feedback.identifier',
                 'email.feedback.unlocked',
@@ -516,7 +523,7 @@ class BackendController extends AbstractModuleController
             )
         ];
 
-        $this->mauticService->fireCreateEmailEvent($node->getIdentifier(), $properties);
+        $this->taskService->fireCreateEmailEvent($node->getIdentifier(), $properties);
 
         $this->addFlashMessage('', 'email.feedback.created', Message::SEVERITY_OK, [$title]);
         $this->redirect('node', null, null, ['node' => $node], 1);
@@ -554,7 +561,7 @@ class BackendController extends AbstractModuleController
             $email->setProperty('segments', $convertedSegments);
         }
         $feedback = $hasSegments ? 'email.feedback.edited.withSegments' : 'email.feedback.edited';
-        $this->mauticService->fireUpdateEmailEvent($email);
+        $this->taskService->fireUpdateEmailEvent($email);
         $this->addFlashMessage('', $feedback, Message::SEVERITY_OK, []);
         $this->redirectCommand($node, $email, $redirect);
     }
@@ -638,7 +645,7 @@ class BackendController extends AbstractModuleController
         MauticEmail $email
     ): void {
         $title = $email->getProperty('subject') ?? $node->getProperty('title');
-        $this->mauticService->fireDeleteEmailEvent($email);
+        $this->taskService->fireDeleteEmailEvent($email);
 
         $this->addFlashMessage('', 'email.feedback.deleted', Message::SEVERITY_OK, [$title]);
         $this->redirect('node', null, null, ['node' => $node]);
