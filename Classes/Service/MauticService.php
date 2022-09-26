@@ -20,6 +20,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Neos\Flow\Http\Client\Browser;
 use Neos\Flow\Http\Client\CurlEngine;
+use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Psr\Log\LoggerInterface;
 use DateTime;
@@ -78,6 +79,12 @@ class MauticService
 
     /**
      * @Flow\Inject
+     * @var TranslationHelper
+     */
+    protected $translationHelper;
+
+    /**
+     * @Flow\Inject
      * @var TestEmailService
      */
     protected $testEmailService;
@@ -100,7 +107,6 @@ class MauticService
         string $nodeIdentifier,
         array $properties
     ): MauticEmail {
-
         $email = new MauticEmail();
         foreach ($properties as $property => $value) {
             $email->setProperty($property, $value);
@@ -384,7 +390,17 @@ class MauticService
                 case $type === 'Garagist.Mautic:MauticEmailSent':
                     /** @var MauticEmailSent $domainEvent */
                     $domainEvent = $stream->current()->getDomainEvent();
-                    $message = sprintf('Send: %s | Success: %s | Failed: %s', $domainEvent->getSentCount(), $domainEvent->getSuccess(), $domainEvent->getFailedRecipients());
+                    $message = $this->translationHelper->translate(
+                        'message.sent',
+                        '{0} sent ({1} successful and {2} failed)',
+                        [
+                            $domainEvent->getSentCount(),
+                            $domainEvent->getSuccess(),
+                            $domainEvent->getFailedRecipients()
+                        ],
+                        'Module',
+                        'Garagist.Mautic'
+                    );
                     break;
                 default:
                     /** @var DomainEventInterface $event */

@@ -343,7 +343,7 @@
             </trans-unit>
             <trans-unit id="Garagist.Mautic:MauticEmailSent" xml:space="preserve">
                 <source>Email sent</source>
-                <target>Email gesendet</target>
+                <target>E-Mail gesendet</target>
             </trans-unit>
             <trans-unit id="Garagist.Mautic:MauticEmailSync" xml:space="preserve">
                 <source>Email synced</source>
@@ -360,6 +360,10 @@
             <trans-unit id="Garagist.Mautic:MauticEmailTest" xml:space="preserve">
                 <source>Sent test email</source>
                 <target>Test E-Mail versendet</target>
+            </trans-unit>
+            <trans-unit id="message.sent" xml:space="preserve">
+                <source>{0} sent ({1} successful and {2} failed)</source>
+                <target>{0} gesendet ({1} erfolgreich und {2} fehlgeschlagen)</target>
             </trans-unit>
         </body>
     </file>
