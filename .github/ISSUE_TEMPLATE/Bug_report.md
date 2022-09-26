@@ -1,27 +1,73 @@
----
 name: 🐛 Bug report
-about: Create a report to help us improve
-title: ""
+description: Create a report to help us improve
 labels: bug
----
-
-**Describe the bug**
-A clear and concise description of what the bug is.
-
-**To Reproduce**
-Steps to reproduce the behavior:
-
-**Expected behavior**
-A clear and concise description of what you expected to happen.
-
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
-
-**Enviroment (please complete the following information):**
-
-- PHP Version
-- Neos Version
-- Flow Version
-
-**Additional context**
-Add any other context about the problem here.
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for taking the time to complete this bug report!
+  - type: markdown
+    attributes:
+      value: Please make sure to provide the information we ask for. This will allow us to help you better.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of the current behaviour.
+      placeholder: A bug happened!
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: A description of what you expect to happen.
+      placeholder: I expect to see X or Y
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Please add a link to a repository with a minimal reproduction. Or describe accurately how we can reproduce/verify the bug.
+      placeholder: |
+        Example steps (replace with your own):
+        1. Clone my repo at https://github.com/<myuser>/example
+        2. Do x and y
+        3. You should see the error come up
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The version of Garagist.Mautic you are using.
+      placeholder: ex. 0.1.0
+    validations:
+      required: true
+  - type: textarea
+    id: phpinfo
+    attributes:
+      label: PHP version
+      description: |
+        Please paste the output of running `php -v`.
+        This will be automatically formatted as a code block, so no need for backticks.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: composerinfo
+    attributes:
+      label: Environment
+      description: |
+        Please paste the output of running `composer info`.
+        This will be automatically formatted as a code block, so no need for backticks.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Anything else that might be relevant
+    validations:
+      required: false

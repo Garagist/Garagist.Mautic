@@ -1,18 +1,45 @@
----
 name: ✨ Feature request
-about: Suggest an idea for this project
-title: ""
+description: Suggest an idea for this project
 labels: enhancement
----
-
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
-
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
-
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
-**Additional context**
-Add any other context or screenshots about the feature request here.
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for taking the time to suggest a new feature!
+  - type: markdown
+    attributes:
+      value: Please describe the feature in detail. Why would it would be a good addition to Garagist.Mautic?
+  - type: textarea
+    id: description
+    attributes:
+      label: What should be improved?
+      description: Is your feature request related to a problem? Please describe it.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the solution you would like
+      description: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Possible alternatives
+      description: Describe any alternatives you have considered.
+    validations:
+      required: false
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Add any other relevant information.
+    validations:
+      required: false
+  - type: checkboxes
+    id: can-work
+    attributes:
+      label: Are you willing to work on this?
+      description: Are you willing to help us add this feature? If you are not sure how, feel free to ask for guidance.
+      options:
+        - label: Yes, I would like to help
