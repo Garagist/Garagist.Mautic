@@ -15,7 +15,6 @@ use Garagist\Mautic\Event\MauticEmailTaskFinished;
 use Garagist\Mautic\Event\MauticEmailUnpublish;
 use Garagist\Mautic\Event\MauticEmailUpdate;
 use Garagist\Mautic\Service\MauticService;
-use Garagist\Mautic\Service\ApiService;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Garagist\Mautic\Event\MauticEmailSend;

@@ -2,10 +2,12 @@
 
 namespace Garagist\Mautic\Api;
 
+use Mautic\Api\Emails as MauticEmails;
+
 /**
  * Emails Context.
  */
-class Emails extends \Mautic\Api\Emails
+class Emails extends MauticEmails
 {
     /**
      * Send test email to the assigned lists.
@@ -17,6 +19,6 @@ class Emails extends \Mautic\Api\Emails
      */
     public function sendExample(int $id, array $recipients)
     {
-        return $this->makeRequest($this->endpoint.'/'.$id.'/example', ['recipients' => $recipients], 'POST');
+        return $this->makeRequest($this->endpoint . '/' . $id . '/example', ['recipients' => $recipients], 'POST');
     }
 }

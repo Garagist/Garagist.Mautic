@@ -7,15 +7,8 @@ namespace Garagist\Mautic\Service;
 use Garagist\Mautic\Domain\Dto\HistoryItem;
 use Garagist\Mautic\Domain\Model\MauticEmail;
 use Garagist\Mautic\Domain\Repository\MauticEmailRepository;
-use Garagist\Mautic\Event\MauticEmailCreate;
-use Garagist\Mautic\Event\MauticEmailDelete;
-use Garagist\Mautic\Event\MauticEmailPublish;
-use Garagist\Mautic\Event\MauticEmailSend;
 use Garagist\Mautic\Event\MauticEmailSent;
-use Garagist\Mautic\Event\MauticEmailSync;
 use Garagist\Mautic\Event\MauticEmailTaskFinished;
-use Garagist\Mautic\Event\MauticEmailUnpublish;
-use Garagist\Mautic\Event\MauticEmailUpdate;
 use Garagist\Mautic\Provider\DataProviderInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\EventSourcing\Event\DomainEventInterface;
@@ -28,8 +21,6 @@ use Neos\Flow\Exception;
 use Neos\Flow\Http\Client\Browser;
 use Neos\Flow\Http\Client\CurlEngine;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use Neos\Flow\Utility\Algorithms;
-use ProxyManager\Exception\ExceptionInterface;
 use Psr\Log\LoggerInterface;
 use DateTime;
 
@@ -315,11 +306,11 @@ class MauticService
      * @param array $recipients
      * @return void
      */
-    public function sendExampleEmail(MauticEmail $email, array $recipients=[]): void
+    public function sendExampleEmail(MauticEmail $email, array $recipients = []): void
     {
         $emailIdentifier = $email->getEmailIdentifier();
 
-        if(empty($recipients)) {
+        if (empty($recipients)) {
             $recipients = $this->testEmailService->getTestEmailRecipients();
         }
 

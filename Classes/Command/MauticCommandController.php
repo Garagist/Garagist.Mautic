@@ -44,9 +44,10 @@ class MauticCommandController extends CommandController
         var_dump($this->mauticService->getAuditLog($email));
     }
 
-    public function sendTestEmailCommand(string $emailIdentifier, string $recipients) {
+    public function sendTestEmailCommand(string $emailIdentifier, string $recipients)
+    {
         $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
-        $this->mauticService->sendExampleEmail($email, explode(',',$recipients));
+        $this->mauticService->sendExampleEmail($email, explode(',', $recipients));
 
         var_dump($email);
     }
