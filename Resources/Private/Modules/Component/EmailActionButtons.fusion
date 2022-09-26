@@ -26,7 +26,8 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
             `
             sendTestMail = afx`
                 <Garagist.Mautic:Component.SendTestMail
-                    @if={(props.action.test && props.canTest) || (props.action.test && props._canResend)}
+                    @if={props.action.test}
+                    @if={props.canTest || props._canResend}
                     detailView={props.detailView}
                     {...props.hrefArguments}
                 />
