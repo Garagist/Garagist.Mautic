@@ -91,9 +91,9 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                     <div x-show="expanded" x-collapse>
                         <table class="neos-info-table !mb-0">
                             <thead>
-                                <th>{props._i18n.id('date').translate()}</th>
-                                <th>{props._i18n.id('type').translate()}</th>
-                                <th>{props._i18n.id('message').translate()}</th>
+                                <th>{props._i18n.id('time').translate()}</th>
+                                <th>{props._i18n.id('action').translate()}</th>
+                                <th>{props._i18n.id('furtherInformation').translate()}</th>
                             </thead>
                             <tbody>
                                 <Neos.Fusion:Loop items={history}>
