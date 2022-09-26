@@ -95,12 +95,6 @@ class MauticEmail
 
 
     /**
-     * @var DateTime
-     * @ORM\Column(nullable=true)
-     */
-    protected $dateSent;
-
-    /**
      * @var string
      */
     protected $task;
@@ -224,22 +218,6 @@ class MauticEmail
     public function setDateCreated(DateTime $dateCreated): void
     {
         $this->dateCreated = $dateCreated;
-    }
-
-    /**
-     * @return DateTime|null
-     */
-    public function getDateSent(): ?DateTime
-    {
-        return $this->dateSent ?? null;
-    }
-
-    /**
-     * @param DateTime $dateSent
-     */
-    public function setDateSent(DateTime $dateSent): void
-    {
-        $this->dateSent = $dateSent;
     }
 
     /**

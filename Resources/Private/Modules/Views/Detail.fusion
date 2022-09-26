@@ -48,7 +48,12 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                             </tr>
                             <tr @if={props.emailData.isSended}>
                                 <td>{props._i18n.id('sentOn').translate()}</td>
-                                <td>{props.emailData.dateSent}</td>
+                                <td>
+                                    <Neos.Fusion:Loop items={props.emailData.sent}>
+                                        {props._i18n.id('dateAndTime').arguments([Date.format(item, 'd.m.Y'), Date.format(item, 'H:m:s')]).translate()}
+                                        <br @if={!iterator.isLast} />
+                                    </Neos.Fusion:Loop>
+                                </td>
                             </tr>
                             <tr>
                                 <td>{props._i18n.id('subject').translate()}</td>
