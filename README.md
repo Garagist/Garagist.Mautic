@@ -7,6 +7,10 @@ This package makes it possible to **send personalized newsletters** from Neos wi
 Mautic as a content element and add **Mautic tracking**. The forms are integrated via the Javascript API. All backend
 requests to Mautic are event-sourced. This ensures that the tasks are processed even if Mautic is not available.
 
+![Screenshot with the overview of emails](https://user-images.githubusercontent.com/4510166/192508665-7dded40f-34e4-4035-b794-ca42eb8f12f0.png)
+![Screenshot with the view of a document](https://user-images.githubusercontent.com/4510166/192508719-a5c3e5c0-4994-4e24-b989-0943cce25ec6.png)
+![Screenshot with the detail view of an email](https://user-images.githubusercontent.com/4510166/192508772-b8958a6b-fc75-4d78-8b4d-756395e4d8a5.png)
+
 ## Installation
 
 Add the package in your site package:
