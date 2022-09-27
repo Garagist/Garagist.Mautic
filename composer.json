@@ -1,7 +1,8 @@
 {
+    "name": "garagist/mautic",
     "description": "Neos adapter for the Mautic API",
     "type": "neos-plugin",
-    "name": "garagist/mautic",
+    "license": "GPL-3.0-or-later",
     "require": {
         "ext-intl": "*",
         "ext-json": "*",
