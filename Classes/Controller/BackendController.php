@@ -106,6 +106,12 @@ class BackendController extends AbstractModuleController
     protected $routeArgument;
 
     /**
+     * @var string
+     * @Flow\InjectConfiguration(path="mail.trackingPixel", package="Garagist.Mautic")
+     */
+    protected $trackingPixel;
+
+    /**
      * @var array
      */
     protected $viewFormatToObjectNameMap = [
