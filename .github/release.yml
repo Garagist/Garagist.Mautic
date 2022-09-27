@@ -3,6 +3,8 @@ changelog:
     labels:
       - ignore-for-releasenotes
       - dependencies
+    authors:
+      - dependabot
   categories:
     - title: 💥 Breaking changes
       labels:
