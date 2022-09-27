@@ -3,9 +3,9 @@
 [![Latest stable version]][packagist] [![GitHub stars]][stargazers] [![GitHub watchers]][subscription]
 [![GitHub license]][license] [![GitHub issues]][issues] [![GitHub forks]][network]
 
-This package makes it possible to **send newsletters** from Neos with [Mautic], **include forms** from Mautic as a
-content element and add **Mautic tracking**. The forms are integrated via the Javascript API. All backend requests to
-Mautic are event-sourced. This ensures that the tasks are processed even if Mautic is not available.
+This package makes it possible to **send personalized newsletters** from Neos with [Mautic], **include forms** from
+Mautic as a content element and add **Mautic tracking**. The forms are integrated via the Javascript API. All backend
+requests to Mautic are event-sourced. This ensures that the tasks are processed even if Mautic is not available.
 
 ## Installation
 
@@ -106,6 +106,36 @@ In this group you can enable/disable folwing actions:
 - `test` Ability to send test (aka example) emails, defaults to `false`. You need to install the
   [GaragistMauticApiBundle] plugin in your Mautic installation
 
+## Personalization
+
+It is possible to send personalized emails. To use this, simply apply the following markup in the text on your page:
+
+```
+{#ifNewsletter}Hello #FIRSTNAME# #Lastname#, this is your newsletter{:else}Fallback for Webview{/if}
+```
+
+Availble fields are every field from contactfield, surounded by an # on both sides (case insensitive)
+
+## NodeTypes
+
+### [Garagist.Mautic:Mixin.Email]
+
+Add this mixin to any document to enable the ability to send newsletter.
+
+### [Garagist.Mautic:Mixin.Category]
+
+Add this mixin to any document to define this as a category for newsletters. This is used in the overview of the
+newsletter module.
+
+### [Garagist.Mautic:Mixin.DoNotTrack]
+
+Add this mixin to any document to have the ability to disable the Mautic tracking for this specific page.
+
+### [Garagist.Mautic:Mixin.Form]
+
+Add this mixin to a node to add the selector for Mautic forms. Be aware that you need to include the Fusion prototype
+[Garagist.Mautic:Component.Form] somewhere in your markup
+
 [packagist]: https://packagist.org/packages/garagist/mautic
 [latest stable version]: https://poser.pugx.org/garagist/mautic/v/stable
 [github issues]: https://img.shields.io/github/issues/Garagist/Garagist.Mautic
@@ -125,3 +155,8 @@ In this group you can enable/disable folwing actions:
 [enable api and http basic auth]: https://docs.acquia.com/campaign-studio/settings/api-quick-start/
 [enable cors]: https://docs.acquia.com/campaign-studio/settings/configuration/#cors-settings
 [garagistmauticapibundle]: https://github.com/Garagist/GaragistMauticApiBundle
+[garagist.mautic:mixin.email]: NodeTypes/Mixin/Email.yaml
+[garagist.mautic:mixin.category]: NodeTypes/Mixin/Category.yaml
+[garagist.mautic:mixin.donottrack]: NodeTypes/Mixin/DoNotTrack.yaml
+[garagist.mautic:mixin.form]: NodeTypes/Mixin/Form.yaml
+[garagist.mautic:component.form]: Resources/Private/Fusion/Component/Form.fusion
