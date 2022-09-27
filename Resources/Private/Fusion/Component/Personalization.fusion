@@ -3,7 +3,7 @@ prototype(Garagist.Mautic:Personalization) {
     // {#ifNewsletter}Hello #FIRSTNAME# #Lastname#, this is your newsletter{:else}Fallback for Webview{/if}
     // Availble fields: Every field from contactfield, surounded by an # on both sides (case insensitive)
     @class = 'Garagist\\Mautic\\FusionObjects\\PersonalizationImplementation'
-    enable = ${!node.context.inBackend}
+    enable = ${!documentNode.context.inBackend && q(documentNode).is('[instanceof Garagist.Mautic:Mixin.Email]')}
     webview = true
     content = ${value}
 }
