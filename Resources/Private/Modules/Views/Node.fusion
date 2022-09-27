@@ -83,11 +83,18 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                                         {props.title}
                                     </td>
                                     <td>{item.dateCreated}</td>
-                                    <td>{item.dateSent}</td>
-                                    <td>{item.properties ? item.properties.recipients : ''}</td>
+                                    <td>
+                                        <Neos.Fusion:Loop items={item.sent}>
+                                            <span aria-label={props._i18n.id('dateAndTime').arguments([Date.format(item, 'd.m.Y'), Date.format(item, 'H:m:s')]).translate()}>
+                                                {Date.format(item, 'd.m.Y')}
+                                            </span>
+                                            {iterator.isLast ? '' : ', '}
+                                        </Neos.Fusion:Loop>
+                                    </td>
+                                    <td>{item.properties.recipients}</td>
                                     <td class="neos-action">
                                         <div
-                                            x-data={"actions(" + (item.properties ? "2" : "1") + ")"}
+                                            x-data="actions(2)"
                                             class="neos-pull-right"
                                         >
                                             <Garagist.Mautic:Component.EmailActionButtons {...item} />

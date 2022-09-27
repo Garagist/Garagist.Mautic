@@ -45,6 +45,10 @@
                 <source>Show pages without emails</source>
                 <target>Zeige Seiten ohne E-Mails</target>
             </trans-unit>
+            <trans-unit id="dateAndTime" xml:space="preserve">
+                <source>{0} at {1}</source>
+                <target>{0} um {1} Uhr</target>
+            </trans-unit>
             <trans-unit id="email.publish" xml:space="preserve">
                 <source>Publish email</source>
                 <target>E-Mail veröffentlichen</target>

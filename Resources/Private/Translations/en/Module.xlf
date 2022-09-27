@@ -35,6 +35,9 @@
             <trans-unit id="showPagesWithoutEmails" xml:space="preserve">
                 <source>Show pages without emails</source>
             </trans-unit>
+            <trans-unit id="dateAndTime" xml:space="preserve">
+                <source>{0} at {1}</source>
+            </trans-unit>
             <trans-unit id="email.publish" xml:space="preserve">
                 <source>Publish email</source>
             </trans-unit>

@@ -502,6 +502,7 @@ class BackendController extends AbstractModuleController
         }
 
         $properties = [
+            "sent" => [],
             "subject" => $subject,
             "previewText" => $this->mauticService->cleanPreviewText($previewText),
             "segments" => $convertedSegments,

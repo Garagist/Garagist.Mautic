@@ -9,11 +9,12 @@ prototype(Garagist.Mautic:Component.EmailData) < prototype(Neos.Fusion:Component
         name = ${props.email.name}
         dateCreated = ${Date.format(props.email.dateCreated, 'd.m.Y H:m:s')}
         emailIdentifier = ${props.email.emailIdentifier}
+
         properties = ${props.email.properties}
-        subject = ${this.properties ? this.properties.subject : null}
-        previewText = ${this.properties ? this.properties.previewText : null}
-        segments = ${this.properties ? this.properties.segments : null}
-        dateSent = ${props.email.dateSent ? Date.format(props.email.dateSent, 'd.m.Y H:m:s') : '–'}
+        subject = ${this.properties.subject}
+        previewText = ${this.properties.previewText}
+        segments = ${this.properties.segments}
+        sent = ${Array.sort(props.email.properties.sent)}
         hrefArguments = Neos.Fusion:DataStructure {
             node = ${props.node}
             email = ${props.email}
@@ -22,17 +23,17 @@ prototype(Garagist.Mautic:Component.EmailData) < prototype(Neos.Fusion:Component
         task = ${props.email.task}
 
         isIdle = ${props.email.task == 'idle'}
-        isSended = ${props.email.dateSent}
-        canPublish = ${this.isIdle && (props.email.dateModified != null && props.email.dateSend == null && !props.email.published)}
-        canUnpublish = ${this.isIdle && (props.email.dateSent == null && props.email.published)}
+        isSended = ${Carbon.Array.check(props.email.properties.sent)}
+        canPublish = ${this.isIdle && (props.email.dateModified != null && !this.isSended && !props.email.published)}
+        canUnpublish = ${this.isIdle && (!this.isSended && props.email.published)}
         canTest = ${this.canPublish || this.canUnpublish}
         canEdit = ${this.canPublish}
-        canSend = ${this.isIdle && (props.email.dateSent == null && props.email.published)}
-        canUpdate = ${this.isIdle && this.properties && (props.email.dateSent == null && !props.email.published)}
+        canSend = ${this.isIdle && (!this.isSended && props.email.published)}
+        canUpdate = ${this.isIdle && this.properties && (!this.isSended && !props.email.published)}
         canResend = ${this.isIdle && this.isSended}
         canDelete= ${this.isIdle}
-        canPublishAndSend = ${this.isIdle && (props.email.dateModified != null && props.email.dateSend == null)}
-        canUnpublishAndUpdate = ${this.isIdle && (props.email.dateSent == null)}
+        canPublishAndSend = ${this.isIdle && (props.email.dateModified != null && !this.isSended)}
+        canUnpublishAndUpdate = ${this.isIdle && !this.isSended}
 
         isRunning = ${props.email.task != 'idle' && props.email.task != 'failed'}
         isFailed = ${props.email.task == 'failed'}

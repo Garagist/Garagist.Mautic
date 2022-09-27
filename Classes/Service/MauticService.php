@@ -294,7 +294,11 @@ class MauticService
             $sentCount = (int) $stats['sentCount'];
             $failedRecipients = (int) $stats['failedRecipients'];
 
-            $email->setDateSent(new DateTime());
+            // Add sent date to email
+            $sent = $email->getProperty('sent') || [];
+            $sent[] = time();
+            $email->setProperty('sent', $sent);
+
             $this->mauticEmailRepository->update($email);
 
             $eventSuccess = new MauticEmailSent($emailIdentifier, $mauticIdentifier, $success, $sentCount, $failedRecipients);
