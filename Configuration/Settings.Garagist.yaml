@@ -10,6 +10,7 @@ Garagist:
     publicUrl: null
     enableTracking: false
     mail:
+      # Injects the tracking pixel from Mautic right before the closing `body` tag.
       trackingPixel: '<img src="{tracking_pixel}" alt="" />'
     form:
       # Add here the IDs of the forms you want to hide
@@ -42,6 +43,21 @@ Garagist:
       # You can pass an array (eg. [1, 2, 3]) or an integer
       hide: null
 
+    action:
+      delete: true
+      publish: true
+      unpublish: true
+      send: true
+      update: true
+      edit: true
+      test: false
+
+      # Disabled for now, as it need the implementation
+      sendLater: false
+      resend: false
+      publishAndSend: false
+      unpublishAndUpdate: false
+
     # job:
     #   transactions:
     #     publishAndSend:
@@ -50,18 +66,9 @@ Garagist:
     #         - send
     #       down:
     #         - unpublish
-    action:
-      # publishAndSend: false
-      # unpublishAndUpdate: false
-
-      delete: true
-      publish: true
-      unpublish: true
-      send: true
-      update: true
-      edit: true
-
-      # Disabled for now, as it need the implementation
-      sendLater: false
-      test: false
-      resend: false
+    #     unpublishAndUpdate:
+    #       up:
+    #         - unpublish
+    #         - update
+    #       down:
+    #         - publish
