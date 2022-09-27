@@ -444,6 +444,10 @@ class BackendController extends AbstractModuleController
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
         $allSegments = $this->apiService->getAllSegments();
         $testEmailRecipients = $this->testEmailService->getTestEmailRecipients();
+
+        // Disable tracking pixel for the preview
+        $mauticRecord['customHtml'] = str_replace($this->trackingPixel, '<!-- Tracking Pixel disabled for preview ' . $this->trackingPixel . '-->', $mauticRecord['customHtml']);
+
         $this->view->assignMultiple([
             'email' => $email,
             'node' => $node,
