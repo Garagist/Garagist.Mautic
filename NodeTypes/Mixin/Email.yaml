@@ -6,6 +6,7 @@
         mautic:
           label: Mautic
           icon: paper-plane
+          position: 20
   properties:
     mauticEmailModule:
       ui:
