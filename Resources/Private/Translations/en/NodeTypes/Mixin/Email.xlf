@@ -6,6 +6,14 @@
             <trans-unit id="properties.mauticEmailModule" xml:space="preserve">
                 <source>Show emails</source>
             </trans-unit>
+            <trans-unit id="properties.mauticEmailModule.ui.help.message" xml:space="preserve">
+                <source>It is possible to send personalized emails. To use this, simply apply the following markup in the text on your page:
+
+**{#ifNewsletter}** Hello #FIRSTNAME# #Lastname#, this is your newsletter **{:else}** Fallback for Webview **{/if}**
+
+Availble fields are every field from **contactfield**, surounded by an **#** on both sides. (case insensitive)
+                </source>
+            </trans-unit>
             <trans-unit id="properties.mauticPreviewText" xml:space="preserve">
                 <source>Preview text</source>
             </trans-unit>

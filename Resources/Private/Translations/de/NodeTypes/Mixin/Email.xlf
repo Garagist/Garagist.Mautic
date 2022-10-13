@@ -7,6 +7,20 @@
                 <source>Show emails</source>
                 <target>Zeige E-Mails</target>
             </trans-unit>
+            <trans-unit id="properties.mauticEmailModule.ui.help.message" xml:space="preserve">
+                <source>It is possible to send personalized emails. To use this, simply apply the following markup in the text on your page:
+
+**{#ifNewsletter}** Hello #FIRSTNAME# #Lastname#, this is your newsletter **{:else}** Fallback for Webview **{/if}**
+
+Availble fields are every field from **contactfield**, surounded by an **#** on both sides. (case insensitive)
+                </source>
+                <target>Es ist möglich, personalisierte E-Mails zu versenden. Wenden Sie dazu einfach das folgende Markup im Text auf Ihrer Seite an:
+
+**{#ifNewsletter}** Hallo #FIRSTNAME# #Lastname#, das ist Ihr Newsletter **{:else}** Anzeige für Webseite **{/if}**
+
+Verfügbare Felder sind alle Felder von **contactfield**, umgeben von einem **#** auf beiden Seiten. (Groß- und Kleinschreibung wird nicht berücksichtigt)
+                </target>
+            </trans-unit>
             <trans-unit id="properties.mauticPreviewText" xml:space="preserve">
                 <source>Preview text</source>
                 <target>Vorschautext</target>
