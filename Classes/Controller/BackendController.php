@@ -416,14 +416,16 @@ class BackendController extends AbstractModuleController
         $categoryNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
         $emails = $this->mauticService->getEmailsNodeIdentifier($node->getIdentifier());
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
-        $prefilledSegments = $this->mauticService->getPrefilledSegments($node);
+        $preSelectedSegments = $this->mauticService->getPreSelectedSegments($node);
+        $selectableSegments = $this->mauticService->getSelectableSegments($node);
         $allSegments = $this->apiService->getAllSegments();
         $testEmailRecipients = $this->testEmailService->getTestEmailRecipients();
         $this->view->assignMultiple([
             'emails' => $emails,
             'node' => $node,
             'categoryNode' => $categoryNode,
-            'prefilledSegments' => $prefilledSegments,
+            'preSelectedSegments' => $preSelectedSegments,
+            'selectableSegments' => $selectableSegments,
             'allSegments' => $allSegments,
             'flashMessages' => $flashMessages,
             'ping' => $ping,
@@ -446,10 +448,11 @@ class BackendController extends AbstractModuleController
         $categoryNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
         $mauticRecord = $this->apiService->findMauticRecordByEmailIdentifier($email->getEmailIdentifier());
         $history = $this->mauticService->getAuditLog($email);
-        $prefilledSegments = $this->mauticService->getPrefilledSegments($node);
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
-        $allSegments = $this->apiService->getAllSegments();
         $testEmailRecipients = $this->testEmailService->getTestEmailRecipients();
+        $preSelectedSegments = $this->mauticService->getPreSelectedSegments($node);
+        $selectableSegments = $this->mauticService->getSelectableSegments($node);
+        $allSegments = $this->apiService->getAllSegments();
 
         // Disable tracking pixel for the preview
         $mauticRecord['customHtml'] = str_replace($this->trackingPixel, '<!-- Tracking Pixel disabled for preview ' . $this->trackingPixel . '-->', $mauticRecord['customHtml']);
@@ -461,7 +464,8 @@ class BackendController extends AbstractModuleController
             'history' => $history,
             'mauticRecord' => $mauticRecord,
             'allSegments' => $allSegments,
-            'prefilledSegments' => $prefilledSegments,
+            'preSelectedSegments' => $preSelectedSegments,
+            'selectableSegments' => $selectableSegments,
             'flashMessages' => $flashMessages,
             'ping' => $ping,
             'testEmailRecipients' => $testEmailRecipients,

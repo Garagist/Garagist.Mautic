@@ -10,18 +10,18 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
     previewTextPlaceholder = Garagist.Mautic:Component.PreviewText
     segments = null
 
-    chooseSegment = ${Configuration.Setting('Garagist.Mautic.segment.choose')}
-    chooseSegment.@process.convert = ${Type.isArray(value) ? value : Type.isInteger(value) ? [value] : null}
+    selectableSegments = ${selectableSegments}
+    selectableSegments.@process.convert = ${Type.isArray(value) ? value : Type.isInteger(value) ? [value] : null}
     allSegments = ${allSegments}
-    prefilledSegments = ${prefilledSegments}
-    lockPrefilledSegments = ${Configuration.Setting('Garagist.Mautic.segment.lockPrefilled')}
+    preSelectedSegments = ${preSelectedSegments}
+    lockPreSelectedSegments = ${Configuration.Setting('Garagist.Mautic.segment.lockPreSelected')}
 
     @if.hasNodeAndPing = ${node && ping}
     class = 'neos-button neos-button-primary'
 
     _isEdit = ${!!this.email}
     _type = ${this._isEdit ? 'edit' : 'create'}
-    _showSegments = ${Carbon.Array.check(this.chooseSegment) && Carbon.Array.check(this.allSegments)}
+    _showSegments = ${Carbon.Array.check(this.selectableSegments) && Carbon.Array.check(this.allSegments)}
     _placeholder = ${q(node).property('titleOverride') || q(node).property('title')}
 
     renderer = Neos.Fusion:Component {
@@ -58,11 +58,12 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
             placeholder = ${props._placeholder}
             previewText = ${props.previewText == props.previewTextPlaceholder ? '' : props.previewText}
             previewTextPlaceholder = ${props.previewTextPlaceholder || ''}
-            segments = ${props.segments || props.prefilledSegments}
+            segments = ${props.segments || props.preSelectedSegments}
             segments.@if.show = ${props._showSegments}
         }
 
         renderer = afx`
+            <Neos.Fusion:Debug.Console value={props.preSelectedSegments} />
             <Garagist.Mautic:Component.ActionButton
                 label={props._label}
                 icon="fa-pencil-alt"
@@ -103,9 +104,9 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
                     <legend class="!p-0 !leading-5 !text-sm">
                         {props._i18n.id('recipients').translate()}
                     </legend>
-                    <Neos.Fusion:Loop items={props.chooseSegment}>
+                    <Neos.Fusion:Loop items={props.selectableSegments}>
                         <Garagist.Mautic:Component.Checkbox
-                            class={props.lockPrefilledSegments && Array.indexOf(props.prefilledSegments, item) != -1 ? "pointer-events-none" : null}
+                            class={props.lockPreSelectedSegments && Array.indexOf(props.preSelectedSegments, item) != -1 ? "pointer-events-none" : null}
                             xModel="segments"
                             value={item}
                             label={props.allSegments[item].name}

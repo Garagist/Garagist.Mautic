@@ -88,11 +88,11 @@ set to `true`.
 
 ### `segment` setting
 
-- `lockPrefilled` set if an segment is prefilled from the creation/edit dialog, the user can't unselect it. Defaults to
+- `lockPreSelected`: If a segment is preSelected from the creation/edit dialog, the user can't unselect it. Defaults to
   `true`
-- `mapping`: The ID of the segment to use for the newsletter. But you can also define an array/object to handle the
+- `selectable`: Segments (Mautic ID) that can be selected from on creation/edit dialog. But you can also define an array/object to handle the
   segment in your own data provider.
-- `choose`: Add here to segments to choose from on creation/edit dialog. You can pass an array (eg. `[1, 2, 3]`) or an
+- `preSelected`: Segments (Mautic ID) that are preSelected in the creation/edit dialog. You can pass an array (eg. `[1, 2, 3]`) or an
   integer.
 - `hide`: Add here the IDs of the segments you want to hide (eg. for unconfirmed contacts). You can pass an array (eg.
   `[1, 2, 3]`) or an integer.

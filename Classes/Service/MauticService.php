@@ -178,9 +178,18 @@ class MauticService
      * @param NodeInterface $node
      * @return array
      */
-    public function getPrefilledSegments(NodeInterface $node): array
+    public function getPreSelectedSegments(NodeInterface $node): array
     {
-        return $this->dataProvider->getPrefilledSegments($node);
+        return $this->dataProvider->getPreCheckedSegments($node);
+    }
+
+    /**
+     * @param NodeInterface $node
+     * @return array
+     */
+    public function getSelectableSegments(NodeInterface $node): array
+    {
+        return $this->dataProvider->getSelectableSegments($node);
     }
 
     /**
@@ -195,7 +204,7 @@ class MauticService
             if (!is_array($allSegments) || count($allSegments) == 0) {
                 throw new Exception(sprintf('Mautic has no segments: %s', json_encode($allSegments)), 1662631248);
             }
-            $segmentsIds = $this->dataProvider->filterSegments($email, $allSegments);
+            $segmentsIds = $this->dataProvider->getSendOutSegments($email);
 
             // Save recipients to properties
             $recipients = [];
@@ -362,7 +371,7 @@ class MauticService
 
     public function getSegmentsForEmail(MauticEmail $email)
     {
-        return $this->dataProvider->filterSegments($email);
+        return $this->dataProvider->getSendOutSegments($email);
     }
 
     /**

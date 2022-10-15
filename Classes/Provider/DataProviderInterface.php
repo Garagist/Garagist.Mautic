@@ -9,7 +9,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 interface DataProviderInterface
 {
-    public function getChoosenSegments(MauticEmail $email): ?array;
+    public function getEmailSegments(MauticEmail $email): ?array;
 
     public function getSubject(MauticEmail $email): string;
 
@@ -23,9 +23,11 @@ interface DataProviderInterface
 
     public function getData(MauticEmail $email, array $segmentIds): array;
 
-    public function filterSegments(MauticEmail $email, array $segmentsFromMautic): array;
+    public function getSendOutSegments(MauticEmail $email): array;
 
-    public function getPrefilledSegments(NodeInterface $node): array;
+    public function getPreCheckedSegments(NodeInterface $node): array;
+
+    public function getSelectableSegments(NodeInterface $node): array;
 
     public function getCategoryNode(NodeInterface $node): ?NodeInterface;
 }

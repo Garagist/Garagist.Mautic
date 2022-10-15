@@ -86,12 +86,12 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
-     * Get the choosen segment from the email
+     * Get the email segment from the email
      *
      * @param MauticEmail $email
      * @return array|null
      */
-    public function getChoosenSegments(MauticEmail $email): ?array
+    public function getEmailSegments(MauticEmail $email): ?array
     {
         return $email->getProperty('segments');
     }
@@ -228,9 +228,26 @@ class DataProvider implements DataProviderInterface
      * @param NodeInterface $node
      * @return array of ids
      */
-    public function getPrefilledSegments(NodeInterface $node): array
+    public function getPreCheckedSegments(NodeInterface $node): array
     {
-        $segmentMapping = $this->settings['segment']['mapping'];
+        $segmentMapping = $this->settings['segment']['preSelected'];
+        if (is_array($segmentMapping)) {
+            return $segmentMapping;
+        }
+        if (is_string($segmentMapping) || is_numeric($segmentMapping)) {
+            return [(int) $segmentMapping];
+        }
+
+        return [];
+    }
+
+    /**
+     * @param NodeInterface $node
+     * @return array of ids
+     */
+    public function getSelectableSegments(NodeInterface $node): array
+    {
+        $segmentMapping = $this->settings['segment']['selectable'];
         if (is_array($segmentMapping)) {
             return $segmentMapping;
         }
@@ -246,14 +263,15 @@ class DataProvider implements DataProviderInterface
      * @param array $segmentsFromMautic
      * @return array Segment IDs
      */
-    public function filterSegments(MauticEmail $email, array $segmentsFromMautic): array
+    public function getSendOutSegments(MauticEmail $email): array
     {
-        $choosenSegments = $this->getChoosenSegments($email);
-        if (is_array($choosenSegments) && count($choosenSegments)) {
-            return $choosenSegments;
+        $emailSegments = $this->getEmailSegments($email);
+
+        if (is_array($emailSegments) && count($emailSegments)) {
+            return $emailSegments;
         }
 
-        return $this->getAllSegmentIDsFromMautic($segmentsFromMautic);
+        return $this->getAllSegmentIDsFromMautic($this->apiService->getAllSegments());
     }
 
     /**
