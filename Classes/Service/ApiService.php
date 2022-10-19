@@ -7,6 +7,7 @@ namespace Garagist\Mautic\Service;
 use Garagist\Mautic\Api\Emails;
 use Mautic\Api\Contacts;
 use Mautic\Api\Forms;
+use Mautic\Api\Segments;
 use Mautic\Auth\ApiAuth;
 use Mautic\Auth\AuthInterface;
 use Mautic\Exception\ContextNotFoundException;
@@ -57,6 +58,11 @@ class ApiService
     protected $formApi;
 
     /**
+     * @var Segments
+     */
+    protected $segmentApi;
+
+    /**
      * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
      * @var LoggerInterface
      */
@@ -83,6 +89,7 @@ class ApiService
         $url = $this->settings['api']['baseUrl'] . '/api/';
         $this->emailApi = new Emails($auth, $url);
         $this->contactApi = $api->newApi("contacts", $auth, $url);
+        $this->segmentApi = $api->newApi("segments", $auth, $url);
         $this->formApi = $api->newApi("forms", $auth, $url);
     }
 
