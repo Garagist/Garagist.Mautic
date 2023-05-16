@@ -287,7 +287,7 @@ class ApiService
         if (isset($response['errors'])) {
             $json = json_encode($response['errors']);
             $this->mauticLogger->error($additionalText . $json);
-            throw new Exception($response['errors']);
+            throw new Exception(implode('<----->',$response['errors']));
         }
 
         return $response;
