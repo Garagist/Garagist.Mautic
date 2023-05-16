@@ -23,7 +23,7 @@
               ClientEval:
               "/neos/management/mautic/node?"
               + encodeURIComponent("moduleArguments[node]")
-              + "=" + encodeURIComponent(node.contextPath.split('@')[0] + '@live')
+              + "=" + encodeURIComponent(node.contextPath.replace(/([^@]*)@([^;]*)/, '$1@live'))
     mauticPreviewText:
       type: string
       ui:
