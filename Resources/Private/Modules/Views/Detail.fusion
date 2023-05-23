@@ -1,7 +1,14 @@
 Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
     title = ${q(node).property('title')}
     action = ${Configuration.Setting('Garagist.Mautic.action')}
-    categoryTitle = ${categoryNode ? q(categoryNode).property('title') : null}
+
+    categories = Neos.Fusion:Map {
+        items = ${categoryNodes || []}
+        itemRenderer = Neos.Fusion:DataStructure {
+            title = ${q(item).property('title')}
+            node = ${item}
+        }
+    }
 
     emailData = Garagist.Mautic:Component.EmailData {
         node = ${node}
@@ -17,15 +24,16 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
             <div class="space-y-4">
                 <h1 class="text-2xl">
                     {props._i18n.id('newsletter.headline').translate()}
-                    <Neos.Fusion:Link.Action
-                        @if={categoryNode}
-                        href.action="link"
-                        href.arguments.node={categoryNode}
-                        class="hover:!underline focus:!underline"
-                        target="_blank"
-                        content={props.categoryTitle}
-                    />
-                    {categoryNode ? ' › ' : ''}
+                    <Neos.Fusion:Loop items={props.categories}>
+                        <Neos.Fusion:Link.Action
+                            href.action="link"
+                            href.arguments.node={item.node}
+                            class="hover:!underline focus:!underline"
+                            target="_blank"
+                            content={item.title}
+                        />
+                        {' › '}
+                    </Neos.Fusion:Loop>
                     <Neos.Fusion:Link.Action
                         href.action="link"
                         href.arguments.node={node}
@@ -114,22 +122,24 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                 </section>
             </div>
 
-            <h2 @if={ping} class="text-xl mt-8 mb-4">{props._i18n.id('email.content').translate()}</h2>
-            <div @if={ping} class="grid gap-8 grid-flow-row auto-rows-auto grid-cols-1 lg:grid-cols-2">
-                <div>
-                    <h3 class="text-md mb-4">{props._i18n.id('email.content.html').translate()}</h3>
-                    <iframe
-                        srcdoc={mauticRecord.customHtml}
-                        class="bg-white w-full h-[calc(100vh-150px)]"
-                    ></iframe>
+            <Neos.Fusion:Fragment @if={ping && mauticRecord}>
+                <h2 class="text-xl mt-8 mb-4">{props._i18n.id('email.content').translate()}</h2>
+                <div class="grid gap-8 grid-flow-row auto-rows-auto grid-cols-1 lg:grid-cols-2">
+                    <div>
+                        <h3 class="text-md mb-4">{props._i18n.id('email.content.html').translate()}</h3>
+                        <iframe
+                            srcdoc={mauticRecord.customHtml}
+                            class="bg-white w-full h-[calc(100vh-150px)]"
+                        ></iframe>
+                    </div>
+                    <div>
+                        <h3 class="text-md mb-4">{props._i18n.id('email.content.plaintext').translate()}</h3>
+                        <pre class="block bg-slate-200 text-neos-gray-dark px-8 py-12 overflow-auto h-[calc(100vh-150px)] text-xs md:text-sm lg:text-xs xl:text-sm">
+                            {mauticRecord.plainText}
+                        </pre>
+                    </div>
                 </div>
-                <div>
-                    <h3 class="text-md mb-4">{props._i18n.id('email.content.plaintext').translate()}</h3>
-                    <pre class="block bg-slate-200 text-neos-gray-dark px-8 py-12 overflow-auto h-[calc(100vh-150px)] text-xs md:text-sm lg:text-xs xl:text-sm">
-                        {mauticRecord.plainText}
-                    </pre>
-                </div>
-            </div>
+            </Neos.Fusion:Fragment>
         </main>
         <div class="neos-footer">
             <Neos.Fusion:Link.Action

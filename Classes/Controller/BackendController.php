@@ -12,6 +12,7 @@ use Garagist\Mautic\Service\NodeService;
 use Garagist\Mautic\Service\TaskService;
 use Garagist\Mautic\Service\TestEmailService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
@@ -160,24 +161,22 @@ class BackendController extends AbstractModuleController
         $categoryList = [];
         $hasCategories = false;
         foreach ($nodes as $node) {
-            $categoryNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
+            $category = $this->getCategories($node);
             $identifier = $node->getIdentifier();
-            $categoryIdentifier = $categoryNode ? $categoryNode->getIdentifier() : null;
             $title = $node->getProperty('title');
-            $categoryTitle = $categoryNode ? $categoryNode->getProperty('title') : null;
             $count = count($this->mauticService->getEmailsNodeIdentifier(
                 $node->getIdentifier()
             ));
-            if ($categoryNode) {
-                $categoryList[$categoryIdentifier] = $categoryTitle;
+            if ($category) {
+                $categoryList[$category['identifier']] = $category['title'];
                 $hasCategories = true;
             }
             $pages[$identifier] = [
                 "count" => $count,
                 "node" => $node,
                 "title" => $title,
-                "categoryTitle" => $categoryTitle,
-                "categoryIdentifier" => $categoryIdentifier,
+                "categoryTitle" => $category ? $category['title'] : null,
+                "categoryIdentifier" => $category ? $category['identifier'] : null,
             ];
         }
 
@@ -413,7 +412,7 @@ class BackendController extends AbstractModuleController
     public function nodeAction(NodeInterface $node): void
     {
         $ping = $this->ping();
-        $categoryNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
+        $categories = $this->getCategories($node);
         $emails = $this->mauticService->getEmailsNodeIdentifier($node->getIdentifier());
         $flashMessages = $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush();
         $prefilledSegments = $this->mauticService->getPrefilledSegments($node);
@@ -422,7 +421,7 @@ class BackendController extends AbstractModuleController
         $this->view->assignMultiple([
             'emails' => $emails,
             'node' => $node,
-            'categoryNode' => $categoryNode,
+            'categoryNodes' => $categories ? $categories['nodes'] : null,
             'prefilledSegments' => $prefilledSegments,
             'allSegments' => $allSegments,
             'flashMessages' => $flashMessages,
@@ -443,7 +442,7 @@ class BackendController extends AbstractModuleController
         MauticEmail $email
     ): void {
         $ping = $this->ping();
-        $categoryNode = $this->nodeService->getParentByType($node, 'Garagist.Mautic:Mixin.Category');
+        $categories = $this->getCategories($node);
         $mauticRecord = $this->apiService->findMauticRecordByEmailIdentifier($email->getEmailIdentifier());
         $history = $this->mauticService->getAuditLog($email);
         $prefilledSegments = $this->mauticService->getPrefilledSegments($node);
@@ -452,12 +451,14 @@ class BackendController extends AbstractModuleController
         $testEmailRecipients = $this->testEmailService->getTestEmailRecipients();
 
         // Disable tracking pixel for the preview
-        $mauticRecord['customHtml'] = str_replace($this->trackingPixel, '<!-- Tracking Pixel disabled for preview ' . $this->trackingPixel . '-->', $mauticRecord['customHtml']);
+        if ($mauticRecord) {
+            $mauticRecord['customHtml'] = str_replace($this->trackingPixel, '<!-- Tracking Pixel disabled for preview ' . $this->trackingPixel . '-->', $mauticRecord['customHtml']);
+        }
 
         $this->view->assignMultiple([
             'email' => $email,
             'node' => $node,
-            'categoryNode' => $categoryNode,
+            'categoryNodes' => $categories ? $categories['nodes'] : null,
             'history' => $history,
             'mauticRecord' => $mauticRecord,
             'allSegments' => $allSegments,
@@ -699,5 +700,33 @@ class BackendController extends AbstractModuleController
         }
 
         return $ping;
+    }
+
+    /**
+     * Get category id and name
+     *
+     * @param NodeInterface $node
+     * @return array|null
+     */
+    private function getCategories(NodeInterface $node): ?array
+    {
+        $flowQuery = new FlowQuery(array($node));
+        $parents = $flowQuery->parents('[instanceof Garagist.Mautic:Mixin.Category]')->get();
+        if (!count($parents)) {
+            return null;
+        }
+        $identifier = $parents[0]->getIdentifier();
+        $parents = array_reverse($parents);
+        $title = [];
+        foreach ($parents as $entry) {
+            $title[] = $entry->getProperty('title');
+        }
+        $title = implode(' › ', $title);
+
+        return [
+            'identifier' => $identifier,
+            'title' => $title,
+            'nodes' => $parents,
+        ];
     }
 }
