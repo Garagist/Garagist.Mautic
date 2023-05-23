@@ -9,6 +9,8 @@ Garagist:
       password: null
     publicUrl: null
     enableTracking: false
+    # Can be javascript, iframe or plain
+    embedType: javascript
     mail:
       # Injects the tracking pixel from Mautic right before the closing `body` tag.
       trackingPixel: '<img src="{tracking_pixel}" alt="" />'
