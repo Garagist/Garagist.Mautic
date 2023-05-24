@@ -1,0 +1,51 @@
+prototype(Garagist.Mautic:Component.Form.Fragment.Plain) < prototype(Neos.Fusion:Component) {
+    @propTypes {
+        id = ${PropTypes.integer}
+        url = ${PropTypes.string}
+        apiUrl = ${PropTypes.string}
+        waitMessage = ${PropTypes.string}
+    }
+
+    waitMessage = ${Translation.translate('pleaseWait', 'Please wait…', [], 'Main', 'Garagist.Mautic')}
+
+    id = null
+    url = null
+    apiUrl = null
+    removeStyles = true
+
+    @if.hasUrl_Id_ApiUrl = ${this.url && this.id && this.apiUrl}
+
+    _javascript = ${this.url + '/media/js/mautic-form.js'}
+    _embededFile = ${File.readFile(this.apiUrl + "/form/embed/" + this.id)}
+    _embededFile.@process.removeStyles = ${this.removeStyles && value ? String.pregReplace(value, '~<style([.\s\S]*?)</style>~', ''): value}
+    _hasReplacements = ${Carbon.Array.check(this.replacements)}
+    _globalVariables = ${'window.MauticDomain="' + this.url + '";window.MauticLang={submittingMessage:"' + this.waitMessage + '"}'}
+
+    renderer = afx`
+        <script data-slipstream>{props._globalVariables}</script>
+        <script src={props._javascript} data-slipstream defer onload="MauticSDK.onLoad()"></script>
+        {props._hasReplacements ? '' : props._embededFile}
+        <Neos.Fusion:Reduce
+            @if={props._hasReplacements}
+            items={props.replacements}
+            initialValue={props._embededFile}
+            itemReducer={String.replace(carry, item.search, item.replace)}
+        />
+    `
+
+    @context.cacheEntryIdentifier = ${'MauticFormPlain'+ this.url + this.id + this.apiUrl}
+
+    @cache {
+        mode = 'cached'
+        // Maximum lifetime of this cache entry in seconds. Defaults to 300 seconds (5 minutes)
+        maximumLifetime = 300
+        entryIdentifier {
+            node = ${node}
+            cacheEntryIdentifier = ${cacheEntryIdentifier}
+        }
+        entryTags {
+            1 = ${Neos.Caching.nodeTag(node)}
+            2 = 'Garagist_Mautic_Form'
+        }
+    }
+}

@@ -1,0 +1,23 @@
+prototype(Garagist.Mautic:Component.Form) < prototype(Neos.Fusion:Component) {
+    @propTypes {
+        id = ${PropTypes.integer}
+        url = ${PropTypes.string}
+        apiUrl = ${PropTypes.string}
+        embedType = ${PropTypes.oneOf(['javascript', 'iframe', 'plain'])}
+        iframeClass = ${PropTypes.anyOf( PropTypes.string, PropTypes.arrayOf( PropTypes.string ) )}
+        waitMessage = ${PropTypes.string}
+    }
+
+    id = ${q(node).property('mauticFormId')}
+    url = ${Configuration.Setting('Garagist.Mautic.publicUrl')}
+    apiUrl = ${Configuration.Setting('Garagist.Mautic.api.baseUrl') || this.url}
+    embedType = ${Configuration.Setting('Garagist.Mautic.embedType')}
+    iframeClass = null
+    replacements = Neos.Fusion:DataStructure
+
+    renderer = afx`
+        <Garagist.Mautic:Component.Form.Fragment.Javascript @if={props.embedType == 'javascript'} {...props} />
+        <Garagist.Mautic:Component.Form.Fragment.Iframe @if={props.embedType == 'iframe'} {...props} />
+        <Garagist.Mautic:Component.Form.Fragment.Plain @if={props.embedType == 'plain'} {...props} />
+    `
+}
