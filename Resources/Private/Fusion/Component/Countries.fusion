@@ -1,0 +1,298 @@
+prototype(Garagist.Mautic:Countries) < prototype(Neos.Fusion:Component) {
+    countries = Neos.Fusion:DataStructure {
+        europe {
+            label = 'Europe'
+            items {
+                GB = 'United Kingdom'
+                AL = 'Albania'
+                AD = 'Andorra'
+                AT = 'Austria'
+                BY = 'Belarus'
+                BE = 'Belgium'
+                BA = 'Bosnia and Herzegovina'
+                BG = 'Bulgaria'
+                HR = 'Croatia (Hrvatska)'
+                CY = 'Cyprus'
+                CZ = 'Czech Republic'
+                FR = 'France'
+                GI = 'Gibraltar'
+                DE = 'Germany'
+                GR = 'Greece'
+                VA = 'Holy See (Vatican City State)'
+                HU = 'Hungary'
+                IT = 'Italy'
+                LI = 'Liechtenstein'
+                LU = 'Luxembourg'
+                MK = 'Macedonia'
+                MT = 'Malta'
+                MD = 'Moldova'
+                MC = 'Monaco'
+                ME = 'Montenegro'
+                NL = 'Netherlands'
+                PL = 'Poland'
+                PT = 'Portugal'
+                RO = 'Romania'
+                SM = 'San Marino'
+                RS = 'Serbia'
+                SK = 'Slovakia'
+                SI = 'Slovenia'
+                ES = 'Spain'
+                UA = 'Ukraine'
+                DK = 'Denmark'
+                EE = 'Estonia'
+                FO = 'Faroe Islands'
+                FI = 'Finland'
+                GL = 'Greenland'
+                IS = 'Iceland'
+                IE = 'Ireland'
+                LV = 'Latvia'
+                LT = 'Lithuania'
+                NO = 'Norway'
+                SJ = 'Svalbard and Jan Mayen Islands'
+                SE = 'Sweden'
+                CH = 'Switzerland'
+                TR = 'Turkey'
+            }
+        }
+        northAmerica {
+            label = 'North America'
+            items {
+                US = 'United States'
+                UM = 'United States Minor Outlying Islands'
+                CA = 'Canada'
+                MX = 'Mexico'
+                AI = 'Anguilla'
+                AG = 'Antigua and Barbuda'
+                AW = 'Aruba'
+                BS = 'Bahamas'
+                BB = 'Barbados'
+                BZ = 'Belize'
+                BM = 'Bermuda'
+                VG = 'British Virgin Islands'
+                KY = 'Cayman Islands'
+                CR = 'Costa Rica'
+                CU = 'Cuba'
+                DM = 'Dominica'
+                DO = 'Dominican Republic'
+                SV = 'El Salvador'
+                GD = 'Grenada'
+                GP = 'Guadeloupe'
+                GT = 'Guatemala'
+                HT = 'Haiti'
+                HN = 'Honduras'
+                JM = 'Jamaica'
+                MQ = 'Martinique'
+                MS = 'Montserrat'
+                NI = 'Nicaragua'
+                PA = 'Panama'
+                PR = 'Puerto Rico'
+                KN = 'Saint Kitts and Nevis'
+                LC = 'Saint Lucia'
+                VC = 'Saint Vincent and the Grenadines'
+                TT = 'Trinidad and Tobago'
+                TC = 'Turks and Caicos Islands'
+                VI = 'US Virgin Islands'
+            }
+        }
+        southAmerica {
+            label = 'South America'
+            items {
+                AR = 'Argentina'
+                BO = 'Bolivia'
+                BR = 'Brazil'
+                CL = 'Chile'
+                CO = 'Colombia'
+                EC = 'Ecuador'
+                FK = 'Falkland Islands (Malvinas)'
+                GF = 'French Guiana'
+                GY = 'Guyana'
+                PY = 'Paraguay'
+                PE = 'Peru'
+                SR = 'Suriname'
+                UY = 'Uruguay'
+                VE = 'Venezuela'
+            }
+        }
+        asia {
+            label = 'Asia'
+            items {
+                AF = 'Afghanistan'
+                AM = 'Armenia'
+                AZ = 'Azerbaijan'
+                BH = 'Bahrain'
+                BD = 'Bangladesh'
+                BT = 'Bhutan'
+                IO = 'British Indian Ocean Territory'
+                BN = 'Brunei Darussalam'
+                KH = 'Cambodia'
+                CN = 'China'
+                CX = 'Christmas Island'
+                CC = 'Cocos (Keeling) Islands'
+                GE = 'Georgia'
+                HK = 'Hong Kong'
+                IN = 'India'
+                ID = 'Indonesia'
+                IR = 'Iran'
+                IQ = 'Iraq'
+                IL = 'Israel'
+                JP = 'Japan'
+                JO = 'Jordan'
+                KZ = 'Kazakhstan'
+                KP = "Democratic People's Republic of Korea"
+                KR = 'Republic of Korea'
+                KW = 'Kuwait'
+                KG = 'Kyrgyzstan'
+                LA = 'Lao'
+                LB = 'Lebanon'
+                MY = 'Malaysia'
+                MV = 'Maldives'
+                MN = 'Mongolia'
+                MM = 'Myanmar (Burma)'
+                NP = 'Nepal'
+                OM = 'Oman'
+                PK = 'Pakistan'
+                PH = 'Philippines'
+                QA = 'Qatar'
+                RU = 'Russian Federation'
+                SA = 'Saudi Arabia'
+                SG = 'Singapore'
+                LK = 'Sri Lanka'
+                SY = 'Syria'
+                TW = 'Taiwan'
+                TJ = 'Tajikistan'
+                TH = 'Thailand'
+                TL = 'East Timor'
+                TM = 'Turkmenistan'
+                AE = 'United Arab Emirates'
+                UZ = 'Uzbekistan'
+                VN = 'Vietnam'
+                YE = 'Yemen'
+            }
+        }
+        australia {
+            label = 'Australia / Oceania'
+            items {
+                AS = 'American Samoa'
+                AU = 'Australia'
+                CK = 'Cook Islands'
+                FJ = 'Fiji'
+                PF = 'French Polynesia (Tahiti)'
+                GU = 'Guam'
+                KB = 'Kiribati'
+                MH = 'Marshall Islands'
+                FM = 'Federated States of Micronesia'
+                NR = 'Nauru'
+                NC = 'New Caledonia'
+                NZ = 'New Zealand'
+                NU = 'Niue'
+                MP = 'Northern Mariana Islands'
+                PW = 'Palau'
+                PG = 'Papua New Guinea'
+                PN = 'Pitcairn'
+                WS = 'Samoa'
+                SB = 'Solomon Islands'
+                TK = 'Tokelau'
+                TO = 'Tonga'
+                TV = 'Tuvalu'
+                VU = 'Vanuatu'
+                WF = 'Wallis and Futuna Islands'
+            }
+        }
+        africa {
+            label = 'Africa'
+            items {
+                DZ = 'Algeria'
+                AO = 'Angola'
+                BJ = 'Benin'
+                BW = 'Botswana'
+                BF = 'Burkina Faso'
+                BI = 'Burundi'
+                CM = 'Cameroon'
+                CV = 'Cape Verde'
+                CF = 'Central African Republic'
+                TD = 'Chad'
+                KM = 'Comoros'
+                CG = 'Congo'
+                CD = 'The Democratic Republic of the Congo'
+                DJ = 'Dijibouti'
+                EG = 'Egypt'
+                GQ = 'Equatorial Guinea'
+                ER = 'Eritrea'
+                ET = 'Ethiopia'
+                GA = 'Gabon'
+                GM = 'Gambia'
+                GH = 'Ghana'
+                GN = 'Guinea'
+                GW = 'Guinea-Bissau'
+                CI = "Cote d'Ivoire (Ivory Coast)"
+                KE = 'Kenya'
+                LS = 'Lesotho'
+                LR = 'Liberia'
+                LY = 'Libya'
+                MG = 'Madagascar'
+                MW = 'Malawi'
+                ML = 'Mali'
+                MR = 'Mauritania'
+                MU = 'Mauritius'
+                YT = 'Mayotte'
+                MA = 'Morocco'
+                MZ = 'Mozambique'
+                NA = 'Namibia'
+                NE = 'Niger'
+                NG = 'Nigeria'
+                RE = 'Reunion'
+                RW = 'Rwanda'
+                ST = 'Sao Tome and Principe'
+                SH = 'Saint Helena'
+                SN = 'Senegal'
+                SC = 'Seychelles'
+                SL = 'Sierra Leone'
+                SO = 'Somalia'
+                ZA = 'South Africa'
+                SS = 'South Sudan'
+                SD = 'Sudan'
+                SZ = 'Swaziland'
+                TZ = 'Tanzania'
+                TG = 'Togo'
+                TN = 'Tunisia'
+                UG = 'Uganda'
+                EH = 'Western Sahara'
+                ZM = 'Zambia'
+                ZW = 'Zimbabwe'
+            }
+        }
+    }
+
+    value = null
+
+    renderer = Neos.Fusion:Component {
+        _translatedCountries = Neos.Fusion:Map {
+            @process.filter = ${Array.filter(value)}
+            items = ${props.countries}
+            itemRenderer = Neos.Fusion:DataStructure {
+                @if.hasCountries = ${Carbon.Array.check(item.items)}
+                label = ${Translation.translate(itemKey, item.label, [], 'Countries', 'Garagist.Mautic')}
+                items = Neos.Fusion:Map {
+                    items = ${item.items}
+                    keyRenderer = ${itemKey}
+                    itemRenderer = ${Translation.translate(itemKey, item, [], 'Countries', 'Garagist.Mautic')}
+                }
+            }
+        }
+
+        renderer = afx`
+            <Neos.Fusion:Loop items={props._translatedCountries}>
+                <optgroup label={item.label}>
+                    <Neos.Fusion:Loop items={Array.sort(item.items)}>
+                        <option
+                            value={itemKey}
+                            selected={itemKey == props.value}
+                        >
+                          {item}
+                      </option>
+                    </Neos.Fusion:Loop>
+                </optgroup>
+            </Neos.Fusion:Loop>
+        `
+    }
+}
