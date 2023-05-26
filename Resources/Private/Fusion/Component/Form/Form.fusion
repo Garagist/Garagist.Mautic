@@ -19,6 +19,6 @@ prototype(Garagist.Mautic:Component.Form) < prototype(Neos.Fusion:Component) {
         <Garagist.Mautic:Component.Form.Fragment.Javascript @if={props.embedType == 'javascript'} {...props} />
         <Garagist.Mautic:Component.Form.Fragment.Iframe @if={props.embedType == 'iframe'} {...props} />
         <Garagist.Mautic:Component.Form.Fragment.Plain @if={props.embedType == 'plain'} {...props} />
-        {props.content}
+        <Garagist.Mautic:Component.Form.Fragment.API @if={props.embedType == 'api'} {...props} />
     `
 }

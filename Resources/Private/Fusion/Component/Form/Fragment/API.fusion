@@ -1,0 +1,39 @@
+prototype(Garagist.Mautic:Component.Form.Fragment.API) < prototype(Neos.Fusion:Component) {
+    @propTypes {
+        id = ${PropTypes.integer}
+        url = ${PropTypes.string}
+        class = ${PropTypes.anyOf( PropTypes.string, PropTypes.arrayOf( PropTypes.string ) )}
+        renderPrototype  = ${PropTypes.string}
+    }
+
+    id = null
+    url = null
+    class = null
+    renderPrototype = ${Configuration.Setting('Garagist.Mautic.apiRenderer')}
+
+    @if.hasUrl_Id = ${this.url && this.id && this.renderPrototype}
+
+    renderer = Neos.Fusion:Renderer {
+        type = ${props.renderPrototype}
+        element.class = ${props.class}
+        element.data = Garagist.Mautic:API.Form {
+            id = ${props.id}
+            url = ${props.url}
+       }
+    }
+
+
+    @cache {
+        mode = 'cached'
+        // Maximum lifetime of this cache entry in seconds. Defaults to 300 seconds (5 minutes)
+        maximumLifetime = 300
+        entryIdentifier {
+            node = ${node}
+            cacheEntryIdentifier = ${cacheEntryIdentifier}
+        }
+        entryTags {
+            1 = ${Neos.Caching.nodeTag(node)}
+            2 = 'Garagist_Mautic_Form'
+        }
+    }
+}
