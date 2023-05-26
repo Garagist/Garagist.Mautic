@@ -1,0 +1,5 @@
+prototype(Garagist.Mautic:API.Form) {
+    @class = 'Garagist\\Mautic\\FusionObjects\\ApiFormImplementation'
+
+    id = null
+}

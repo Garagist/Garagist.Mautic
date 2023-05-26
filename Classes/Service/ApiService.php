@@ -218,6 +218,22 @@ class ApiService
     }
 
     /**
+     * Get a single form. Fails gracefully
+     *
+     * @param integer $id
+     * @return array
+     */
+    public function getForm(int $id): array
+    {
+        $data = $this->validateResponse($this->formApi->get($id), null, false);
+        if (isset($data['form']) && $data['form']['isPublished']) {
+            return $data['form'];
+        }
+
+        return [];
+    }
+
+    /**
      * Get the list of all forms
      *
      * @return array
