@@ -271,9 +271,10 @@ class ApiService
      *
      * @param array $response
      * @param string|null $additionalText
+     * @param bool $throwExeptions
      * @return array
      */
-    protected function validateResponse(array $response, ?string $additionalText = null): array
+    protected function validateResponse(array $response, ?string $additionalText = null, bool $throwExeptions = true): array
     {
         if (!isset($additionalText)) {
             $additionalText = '';
@@ -282,12 +283,16 @@ class ApiService
         if (isset($response['error'])) {
             $json = json_encode($response['error']);
             $this->mauticLogger->error($additionalText . $json);
-            throw new Exception($response['error']);
+            if ($throwExeptions) {
+                throw new Exception($json);
+            }
         }
         if (isset($response['errors'])) {
             $json = json_encode($response['errors']);
             $this->mauticLogger->error($additionalText . $json);
-            throw new Exception(implode('<----->',$response['errors']));
+            if ($throwExeptions) {
+                throw new Exception($json);
+            }
         }
 
         return $response;
