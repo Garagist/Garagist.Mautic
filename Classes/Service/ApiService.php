@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Garagist\Mautic\Service;
 
 use Garagist\Mautic\Api\Emails;
+use Mautic\Api\Campaigns;
 use Mautic\Api\Contacts;
 use Mautic\Api\Forms;
+use Mautic\Api\Pages;
+use Mautic\Api\Segments;
 use Mautic\Auth\ApiAuth;
 use Mautic\Auth\AuthInterface;
 use Mautic\Exception\ContextNotFoundException;
@@ -57,6 +60,21 @@ class ApiService
     protected $formApi;
 
     /**
+     * @var Segments
+     */
+    protected $segmentApi;
+
+    /**
+     * @var Campaigns
+     */
+    protected $campaignApi;
+
+    /**
+     * @var Pages
+     */
+    protected $pageApi;
+
+    /**
      * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
      * @var LoggerInterface
      */
@@ -84,6 +102,9 @@ class ApiService
         $this->emailApi = new Emails($auth, $url);
         $this->contactApi = $api->newApi("contacts", $auth, $url);
         $this->formApi = $api->newApi("forms", $auth, $url);
+        $this->segmentApi = $api->newApi("segments", $auth, $url);
+        $this->campaignApi = $api->newApi("campaigns", $auth, $url);
+        $this->pageApi = $api->newApi("pages", $auth, $url);
     }
 
     /**
@@ -280,6 +301,36 @@ class ApiService
         } catch (Throwable $th) {
             return false;
         }
+    }
+
+    public function getFormApi(): Forms
+    {
+        return $this->formApi;
+    }
+
+    public function getContactApi(): Contacts
+    {
+        return $this->contactApi;
+    }
+
+    public function getEmailApi(): Emails
+    {
+        return $this->emailApi;
+    }
+
+    public function getSegmentApi(): Segments
+    {
+        return $this->segmentApi;
+    }
+
+    public function getCampaignApi(): Campaigns
+    {
+        return $this->campaignApi;
+    }
+
+    public function getPageApi(): Pages
+    {
+        return $this->pageApi;
     }
 
     /**
