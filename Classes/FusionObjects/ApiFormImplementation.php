@@ -28,6 +28,11 @@ class ApiFormImplementation extends AbstractFusionObject
         }
 
         $data = $this->apiService->getForm($id);
+
+        if (!$data || !isset($data['fields'])) {
+            return [];
+        }
+
         $parentsMap = [];
         foreach ($data['fields'] as $field) {
             $parentsMap[$field['id']] = $field['alias'];
