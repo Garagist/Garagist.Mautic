@@ -317,7 +317,11 @@ class DataProvider implements DataProviderInterface
         });
     }
 
-    public function getPublicUrl(): string
+    /**
+     * @param NodeInterface $node
+     * @return string
+     */
+    public function getPublicUrl(NodeInterface $node): string
     {
         return $this->settings['publicUrl'];
     }

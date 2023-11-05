@@ -2,6 +2,7 @@
 
 namespace Garagist\Mautic\Eel;
 
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Garagist\Mautic\Provider\DataProviderInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
@@ -14,9 +15,13 @@ class Mautic implements ProtectedContextAwareInterface
      */
     protected $data;
 
-    public function getPublicUrl(): string
+    /**
+     * @param NodeInterface $node
+     * @return string
+     */
+    public function getPublicUrl(NodeInterface $node): string
     {
-        return $this->data->getPublicUrl();
+        return $this->data->getPublicUrl($node);
     }
 
     /**

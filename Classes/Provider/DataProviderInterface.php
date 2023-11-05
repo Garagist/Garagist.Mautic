@@ -29,5 +29,5 @@ interface DataProviderInterface
 
     public function getCategoryNode(NodeInterface $node): ?NodeInterface;
 
-    public function getPublicUrl(): string;
+    public function getPublicUrl(NodeInterface $node): string;
 }
