@@ -28,4 +28,6 @@ interface DataProviderInterface
     public function getPrefilledSegments(NodeInterface $node): array;
 
     public function getCategoryNode(NodeInterface $node): ?NodeInterface;
+
+    public function getPublicUrl(): string;
 }
