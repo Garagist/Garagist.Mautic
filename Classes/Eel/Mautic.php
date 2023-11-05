@@ -2,6 +2,7 @@
 
 namespace Garagist\Mautic\Eel;
 
+use Neos\Flow\Annotations as Flow;
 use Garagist\Mautic\Provider\DataProviderInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
 
