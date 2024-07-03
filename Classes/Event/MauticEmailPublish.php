@@ -6,6 +6,9 @@ namespace Garagist\Mautic\Event;
 
 use Neos\EventSourcing\Event\DomainEventInterface;
 
+/**
+ * @Flow\Proxy(false)
+ */
 final class MauticEmailPublish implements DomainEventInterface
 {
     /**
