@@ -3,7 +3,7 @@ Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
     hasCategories = ${Carbon.Array.check(categories)}
     showPagesWithoutEmails = ${this.hasPages && Array.some(pages, page => page.count > 0) ? 'false' : 'true'}
     logo = ${ping ? 'Logo.svg' : 'LogoInactive.svg'}
-    mauticPublicUrl = ${Configuration.Setting('Garagist.Mautic.publicUrl')}
+    mauticPublicUrl = ${Mautic.getPublicUrl(node)}
 
     _i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
 
