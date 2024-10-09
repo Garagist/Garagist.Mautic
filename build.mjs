@@ -9,7 +9,7 @@ const globalOptions = {
     logLevel: "info",
     bundle: true,
     minify: !watch,
-    sourcemap: watch,
+    sourcemap: false,
     target: "es2020",
     format: "iife",
     legalComments: "none",
