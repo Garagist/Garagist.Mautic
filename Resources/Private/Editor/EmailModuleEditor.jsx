@@ -12,6 +12,7 @@ function EmailModuleEditor(props) {
                 <Button
                     className={className}
                     disabled={disabled}
+                    style="lighter"
                     onClick={() => {
                         renderSecondaryInspector("IFRAME", () => (
                             <iframe
@@ -25,7 +26,6 @@ function EmailModuleEditor(props) {
                             />
                         ))
                     }}
-                    style="lighter"
                 >
                     {icon && <Icon icon={icon} padded="right" />}
                     <I18n id={label} />
