@@ -39,7 +39,10 @@ Garagist:
       mapping: null
 
       # Add here to segments to choose from on creation/edit dialog
-      # You can pass an array (eg. [1, 2, 3]) or an integer
+      # You can pass an array (eg. [1, 2, 3]) or an integer, if you have a nested array, the entries are handled as groups
+      # choose:
+      #   - [1, 2,] <- Is a group, of preselected segments the user gets radio buttons
+      #   - 3 <- Is a single segment, the user gets a checkbox
       choose: null
 
       # Add here the IDs of the segments you want to hide (eg. for unconfirmed contacts)

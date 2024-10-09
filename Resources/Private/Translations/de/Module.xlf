@@ -209,6 +209,10 @@
                 <source>The last task could not be executed! Please check the info log</source>
                 <target>Die letzte Aufgabe konnte nicht ausgeführt werden! Bitte prüfen Sie das Infoprotokoll</target>
             </trans-unit>
+            <trans-unit id="email.oneItemNeeded" xml:space="preserve">
+                <source>At least one item of this group need to be selected.</source>
+                <target>Mindestens ein Element aus dieser Gruppe muss ausgewählt werden.</target>
+            </trans-unit>
             <trans-unit id="email.create" xml:space="preserve">
                 <source>Create new email</source>
                 <target>Neue E-Mail erstellen</target>

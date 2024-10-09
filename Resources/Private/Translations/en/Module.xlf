@@ -158,6 +158,9 @@
             <trans-unit id="task.failed" xml:space="preserve">
                 <source>The last task could not be executed! Please check the info log</source>
             </trans-unit>
+            <trans-unit id="email.oneItemNeeded" xml:space="preserve">
+                <source>At least one item of this group need to be selected.</source>
+            </trans-unit>
             <trans-unit id="email.create" xml:space="preserve">
                 <source>Create new email</source>
             </trans-unit>

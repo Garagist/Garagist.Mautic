@@ -76,6 +76,7 @@ prototype(Garagist.Mautic:Component.SendMail) < prototype(Neos.Fusion:Component)
                 <Garagist.Mautic:Component.Checkbox
                     @if={props.canSendLater}
                     xModel="sendLater"
+                    boolean={true}
                     label={props._i18n.id('email.send.later').translate()}
                     value={true}
                 />

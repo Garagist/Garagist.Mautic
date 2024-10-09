@@ -99,16 +99,57 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
                     <div class="block my-2 opacity-60">{Translation.translate('properties.mauticPreviewText.ui.help.message', null, [], 'NodeTypes/Mixin/Email', 'Garagist.Mautic')}</div>
                     <div @if={props._isEdit} class="block my-2 opacity-60">{Translation.translate('email.need.refresh', null, [], 'Module', 'Garagist.Mautic')}</div>
                 </fieldset>
-                <fieldset @if={props._showSegments} class="!p-0 !mt-8">
+                <fieldset @if={props._showSegments} class="!p-0 !mt-8 flex flex-col items-start">
                     <legend class="!p-0 !leading-5 !text-sm">
                         {props._i18n.id('recipients').translate()}
                     </legend>
-                    <Neos.Fusion:Loop items={props.chooseSegment}>
+                    <Neos.Fusion:Loop items={props.chooseSegment} itemName="segment">
+                        <!-- We have a group -->
+                        <div
+                            @if={Carbon.Array.check(segment)}
+                            class="bg-neos-gray-darker -mx-4 p-4 my-2 self-stretch flex flex-col items-start"
+                        >
+                            <!-- Prefilled group -->
+                            <Neos.Fusion:Loop
+                                @if={Carbon.Array.check(Carbon.Array.intersect(props.prefilledSegments, segment))}
+                                items={segment}
+                                itemName="subsegment"
+                            >
+                                <Garagist.Mautic:Component.Checkbox
+                                    xModel="segments"
+                                    number={true}
+                                    value={subsegment}
+                                    label={props.allSegments[subsegment].name}
+                                    xDisabled={"const intersect=[" + Array.join(segment, ",") + "].filter(item=>segments.includes(item));return intersect.length<=1 && intersect[0]==" + subsegment}
+                                />
+                            </Neos.Fusion:Loop>
+                            <p @if={Carbon.Array.check(Carbon.Array.intersect(props.prefilledSegments, segment))} class="block mt-2 -mb-3 opacity-60 text-xs">
+                                {props._i18n.id('email.oneItemNeeded').translate()}
+                            </p>
+
+                            <!-- No Prefilled group -->
+                            <Neos.Fusion:Loop
+                                @if={!Carbon.Array.check(Carbon.Array.intersect(props.prefilledSegments, segment))}
+                                items={segment}
+                                itemName="subsegment"
+                            >
+                                <Garagist.Mautic:Component.Checkbox
+                                    xModel="segments"
+                                    number={true}
+                                    value={subsegment}
+                                    label={props.allSegments[subsegment].name}
+                                />
+                            </Neos.Fusion:Loop>
+                        </div>
+
+                        <!-- No Group -->
                         <Garagist.Mautic:Component.Checkbox
-                            class={props.lockPrefilledSegments && Array.indexOf(props.prefilledSegments, item) != -1 ? "pointer-events-none" : null}
+                            @if={!Type.isArray(segment)}
                             xModel="segments"
-                            value={item}
-                            label={props.allSegments[item].name}
+                            disabled={props.lockPrefilledSegments && Array.indexOf(props.prefilledSegments, segment) != -1}
+                            number={true}
+                            value={segment}
+                            label={props.allSegments[segment].name}
                         />
                     </Neos.Fusion:Loop>
                     <div x-show="!segments.length" x-transition class="bg-neos-red text-white p-4 mt-4 mb-2 w-full">
