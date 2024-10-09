@@ -49,4 +49,4 @@ Neos:
       resources:
         javascript:
           Garagist.Mautic:EmailModuleEditor:
-            resource: resource://Garagist.Mautic/Public/EmailModuleEditor/Plugin.js
+            resource: resource://Garagist.Mautic/Public/Editor/Plugin.js
