@@ -8,31 +8,18 @@
           icon: paper-plane
           position: 20
   properties:
-    mauticEmailModule:
+    mauticPreviewText:
+      type: string
       ui:
         label: i18n
-        help:
-          message: i18n
         inspector:
-          editor: Garagist.Mautic/Inspector/Editors/EmailModule
           group: mautic
           position: 10
+          editor: Garagist.Mautic/Inspector/Editors/EmailModule
           editorOptions:
-            icon: paper-plane
+            placeholder: 'ClientEval: node.properties.metaDescription'
             src: >-
               ClientEval:
               "/neos/management/mautic/node?"
               + encodeURIComponent("moduleArguments[node]")
               + "=" + encodeURIComponent(node.contextPath.replace(/([^@]*)@([^;]*)/, '$1@live'))
-    mauticPreviewText:
-      type: string
-      ui:
-        label: i18n
-        help:
-          message: i18n
-        inspector:
-          group: mautic
-          position: 20
-          editor: Neos.Neos/Inspector/Editors/TextAreaEditor
-          editorOptions:
-            placeholder: 'ClientEval: node.properties.metaDescription'

@@ -42,9 +42,9 @@ Neos:
             mainStylesheet: Lite
             additionalResources:
               javaScripts:
-                - 'resource://Garagist.Mautic/Public/Scripts/Backend.js'
+                - 'resource://Garagist.Mautic/Public/Backend/Scripts.js'
               styleSheets:
-                - 'resource://Garagist.Mautic/Public/Styles/Backend.css'
+                - 'resource://Garagist.Mautic/Public/Backend/Styles.css'
     Ui:
       resources:
         javascript:

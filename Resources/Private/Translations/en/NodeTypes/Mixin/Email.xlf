@@ -3,22 +3,22 @@
     xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file original="" product-name="Garagist.Mautic" source-language="en" datatype="plaintext">
         <body>
-            <trans-unit id="properties.mauticEmailModule" xml:space="preserve">
+            <trans-unit id="properties.mauticPreviewText" xml:space="preserve">
+                <source>Preview text</source>
+            </trans-unit>
+            <trans-unit id="properties.mauticPreviewText.options.help" xml:space="preserve">
+                <source>Here you can set the preview that will be displayed in the recipient's inbox.</source>
+            </trans-unit>
+            <trans-unit id="properties.mauticPreviewText.options.moduleLabel" xml:space="preserve">
                 <source>Show emails</source>
             </trans-unit>
-            <trans-unit id="properties.mauticEmailModule.ui.help.message" xml:space="preserve">
+            <trans-unit id="properties.mauticPreviewText.options.description" xml:space="preserve">
                 <source>It is possible to send personalized emails. To use this, simply apply the following markup in the text on your page:
 
 **{#ifNewsletter}** Hello #FIRSTNAME# #Lastname#, this is your newsletter **{:else}** Fallback for Webview **{/if}**
 
 Availble fields are every field from **contactfield**, surounded by an **#** on both sides. (case insensitive)
                 </source>
-            </trans-unit>
-            <trans-unit id="properties.mauticPreviewText" xml:space="preserve">
-                <source>Preview text</source>
-            </trans-unit>
-            <trans-unit id="properties.mauticPreviewText.ui.help.message" xml:space="preserve">
-                <source>Here you can set the preview that will be displayed in the recipient's inbox.</source>
             </trans-unit>
         </body>
     </file>

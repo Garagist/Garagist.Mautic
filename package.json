@@ -4,10 +4,10 @@
   "scripts": {
     "build": "concurrently -r pnpm:build:*",
     "build:js": "node build.mjs",
-    "build:css": "postcss Resources/Private/Assets/*.pcss --no-map --ext css --dir Resources/Public/Styles/",
+    "build:css": "postcss Resources/Private/Assets/*.pcss --no-map --ext css --dir Resources/Public/Backend/",
     "watch": "concurrently -r pnpm:watch:*",
     "watch:js": "node build.mjs --watch",
-    "watch:css": "postcss Resources/Private/Assets/*.pcss --no-map --ext css --dir Resources/Public/Styles/ -w",
+    "watch:css": "postcss Resources/Private/Assets/*.pcss --no-map --ext css --dir Resources/Public/Backend/ -w",
     "pipeline": "pnpm install --silent --non-interactive;pnpm build"
   },
   "devDependencies": {
@@ -20,8 +20,8 @@
     "concurrently": "^9.0.1",
     "cssnano": "^7.0.6",
     "esbuild": "^0.24.0",
-    "esbuild-plugin-lightningcss-modules": "^0.1.2",
     "flatpickr": "^4.6.13",
+    "markdown-to-jsx": "^7.5.0",
     "postcss": "^8.4.47",
     "postcss-cli": "^11.0.0",
     "postcss-import": "^16.1.0",

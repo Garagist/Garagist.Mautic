@@ -7,6 +7,5 @@ manifest("Garagist.Mautic:EmailModuleEditor", {}, (globalRegistry) => {
 
     editorsRegistry.set("Garagist.Mautic/Inspector/Editors/EmailModule", {
         component: EmailModuleEditor,
-        hasOwnLabel: true,
     });
 });

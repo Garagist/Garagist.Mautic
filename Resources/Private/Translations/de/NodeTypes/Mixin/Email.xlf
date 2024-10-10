@@ -3,11 +3,19 @@
     xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file original="" product-name="Garagist.Mautic" source-language="en" target-language="de" datatype="plaintext">
         <body>
-            <trans-unit id="properties.mauticEmailModule" xml:space="preserve">
+            <trans-unit id="properties.mauticPreviewText" xml:space="preserve">
+                <source>Preview text</source>
+                <target>Vorschautext</target>
+            </trans-unit>
+            <trans-unit id="properties.mauticPreviewText.options.help" xml:space="preserve">
+                <source>Here you can set the preview that will be displayed in the recipient's inbox.</source>
+                <target>Hier können Sie die Vorschau eingeben, die im Posteingang des Empfängers angezeigt wird.</target>
+            </trans-unit>
+            <trans-unit id="properties.mauticPreviewText.options.moduleLabel" xml:space="preserve">
                 <source>Show emails</source>
                 <target>Zeige E-Mails</target>
             </trans-unit>
-            <trans-unit id="properties.mauticEmailModule.ui.help.message" xml:space="preserve">
+            <trans-unit id="properties.mauticPreviewText.options.description" xml:space="preserve">
                 <source>It is possible to send personalized emails. To use this, simply apply the following markup in the text on your page:
 
 **{#ifNewsletter}** Hello #FIRSTNAME# #Lastname#, this is your newsletter **{:else}** Fallback for Webview **{/if}**
@@ -20,14 +28,6 @@ Availble fields are every field from **contactfield**, surounded by an **#** on 
 
 Verfügbare Felder sind alle Felder von **contactfield**, umgeben von einem **#** auf beiden Seiten. (Groß- und Kleinschreibung wird nicht berücksichtigt)
                 </target>
-            </trans-unit>
-            <trans-unit id="properties.mauticPreviewText" xml:space="preserve">
-                <source>Preview text</source>
-                <target>Vorschautext</target>
-            </trans-unit>
-            <trans-unit id="properties.mauticPreviewText.ui.help.message" xml:space="preserve">
-                <source>Here you can set the preview that will be displayed in the recipient's inbox.</source>
-                <target>Hier können Sie die Vorschau eingeben, die im Posteingang des Empfängers angezeigt wird.</target>
             </trans-unit>
         </body>
     </file>
