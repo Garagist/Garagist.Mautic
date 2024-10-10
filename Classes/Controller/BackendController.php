@@ -92,19 +92,7 @@ class BackendController extends AbstractModuleController
         $this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption(NodeConverter::class, NodeConverter::INVISIBLE_CONTENT_SHOWN, true);
     }
 
-    protected function localSort(array $array, ?string $key = null): array
-    {
-        $collator = new Collator($this->userService->getInterfaceLanguage());
 
-        uasort($array, function ($a, $b) use ($collator, $key) {
-            if (isset($key)) {
-                return $collator->compare($a[$key], $b[$key]);
-            }
-            return $collator->compare($a, $b);
-        });
-
-        return $array;
-    }
 
     /**
      * Render the overview of emails
@@ -687,5 +675,26 @@ class BackendController extends AbstractModuleController
             'title' => $title,
             'nodes' => $parents,
         ];
+    }
+
+    /**
+     * Sort an array by the current language
+     *
+     * @param array $array
+     * @param string|null $key
+     * @return array
+     */
+    private function localSort(array $array, ?string $key = null): array
+    {
+        $collator = new Collator($this->userService->getInterfaceLanguage());
+
+        uasort($array, function ($a, $b) use ($collator, $key) {
+            if (isset($key)) {
+                return $collator->compare($a[$key], $b[$key]);
+            }
+            return $collator->compare($a, $b);
+        });
+
+        return $array;
     }
 }
