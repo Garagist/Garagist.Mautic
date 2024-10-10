@@ -1,4 +1,4 @@
-prototype(Garagist.Mautic:Component.PreviewText) < prototype(Neos.Fusion:Component) {
+prototype(Garagist.Mautic:Backend.Atom.PreviewText) < prototype(Neos.Fusion:Component) {
     node = ${node}
     mauticPreviewText = ${q(this.node).property('mauticPreviewText')}
     metaDescription = ${q(this.node).property('metaDescription')}

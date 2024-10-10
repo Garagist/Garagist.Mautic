@@ -7,9 +7,7 @@ namespace Garagist\Mautic\Event;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 final class MauticEmailDelete implements DomainEventInterface
 {
     /**

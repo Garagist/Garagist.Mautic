@@ -1,0 +1,95 @@
+prototype(Garagist.Mautic:Backend.Module.SendTestMail) < prototype(Neos.Fusion:Component) {
+    email = null
+
+    // Redirect after the action is done
+    redirect = null
+
+    recipients = ${testEmailRecipients}
+
+    class = 'neos-button neos-button-primary'
+
+    @if.hasEmail = ${this.email}
+
+    @private {
+        i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
+        hasRecipients = ${Carbon.Array.check(props.recipients)}
+        pushFunc = "{push:()=>{if(!error&&add&&!alreadyDefined){recipients.push(add.toLowerCase());add=''}}}"
+    }
+
+    renderer = Garagist.Mautic:Backend.Block.ActionButton {
+        label = ${private.i18n.id('email.send.test').translate()}
+        icon = 'fa-vial'
+        showText = ${props.detailView}
+        dialogTitle = ${this.label}
+        dialogXData = Neos.Fusion:DataStructure {
+            @process.alpine = ${AlpineJS.object(value)}
+            action = Neos.Fusion:ActionUri {
+                action = 'test'
+                arguments = Neos.Fusion:DataStructure {
+                    node = ${props.node}
+                    email = ${props.email}
+                    redirect = ${props.redirect}
+                }
+            }
+            recipients = ${props.recipients}
+            error = ''
+            add = ''
+            alreadyDefined = false
+        }
+        confirmLabel = ${this.label}
+        confirmAttributes = Neos.Fusion:DataStructure {
+            :href = "action+'&moduleArguments[recipients]='+recipients"
+            :class = "!recipients.length&&'pointer-events-none opacity-60'"
+        }
+        initalFocusOnConfirm = ${private.hasRecipients}
+        content = afx`
+            <div x-show="recipients.length" x-transition>
+                {private.i18n.id('email.addresses').translate()}
+                <div class="flex flex-wrap gap-4 mt-2">
+                    <template x-for="(address, index) in recipients">
+                        <div class="flex items-center bg-neos-gray-light">
+                            <div class="py-2 px-4" x-text="address"></div>
+                            <button
+                                x-show="recipients.length>1"
+                                x-on:click="recipients.splice(index, 1);$el.blur()"
+                                class="flex items-center justify-center w-8 h-8 hover:bg-neos-red focus:bg-neos-red focus:outline-none"
+                                aria-label={private.i18n.id('delete').translate()}
+                                x-tooltip="10051"
+                                type="button"
+                            >
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            <label for="add">{private.i18n.id('email.addresses.add').translate()}</label>
+            <div class="flex !mt-2" x-data={private.pushFunc}>
+                <input
+                    x-model="add"
+                    x-dialog:focus={!private.hasRecipients}
+                    "x-on:keydown.space.prevent"
+                    "x-on:keydown.enter.prevent"="const msg=$el.validationMessage;if(msg){error=msg}else{push()}"
+                    x-on:change="error=$el.validationMessage"
+                    x-on:input="if(error){error=$el.validationMessage}alreadyDefined=recipients.includes(add.toLowerCase())"
+                    placeholder={private.i18n.id("enter.mailaddress").translate()}
+                    type="email"
+                    id="add"
+                    class="block w-full"
+                    required
+                />
+                <button
+                    x-on:click="push"
+                    aria-label={private.i18n.id('email.addresses.add').translate()}
+                    type="button"
+                    class="neos-button neos-button-secondary focus:outline-none focus:bg-neos-blue"
+                    x-tooltip="10051"
+                >
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+            <div x-show="error" x-text="error" x-transition class="bg-neos-red text-white p-4"></div>
+            <div x-show="alreadyDefined" x-transition class="bg-neos-orange text-white p-4">{private.i18n.id('email.addresses.alreadyDefined').translate()}</div>
+        `
+    }
+}

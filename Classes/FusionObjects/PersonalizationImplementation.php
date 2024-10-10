@@ -8,12 +8,8 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 class PersonalizationImplementation extends AbstractFusionObject
 {
-
-    /**
-     * @Flow\Inject
-     * @var PersonalizationService
-     */
-    protected $personalizationService;
+    #[Flow\Inject]
+    protected PersonalizationService $personalizationService;
 
     /**
      * @return string

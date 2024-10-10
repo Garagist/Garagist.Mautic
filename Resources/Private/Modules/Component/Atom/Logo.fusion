@@ -1,0 +1,34 @@
+prototype(Garagist.Mautic:Backend.Atom.Logo) < prototype(Neos.Fusion:Component) {
+    url = null
+    active = null
+
+    @private {
+        label = ${props.active == null ? null : Translation.translate(props.active ? 'status.active' : 'status.inactive', '', [], 'Module', 'Garagist.Mautic')}
+        logo = ${props.active == null || props.active ? 'Logo.svg' : 'LogoInactive.svg'}
+    }
+
+    renderer = afx`
+        <h1>
+            <Carbon.Eel:Tag
+                tagName={props.url ? 'a' : null}
+                attributes.href={props.url}
+                attributes.target="_blank"
+                attributes.class="inline-block"
+            >
+                <span class="sr-only">Mautic</span>
+                <span
+                    class="inline-block"
+                    aria-label={private.label}
+                    x-tooltip={!!private.label}
+                >
+                    <img
+                        width="152"
+                        alt="Mautic Logo"
+                        aria-hidden="true"
+                        src={StaticResource.uri("Garagist.Mautic", "Public/Assets/" + private.logo)}
+                    />
+                </span>
+            </Carbon.Eel:Tag>
+        </h1>
+    `
+}

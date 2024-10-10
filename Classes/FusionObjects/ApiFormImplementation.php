@@ -9,11 +9,8 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
 class ApiFormImplementation extends AbstractFusionObject
 {
 
-    /**
-     * @Flow\Inject
-     * @var ApiService
-     */
-    protected $apiService;
+    #[Flow\Inject]
+    protected ApiService $apiService;
 
     /**
      * @return string
@@ -60,12 +57,12 @@ class ApiFormImplementation extends AbstractFusionObject
             $tagName = null;
             if (in_array($type, ['email', 'password', 'text', 'file', 'date', 'datetime', 'number', 'captcha', 'url', 'tel'])) {
                 $tagName = 'input';
-            } else if (in_array($type, ['select', 'country'])) {
+            } elseif (in_array($type, ['select', 'country'])) {
                 $tagName = 'select';
-            } else if (in_array($type, ['radiogrp', 'checkboxgrp'])) {
+            } elseif (in_array($type, ['radiogrp', 'checkboxgrp'])) {
                 $tagName = 'inputGroup';
                 $value = $value ? array_map('trim', explode(',', $value)) : [];
-            } else if ($type == 'textarea') {
+            } elseif ($type == 'textarea') {
                 $tagName = $type;
             }
 

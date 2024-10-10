@@ -7,22 +7,17 @@ namespace Garagist\Mautic\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Service\UserService;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class TestEmailService
 {
     /**
      * @var array|string
-     * @Flow\InjectConfiguration(path="testMail.recipients")
      */
+    #[Flow\InjectConfiguration('testMail.recipients')]
     protected $recipientsFromSettings;
 
-    /**
-     * @Flow\Inject
-     * @var UserService
-     */
-    protected $userService;
+    #[Flow\Inject]
+    protected UserService $userService;
 
     public function getTestEmailRecipients(): array
     {

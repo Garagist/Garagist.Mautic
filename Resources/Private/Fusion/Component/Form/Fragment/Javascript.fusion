@@ -7,7 +7,7 @@ prototype(Garagist.Mautic:Component.Form.Fragment.Javascript) < prototype(Neos.F
     id = null
     url = null
 
-    @if.hasUrl_Id = ${this.url && this.id}
+    @if.hasUrlId = ${this.url && this.id}
 
     renderer = afx`
         <script type="text/javascript" src={props.url + "/form/generate.js?id=" + props.id} defer></script>

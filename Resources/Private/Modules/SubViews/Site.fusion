@@ -1,0 +1,64 @@
+prototype(Garagist.Mautic:BackendController.Site) < prototype(Neos.Fusion:Component) {
+    mauticPublicUrl = null
+    pint = null
+    pages = null
+    categories = null
+
+    @private {
+        i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
+        hasPages = ${Carbon.Array.check(props.pages)}
+        hasCategories = ${Carbon.Array.check(props.categories)}
+        showPagesWithoutEmails = ${private.hasPages && Array.some(props.pages, page => page.count > 0) ? 'false' : 'true'}
+    }
+
+    renderer = afx`
+        <main class="mautic" x-data={AlpineJS.object({showPagesWithoutEmails: private.showPagesWithoutEmails})}>
+            <Garagist.Mautic:Backend.Block.FlashMessages />
+                <Garagist.Mautic:Backend.Atom.Logo
+                url={mauticPublicUrl}
+                active={ping}
+            />
+            <h2 class="sr-only">{private.i18n.id('newsletter.available').translate()}</h2>
+            <Garagist.Mautic:Backend.Atom.ToggleSwitch
+                @if={private.showPagesWithoutEmails == 'false'}
+                toggle="showPagesWithoutEmails"
+                label="showPagesWithoutEmails"
+            />
+
+            <p @if={!private.hasPages} class="my-8">{private.i18n.id('newsletter.none').translate()}</p>
+
+            <!-- There are pages with categories -->
+            <Neos.Fusion:Loop @if={private.hasCategories} items={private.categories}>
+                <div
+                    class={[iterator.isFirst ? null : "xl:mt-16", "mt-12"]}
+                    x-show={item.main.count || Array.some(item.pages, page => page.count > 0) ? null : 'showPagesWithoutEmails'}
+                    x-transition={!!this['x-show']}
+                >
+                    <h3 @if={!item.main} class="text-xl mb-4">{item.title}</h3>
+                    <Garagist.Mautic:Backend.Block.IndexLink
+                        @if={item.main}
+                        class="mb-4 text-xl"
+                        show={null}
+                        {...item.main}
+                    />
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        <Neos.Fusion:Loop items={item.pages}>
+                            <Garagist.Mautic:Backend.Block.IndexLink {...item} />
+                        </Neos.Fusion:Loop>
+                    </div>
+                </div>
+            </Neos.Fusion:Loop>
+
+            <!-- There aren't pages with categories -->
+            <div
+                @if={!private.hasCategories && private.hasPages}
+                class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            >
+                <Neos.Fusion:Loop items={props.pages}>
+                    <Garagist.Mautic:Backend.Block.IndexLink {...item} />
+                </Neos.Fusion:Loop>
+            </div>
+
+        </main>
+    `
+}

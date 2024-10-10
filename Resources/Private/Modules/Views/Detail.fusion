@@ -10,7 +10,7 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
         }
     }
 
-    emailData = Garagist.Mautic:Component.EmailData {
+    emailData = Garagist.Mautic:Backend.Helper.EmailData {
         node = ${node}
         email = ${email}
         redirect = 'detail'
@@ -20,7 +20,7 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
 
     renderer = afx`
         <main class="mautic" x-data x-tooltips>
-            <Garagist.Mautic:Component.FlashMessages />
+            <Garagist.Mautic:Backend.Block.FlashMessages />
             <div class="space-y-4">
                 <h1 class="text-2xl">
                     {props._i18n.id('newsletter.headline').translate()}
@@ -79,7 +79,7 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                                 <td>{props._i18n.id('actions').translate()}</td>
                                 <td class="!p-0" x-data="actions(1)">
                                     <div class="flex flex-col items-start">
-                                        <Garagist.Mautic:Component.EmailActionButtons
+                                        <Garagist.Mautic:Backend.Module.EmailActionButtons
                                             detailView={true}
                                             {...props.emailData}
                                         />
@@ -167,14 +167,14 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                 >
                     {props._i18n.id('task.unlock').translate()}
                 </Neos.Fusion:Link.Action>
-                <Garagist.Mautic:Component.ActionButton
+                <Garagist.Mautic:Backend.Block.ActionButton
                     @if={props.action.publish && props.emailData.canPublish}
                     action="publish"
                     actionArguments={props.emailData.hrefArguments}
                     label={props._i18n.id('email.publish').translate()}
                     footer="primary"
                 />
-                <Garagist.Mautic:Component.SendMail
+                <Garagist.Mautic:Backend.Module.SendMail
                     @if={(props.action.send && props.emailData.canSend) || (props.action.resend && props.emailData.canResend)}
                     action='send'
                     resend={props.emailData.canResend}
@@ -182,7 +182,7 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                     segments={props.emailData.segments}
                     {...props.emailData.hrefArguments}
                 />
-                <Garagist.Mautic:Component.SendMail
+                <Garagist.Mautic:Backend.Module.SendMail
                     @if={props.action.publishAndSend && props.emailData.canPublishAndSend}
                     action="publishAndSend"
                     footer="success"

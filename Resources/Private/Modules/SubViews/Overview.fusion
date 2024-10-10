@@ -1,0 +1,15 @@
+prototype(Garagist.Mautic:BackendController.Overview) < prototype(Neos.Fusion:Component) {
+    sites = null
+
+    renderer = afx`
+    <main class="mautic">
+        <Garagist.Mautic:Backend.Block.FlashMessages />
+        <Garagist.Mautic:Backend.Atom.Logo />
+        <div @if={Carbon.Array.check(props.sites)}  class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <Neos.Fusion:Loop items={props.sites}>
+                <Garagist.Mautic:Backend.Block.IndexLink {...item} />
+            </Neos.Fusion:Loop>
+        </div>
+    </main>
+    `
+}

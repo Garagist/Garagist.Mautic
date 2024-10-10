@@ -1,5 +1,12 @@
 Garagist:
   Mautic:
+    # Override any of the settings below by add the site name
+    # Example:
+    # siteSettings:
+    #   rootNodeName:
+    #      enableTracking: true
+    siteSettings: null
+
     routeArgument:
       htmlTemplate: email
       plaintextTemplate: plaintext

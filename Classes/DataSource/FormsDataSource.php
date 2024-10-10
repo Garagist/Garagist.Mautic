@@ -14,11 +14,8 @@ class FormsDataSource extends AbstractDataSource
      */
     protected static $identifier = 'garagist-mautic-forms';
 
-    /**
-     * @Flow\Inject
-     * @var ApiService
-     */
-    protected $apiService;
+    #[Flow\Inject]
+    protected ApiService $apiService;
 
     /**
      * Get data

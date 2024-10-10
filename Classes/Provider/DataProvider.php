@@ -6,6 +6,7 @@ namespace Garagist\Mautic\Provider;
 
 use Garagist\Mautic\Domain\Model\MauticEmail;
 use Garagist\Mautic\Service\ApiService;
+use Garagist\Mautic\Service\SettingsService;
 use Garagist\Mautic\Service\MauticService;
 use Garagist\Mautic\Service\PersonalizationService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -16,51 +17,31 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Psr\Log\LoggerInterface;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class DataProvider implements DataProviderInterface
 {
-    /**
-     * @var array
-     * @Flow\InjectConfiguration(package="Garagist.Mautic")
-     */
-    protected $settings;
+    #[Flow\Inject]
+    protected PersonalizationService $personalizationService;
 
-    /**
-     * @Flow\Inject
-     * @var PersonalizationService
-     */
-    protected $personalizationService;
+    #[Flow\Inject]
+    protected SettingsService $settingsService;
 
-    /**
-     * @Flow\Inject
-     * @var MauticService
-     */
-    protected $mauticService;
+    #[Flow\Inject]
+    protected MauticService $mauticService;
 
-    /**
-     * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
-     * @var LoggerInterface
-     */
-    protected $mauticLogger;
+    #[Flow\Inject(name: 'Garagist.Mautic:MauticLogger')]
+    protected LoggerInterface $mauticLogger;
 
-    /**
-     * @Flow\Inject
-     * @var ApiService
-     */
-    protected $apiService;
+    #[Flow\Inject]
+    protected ApiService $apiService;
 
     /**
      * @var Context
      */
     protected $context;
 
-    /**
-     * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
+    #[Flow\Inject]
+    protected ContextFactoryInterface $contextFactory;
 
     /**
      * @throws Exception
@@ -139,12 +120,12 @@ class DataProvider implements DataProviderInterface
     public function getHtml(MauticEmail $email): string
     {
         $content = $this->mauticService->getNewsletterTemplate($email->getProperty('htmlUrl'));
-        $previewText = $email->getProperty('previewText');
-        if ($previewText) {
+
+        if ($previewText = $email->getProperty('previewText')) {
             $content = preg_replace('/<body([^>]*)>/i', '<body$1><div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;"> ' . $previewText . ' </div>', $content);
         }
-        $trackingPixel = $this->settings['mail']['trackingPixel'];
-        if ($trackingPixel) {
+
+        if ($trackingPixel = $this->settingsService->path('mail.trackingPixel', $email)) {
             $content = str_replace('</body>', $trackingPixel . '</body>', $content);
         }
 
@@ -192,6 +173,7 @@ class DataProvider implements DataProviderInterface
     {
         $this->mauticLogger->debug(sprintf('Using %s DataProvider', static::class));
         $node = $this->getNode($email->getNodeIdentifier());
+        $category = $this->settingsService->path('category.newsletter', $node);
         $emailIdentifier = $email->getEmailIdentifier();
 
         $html = $this->getHtml($email);
@@ -212,7 +194,7 @@ class DataProvider implements DataProviderInterface
             'title' => $title,
             'name' => join(' ❯ ', $name),
             'subject' => $subject,
-            'category' => (int)$this->settings['category']['newsletter'],
+            'category' => (int)$category,
             'template' => 'blank',
             'isPublished' => 0,
             'customHtml' => $html,
@@ -230,7 +212,7 @@ class DataProvider implements DataProviderInterface
      */
     public function getPrefilledSegments(NodeInterface $node): array
     {
-        $segmentMapping = $this->settings['segment']['mapping'];
+        $segmentMapping = $this->settingsService->path('segment.mapping', $node);
         if (is_array($segmentMapping)) {
             return $segmentMapping;
         }
@@ -253,7 +235,7 @@ class DataProvider implements DataProviderInterface
             return $choosenSegments;
         }
 
-        return $this->getAllSegmentIDsFromMautic($segmentsFromMautic);
+        return $this->getAllSegmentIDsFromMautic($segmentsFromMautic, $email);
     }
 
     /**
@@ -283,9 +265,17 @@ class DataProvider implements DataProviderInterface
      * @return array
      * @throws Exception
      */
-    protected function getAllSegmentIDsFromMautic(array $segmentsFromMautic): array
+
+    /**
+     * Get all the segment IDs from Mautic
+     *
+     * @param array $segmentsFromMautic
+     * @param MauticEmail $email
+     * @return array
+     */
+    protected function getAllSegmentIDsFromMautic(array $segmentsFromMautic, MauticEmail $email): array
     {
-        $filteredSegments = $this->filterHiddenSegments($segmentsFromMautic);
+        $filteredSegments = $this->filterHiddenSegments($segmentsFromMautic, $email);
         return array_map(function ($entry) {
             return $entry['id'];
         }, $filteredSegments);
@@ -295,11 +285,12 @@ class DataProvider implements DataProviderInterface
      * Filter hidden segments
      *
      * @param array $segments
+     * @param MauticEmail $email
      * @return array
      */
-    protected function filterHiddenSegments(array $segments): array
+    protected function filterHiddenSegments(array $segments, MauticEmail $email): array
     {
-        $hiddenSegments = $this->settings['segment']['hide'];
+        $hiddenSegments = $this->settingsService->path('segment.hide', $email);
         if (is_int($hiddenSegments)) {
             $hiddenSegments = [$hiddenSegments];
         }

@@ -1,0 +1,88 @@
+prototype(Garagist.Mautic:Backend.Block.ActionButton) < prototype(Neos.Fusion:Component) {
+    detailView = false
+    action = null
+    actionArguments = null
+
+    /// true|string neos button modifier (e.g. 'primary')
+    footer = false
+
+    confirm = false
+    initalFocusOnConfirm = ${this.confirm}
+
+    /// 'success'|'warning'|'danger'
+    type = null
+
+    showText = false
+    labelKey = null
+
+    icon = null
+
+    content = null
+
+    @private {
+        label = ${Translation.translate(props.labelKey, null, [], 'Module', 'Garagist.Mautic')}
+        href = Neos.Fusion:ActionUri {
+            @if.hasAction = ${props.action}
+            action = ${props.action}
+            arguments = ${props.actionArguments}
+        }
+        class = Neos.Fusion:Match {
+            @subject = ${props.showText ? 'text' : props.type}
+            @default = 'neos-button hover:!bg-neos-blue focus:!bg-neos-blue'
+            danger = 'neos-button hover:!bg-neos-red focus:!bg-neos-red'
+            warning = 'neos-button hover:!bg-neos-orange focus:!bg-neos-orange'
+            success = 'neos-button hover:!bg-neos-green focus:!bg-neos-green'
+            text = 'group flex items-center justify-start'
+        }
+        iconClass = Neos.Fusion:Match {
+            @process.addBase = ${'flex items-center justify-center size-10 ' + value}
+            @subject = ${props.type}
+            @default = 'group-hover:bg-neos-blue group-focus:bg-neos-blue'
+            danger = 'group-hover:bg-neos-red group-focus:bg-neos-red'
+            warning = 'group-hover:bg-neos-orange group-focus:bg-neos-orange'
+            success = 'group-hover:bg-neos-green group-focus:bg-neos-green'
+        }
+        footerClass = ${'neos-button neos-button-' + (Type.isString(props.footer) ? props.footer : 'secondary')}
+        confirmAttributes = Neos.Fusion:DataStructure
+    }
+
+    renderer = afx`
+        <a
+            @if={!props.content && !props.confirm}
+            href={private.href}
+            class={props.footer ? private.footerClass : private.class}
+            aria-label={props.footer || props.showText ? null : private.label}
+        >
+            <i @if={!props.footer} class={["fas", props.icon, props.showText ? private.iconClass : null]}></i>
+            <span @if={props.showText && !props.footer} class="block pl-2">
+                {private.label}
+            </span>
+            {props.footer ? private.label : ''}
+        </a>
+        <button
+            @if={props.content || props.confirm}
+            x-data="{open:false}"
+            x-on:click="open=true"
+            class={props.footer ? private.footerClass : private.class}
+            aria-label={props.footer || props.showText ? null : private.label}
+        >
+            <i @if={!props.footer} class={["fas", props.icon, props.showText ? private.iconClass : null]}></i>
+            <span @if={props.showText && !props.footer} class="block pl-2">
+                {private.label}
+            </span>
+            {props.footer ? private.label : ''}
+            <Garagist.Mautic:Backend.Block.Modal
+                title={props.dialogTitle || Translation.translate(props.labelKey + '.headline', private.label, [], 'Module', 'Garagist.Mautic')}
+                description={props.confirm ? Translation.translate(props.labelKey + '.text', private.label, [], 'Module', 'Garagist.Mautic') : null}
+                confirmType={props.type}
+                initalFocusOnConfirm={props.initalFocusOnConfirm}
+                maxWidth={props.dialogMaxWidth}
+                xData={props.dialogXData}
+                xEffect={props.dialogxEffect}
+                content={props.content}
+                confirmLabel={private.label}
+                confirmAttributes={props.action ? {href: private.href}  : private.confirmAttributes}
+            />
+        </button>
+    `
+}

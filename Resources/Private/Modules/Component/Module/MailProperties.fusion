@@ -1,0 +1,148 @@
+prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Component) {
+    // If email is set the action will be edit, otherwise it will be create
+    email = null
+
+    // Redirect after the action is done
+    redirect = null
+
+    subject = null
+    previewText = null
+    previewTextPlaceholder = Garagist.Mautic:Backend.Atom.PreviewText
+    segments = null
+
+    chooseSegment = ${Configuration.Setting('Garagist.Mautic.segment.choose')}
+    chooseSegment.@process.convert = ${Type.isArray(value) ? value : Type.isInteger(value) ? [value] : null}
+    allSegments = ${allSegments}
+    prefilledSegments = ${prefilledSegments}
+    lockPrefilledSegments = ${Configuration.Setting('Garagist.Mautic.segment.lockPrefilled')}
+
+    node = ${node}
+    ping = ${ping}
+
+    class = 'neos-button neos-button-primary'
+
+    @if.hasNodeAndPing = ${this.node && this.ping}
+
+    @private {
+        isEdit = ${!!props.email}
+        type = ${private.isEdit ? 'edit' : 'create'}
+        showSegments = ${Carbon.Array.check(props.chooseSegment) && Carbon.Array.check(props.allSegments)}
+        placeholder = ${q(props.node).property('titleOverride') || q(props.node).property('title')}
+        i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
+    }
+
+    renderer = Garagist.Mautic:Backend.Block.ActionButton {
+        label = ${private.i18n.id('email.' + private.type + (private.isEdit && private.showSegments ? '.withSegments'  : '')).translate()}
+        icon = 'fa-pencil-alt'
+        showText = ${props.detailView}
+        footer = ${private.isEdit ? false : 'primary'}
+        dialogTitle = ${this.label}
+        dialogXData = Neos.Fusion:DataStructure {
+            @process.alpine = ${AlpineJS.object(value)}
+            action = Neos.Fusion:ActionUri {
+                action = ${private.type}
+                arguments = Neos.Fusion:DataStructure {
+                    node = ${props.node}
+                    email = ${props.email}
+                    redirect = ${props.redirect}
+                }
+            }
+            subject = ${props.subject == private.placeholder ? '' : props.subject}
+            placeholder = ${private.placeholder}
+            previewText = ${props.previewText == props.previewTextPlaceholder ? '' : props.previewText}
+            previewTextPlaceholder = ${props.previewTextPlaceholder || ''}
+            segments = ${props.segments || props.prefilledSegments}
+            segments.@if.show = ${private.showSegments}
+        }
+        confirmLabel = ${this.label}
+        initalFocusOnConfirm = ${!private.isEdit}
+        confirmAttributes = Neos.Fusion:DataStructure {
+            :href = ${"action + '&moduleArguments[subject]='+(subject||placeholder)+'&moduleArguments[previewText]='+(previewText||previewTextPlaceholder)" + (private.showSegments ? "+'&moduleArguments[segments]='+segments" : '')}
+            :class = "segments&&!segments.length&&'pointer-events-none opacity-60'"
+        }
+        content = afx`
+            <fieldset class="!p-0">
+                <label for="subject">{private.i18n.id('subject').translate()}</label>
+                <input
+                    type="text"
+                    x-dialog:focus={private.isEdit}
+                    x-model="subject"
+                    id="subject"
+                    :placeholder="placeholder"
+                    class="block w-full"
+                />
+            </fieldset>
+            <fieldset class="!p-0">
+                <label for="preview">
+                    {Translation.translate('properties.mauticPreviewText', null, [], 'NodeTypes/Mixin/Email', 'Garagist.Mautic')}
+                </label>
+                <div class="auto-grow-textarea">
+                    <textarea x-model="previewText" :placeholder="previewTextPlaceholder"></textarea>
+                    <span>
+                        <span x-text="previewText || previewTextPlaceholder"></span>
+                        <br />
+                    </span>
+                </div>
+                <div class="block my-2 opacity-60">{Translation.translate('properties.mauticPreviewText.ui.help.message', null, [], 'NodeTypes/Mixin/Email', 'Garagist.Mautic')}</div>
+                <div @if={private.isEdit} class="block my-2 opacity-60">{Translation.translate('email.need.refresh', null, [], 'Module', 'Garagist.Mautic')}</div>
+            </fieldset>
+            <fieldset @if={private.showSegments} class="!p-0 !mt-8 flex flex-col items-start">
+                <legend class="!p-0 !leading-5 !text-sm">
+                    {private.i18n.id('recipients').translate()}
+                </legend>
+                <Neos.Fusion:Loop items={props.chooseSegment} itemName="segment">
+                    <!-- We have a group -->
+                    <div
+                        @if={Carbon.Array.check(segment)}
+                        class="bg-neos-gray-darker -mx-4 p-4 my-2 self-stretch flex flex-col items-start"
+                    >
+                        <!-- Prefilled group -->
+                        <Neos.Fusion:Loop
+                            @if={Carbon.Array.check(Carbon.Array.intersect(props.prefilledSegments, segment))}
+                            items={segment}
+                            itemName="subsegment"
+                        >
+                            <Garagist.Mautic:Backend.Atom.Checkbox
+                                xModel="segments"
+                                number={true}
+                                value={subsegment}
+                                label={props.allSegments[subsegment].name}
+                                xDisabled={"const intersect=[" + Array.join(segment, ",") + "].filter(item=>segments.includes(item));return intersect.length<=1 && intersect[0]==" + subsegment}
+                            />
+                        </Neos.Fusion:Loop>
+                        <p @if={Carbon.Array.check(Carbon.Array.intersect(props.prefilledSegments, segment))} class="block mt-2 -mb-3 opacity-60 text-xs">
+                            {private.i18n.id('email.oneItemNeeded').translate()}
+                        </p>
+
+                        <!-- No Prefilled group -->
+                        <Neos.Fusion:Loop
+                            @if={!Carbon.Array.check(Carbon.Array.intersect(props.prefilledSegments, segment))}
+                            items={segment}
+                            itemName="subsegment"
+                        >
+                            <Garagist.Mautic:Backend.Atom.Checkbox
+                                xModel="segments"
+                                number={true}
+                                value={subsegment}
+                                label={props.allSegments[subsegment].name}
+                            />
+                        </Neos.Fusion:Loop>
+                    </div>
+
+                    <!-- No Group -->
+                    <Garagist.Mautic:Backend.Atom.Checkbox
+                        @if={!Type.isArray(segment)}
+                        xModel="segments"
+                        disabled={props.lockPrefilledSegments && Array.indexOf(props.prefilledSegments, segment) != -1}
+                        number={true}
+                        value={segment}
+                        label={props.allSegments[segment].name}
+                    />
+                </Neos.Fusion:Loop>
+                <div x-show="!segments.length" x-transition class="bg-neos-red text-white p-4 mt-4 mb-2 w-full">
+                    {private.i18n.id('pleaseChooseMinimalOneItem').translate()}
+                </div>
+            </fieldset>
+        `
+    }
+}

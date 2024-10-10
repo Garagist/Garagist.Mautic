@@ -4,53 +4,137 @@ declare(strict_types=1);
 
 namespace Garagist\Mautic\Service;
 
+use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
+use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 
 /**
  * A service for retrieving nodes from NeosCR
- *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class NodeService
 {
+    #[Flow\Inject]
+    protected ContentDimensionPresetSourceInterface $contentDimensionPresetSource;
 
-    /**
-     * @Flow\Inject
-     * @var ContentDimensionPresetSourceInterface
-     */
-    protected $contentDimensionPresetSource;
+    #[Flow\Inject]
+    protected DomainRepository $domainRepository;
 
-    /**
-     * @Flow\Inject
-     * @var DomainRepository
-     */
-    protected $domainRepository;
+    #[Flow\Inject]
+    protected SiteRepository $siteRepository;
 
-    /**
-     * @Flow\Inject
-     * @var SiteRepository
-     */
-    protected $siteRepository;
+    #[Flow\Inject]
+    protected ContextFactoryInterface $contextFactory;
 
-    /**
-     * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
+    #[Flow\Inject]
+    protected PrivilegeManagerInterface $privilegeManager;
+
+    #[Flow\Inject]
+    protected WorkspaceRepository $workspaceRepository;
+
+    #[Flow\Inject]
+    protected NodeDataRepository $nodeDataRepository;
+
+    #[Flow\Inject]
+    protected NodeFactory $nodeFactory;
 
     /**
      * @var array
      */
     protected array $options = [];
 
+    /**
+     * Get the site node from a node
+     *
+     * @param NodeInterface $node
+     * @return NodeInterface
+     */
+    public function getSiteNodeFromNode(NodeInterface $node): NodeInterface
+    {
+        if ($siteNode = $node->getContext()->getCurrentSiteNode()) {
+            return $siteNode;
+        }
+
+        $flowQuery = new FlowQuery([$node]);
+        $nodes = $flowQuery->parents('[instanceof Neos.Neos:Document]')->get();
+
+        return end($nodes);
+    }
+
+    /**
+     * Get site name based on node
+     *
+     * @param NodeInterface $node
+     * @return string|null
+     */
+    public function getSiteNameBasedOnNode(NodeInterface $node): ?string
+    {
+        if ($site = $node->getContext()->getCurrentSite()) {
+            return $site->getName();
+        }
+
+        $name = null;
+
+        try {
+            $nodePath = $node->findNodePath();
+            $nodePathSegments = $nodePath->getParts();
+            // Seems hacky, but we need to get the site by the node name here
+            // and extract the site name by the node's path
+            if (count($nodePathSegments) >= 3) {
+                $siteName = $nodePathSegments[2];
+                $site = $this->siteRepository->findOneByNodeName($siteName->__toString());
+                if ($site && $site->isOnline()) {
+                    $name = $site->getName();
+                }
+            }
+        } catch (\Exception $th) {
+        }
+
+        return $name;
+    }
+
+    /**
+     * Get all sites nodes
+     *
+     * @return NodeInterface[]
+     */
+    public function getSiteNodes() {
+        $siteNodes = [];
+        $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
+
+        foreach ($this->siteRepository->findOnline() as $site) {
+            $siteNodePath = NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName());
+            $siteNodesInAllDimensions = $this->nodeDataRepository->findByPathWithoutReduce($siteNodePath, $liveWorkspace);
+
+            foreach ($siteNodesInAllDimensions as $siteNodeData) {
+                $siteNodeContext = $this->nodeFactory->createContextMatchingNodeData($siteNodeData);
+                $siteNode = $this->nodeFactory->createFromNodeData($siteNodeData, $siteNodeContext);
+
+                // if the node exists, check if the user is granted access to this node
+                if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($siteNode))) {
+                    $siteNodes[] = $siteNode;
+                    break;
+                }
+            }
+        }
+
+        return $siteNodes;
+    }
 
     /**
      * Get node by id
@@ -107,7 +191,6 @@ class NodeService
      */
     public function getContentContextDimension(): Context
     {
-
         $dimensionName = $this->options['dimensionName'] ?? 'language';
         $workspaceName = $this->options['workspaceName'] ?? 'live';
 

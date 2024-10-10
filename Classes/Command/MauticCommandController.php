@@ -8,24 +8,15 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use function \Neos\Flow\var_dump;
 
-/**
- *
- * @Flow\Scope("singleton")
- */
+// TODO Remove var_dump and replace with proper logging
+#[Flow\Scope('singleton')]
 class MauticCommandController extends CommandController
 {
+    #[Flow\Inject]
+    protected ApiService $apiService;
 
-    /**
-     * @Flow\Inject
-     * @var ApiService
-     */
-    protected $apiService;
-
-    /**
-     * @Flow\Inject
-     * @var MauticService
-     */
-    protected $mauticService;
+    #[Flow\Inject]
+    protected MauticService $mauticService;
 
     public function getCommand(string $emailIdentifier)
     {

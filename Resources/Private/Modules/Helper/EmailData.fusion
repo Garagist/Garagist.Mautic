@@ -1,4 +1,4 @@
-prototype(Garagist.Mautic:Component.EmailData) < prototype(Neos.Fusion:Component) {
+prototype(Garagist.Mautic:Backend.Helper.EmailData) < prototype(Neos.Fusion:Component) {
     email = null
     node = null
     redirect = 'node'

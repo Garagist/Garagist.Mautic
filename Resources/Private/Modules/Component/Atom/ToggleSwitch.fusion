@@ -1,4 +1,4 @@
-prototype(Garagist.Mautic:Component.ToggleSwitch) < prototype(Neos.Fusion:Component) {
+prototype(Garagist.Mautic:Backend.Atom.ToggleSwitch) < prototype(Neos.Fusion:Component) {
     label = null
     toggle = null
     showLabel = true

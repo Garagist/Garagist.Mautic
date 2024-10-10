@@ -9,7 +9,7 @@ prototype(Garagist.Mautic:Component.Form.Fragment.Iframe) < prototype(Neos.Fusio
     url = null
     class = ${this.iframeClass}
 
-    @if.hasUrl_Id = ${this.url && this.id}
+    @if.hasUrlId = ${this.url && this.id}
 
     renderer = afx`
         <iframe src={props.url + "/form/" + props.id} class={props.class}></iframe>
