@@ -14,7 +14,7 @@ prototype(Garagist.Mautic:Component.EmailData) < prototype(Neos.Fusion:Component
         subject = ${this.properties.subject}
         previewText = ${this.properties.previewText}
         segments = ${this.properties.segments}
-        sent = ${Array.sort(props.email.properties.sent)}
+        sent = ${Carbon.Array.check(props.email.properties.sent) ? Array.sort(props.email.properties.sent) : []}
         hrefArguments = Neos.Fusion:DataStructure {
             node = ${props.node}
             email = ${props.email}
