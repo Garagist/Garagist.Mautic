@@ -16,51 +16,32 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Psr\Log\LoggerInterface;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class DataProvider implements DataProviderInterface
 {
-    /**
-     * @var array
-     * @Flow\InjectConfiguration(package="Garagist.Mautic")
-     */
+    #[Flow\InjectConfiguration]
     protected $settings;
 
-    /**
-     * @Flow\Inject
-     * @var PersonalizationService
-     */
-    protected $personalizationService;
+    #[Flow\Inject]
+    protected PersonalizationService $personalizationService;
 
-    /**
-     * @Flow\Inject
-     * @var MauticService
-     */
-    protected $mauticService;
 
-    /**
-     * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
-     * @var LoggerInterface
-     */
-    protected $mauticLogger;
+    #[Flow\Inject]
+    protected MauticService $mauticService;
 
-    /**
-     * @Flow\Inject
-     * @var ApiService
-     */
-    protected $apiService;
+    #[Flow\Inject(name: 'Garagist.Mautic:MauticLogger')]
+    protected LoggerInterface $mauticLogger;
+
+    #[Flow\Inject]
+    protected ApiService $apiService;
 
     /**
      * @var Context
      */
     protected $context;
 
-    /**
-     * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
+    #[Flow\Inject]
+    protected ContextFactoryInterface $contextFactory;
 
     /**
      * @throws Exception

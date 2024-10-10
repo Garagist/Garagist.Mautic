@@ -24,34 +24,20 @@ use Psr\Log\LoggerInterface;
 
 final class MauticProcessManager implements EventListenerInterface
 {
-    /**
-     * @Flow\Inject
-     * @var MauticService
-     */
-    protected $mauticService;
+    #[Flow\Inject]
+    protected MauticService $mauticService;
 
-    /**
-     * @Flow\Inject
-     * @var TaskService
-     */
-    protected $taskService;
+    #[Flow\Inject]
+    protected TaskService $taskService;
 
-    /**
-     * @var EventStore
-     */
-    protected $eventStore;
+    #[Flow\Inject]
+    protected EventStore $eventStore;
 
-    /**
-     * @Flow\Inject
-     * @var EventStoreFactory
-     */
-    protected $eventStoreFactory;
+    #[Flow\Inject]
+    protected EventStoreFactory $eventStoreFactory;
 
-    /**
-     * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
-     * @var LoggerInterface
-     */
-    protected $mauticLogger;
+    #[Flow\Inject(name: 'Garagist.Mautic:MauticLogger')]
+    protected LoggerInterface $mauticLogger;
 
     protected function initializeObject(): void
     {

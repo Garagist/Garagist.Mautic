@@ -15,36 +15,23 @@ use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 
 /**
  * A service for retrieving nodes from NeosCR
- *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class NodeService
 {
 
-    /**
-     * @Flow\Inject
-     * @var ContentDimensionPresetSourceInterface
-     */
-    protected $contentDimensionPresetSource;
+    #[Flow\Inject]
+    protected ContentDimensionPresetSourceInterface $contentDimensionPresetSource;
 
-    /**
-     * @Flow\Inject
-     * @var DomainRepository
-     */
-    protected $domainRepository;
+    #[Flow\Inject]
+    protected DomainRepository $domainRepository;
 
-    /**
-     * @Flow\Inject
-     * @var SiteRepository
-     */
-    protected $siteRepository;
+    #[Flow\Inject]
+    protected SiteRepository $siteRepository;
 
-    /**
-     * @Flow\Inject
-     * @var ContextFactoryInterface
-     */
-    protected $contextFactory;
+    #[Flow\Inject]
+    protected ContextFactoryInterface $contextFactory;
 
     /**
      * @var array

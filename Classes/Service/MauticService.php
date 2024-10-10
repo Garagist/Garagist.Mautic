@@ -25,69 +25,40 @@ use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Psr\Log\LoggerInterface;
 use DateTime;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class MauticService
 {
-    /**
-     * @Flow\Inject
-     * @var ApiService
-     */
-    protected $apiService;
+    #[Flow\Inject]
+    protected ApiService $apiService;
 
-    /**
-     * @Flow\Inject
-     * @var TaskService
-     */
-    protected $taskService;
+    #[Flow\Inject]
+    protected TaskService $taskService;
 
-    /**
-     * @Flow\Inject
-     * @var MauticEmailRepository
-     */
-    protected $mauticEmailRepository;
+    #[Flow\Inject]
+    protected MauticEmailRepository $mauticEmailRepository;
 
-    /**
-     * @Flow\Inject
-     * @var PersistenceManager
-     */
-    protected $persistenceManager;
+    #[Flow\Inject]
+    protected PersistenceManager $persistenceManager;
 
-    /**
-     * @Flow\Inject
-     * @var EventStoreFactory
-     */
-    protected $eventStoreFactory;
+    #[Flow\Inject]
+    protected EventStoreFactory $eventStoreFactory;
 
     /**
      * @var EventStore
      */
     protected $eventStore;
 
-    /**
-     * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
-     * @var LoggerInterface
-     */
-    protected $mauticLogger;
+    #[Flow\Inject(name: 'Garagist.Mautic:MauticLogger')]
+    protected LoggerInterface $mauticLogger;
 
-    /**
-     * @Flow\Inject
-     * @var DataProviderInterface
-     */
-    protected $dataProvider;
+    #[Flow\Inject]
+    protected DataProviderInterface $dataProvider;
 
-    /**
-     * @Flow\Inject
-     * @var TranslationHelper
-     */
-    protected $translationHelper;
+    #[Flow\Inject]
+    protected TranslationHelper $translationHelper;
 
-    /**
-     * @Flow\Inject
-     * @var TestEmailService
-     */
-    protected $testEmailService;
+    #[Flow\Inject]
+    protected TestEmailService $testEmailService;
 
     protected function initializeObject(): void
     {

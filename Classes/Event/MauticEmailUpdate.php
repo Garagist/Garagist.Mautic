@@ -8,9 +8,7 @@ use Neos\EventSourcing\Event\DomainEventInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 class MauticEmailUpdate implements DomainEventInterface
 {
     /**

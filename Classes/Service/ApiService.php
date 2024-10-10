@@ -23,15 +23,10 @@ use function array_pop;
 use function in_array;
 use function sprintf;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class ApiService
 {
-    /**
-     * @Flow\InjectConfiguration
-     * @var array
-     */
+    #[Flow\InjectConfiguration]
     protected $settings = [];
 
     /**
@@ -74,11 +69,8 @@ class ApiService
      */
     protected $pageApi;
 
-    /**
-     * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
-     * @var LoggerInterface
-     */
-    protected $mauticLogger;
+    #[Flow\Inject(name: 'Garagist.Mautic:MauticLogger')]
+    protected LoggerInterface $mauticLogger;
 
     /**
      * @throws Exception
@@ -110,7 +102,7 @@ class ApiService
     /**
      * @param string $emailIdentifier
      * @return void
-     *@throws NodeException|Exception
+     * @throws NodeException|Exception
      */
     public function deleteEmail(string $emailIdentifier): void
     {

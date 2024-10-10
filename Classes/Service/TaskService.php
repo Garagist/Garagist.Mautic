@@ -27,46 +27,28 @@ use Neos\Flow\Annotations as Flow;
 
 class TaskService
 {
-    /**
-     * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
-     * @var LoggerInterface
-     */
-    protected $mauticLogger;
+    #[Flow\Inject(name: 'Garagist.Mautic:MauticLogger')]
+    protected LoggerInterface $mauticLogger;
 
     /**
      * @var EventStore
      */
     protected $eventStore;
 
-    /**
-     * @Flow\Inject
-     * @var MauticService
-     */
-    protected $mauticService;
+    #[Flow\Inject]
+    protected MauticService $mauticService;
 
-    /**
-     * @Flow\Inject
-     * @var ApiService
-     */
-    protected $apiService;
+    #[Flow\Inject]
+    protected ApiService $apiService;
 
-    /**
-     * @Flow\Inject
-     * @var MauticEmailRepository
-     */
-    protected $mauticEmailRepository;
+    #[Flow\Inject]
+    protected MauticEmailRepository $mauticEmailRepository;
 
-    /**
-     * @Flow\Inject
-     * @var PersistenceManager
-     */
-    protected $persistenceManager;
+    #[Flow\Inject]
+    protected PersistenceManager $persistenceManager;
 
-    /**
-     * @Flow\Inject
-     * @var EventStoreFactory
-     */
-    protected $eventStoreFactory;
+    #[Flow\Inject]
+    protected EventStoreFactory $eventStoreFactory;
 
     /**
      * @return void

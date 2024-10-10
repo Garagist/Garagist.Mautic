@@ -6,9 +6,7 @@ namespace Garagist\Mautic\Service;
 
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class PersonalizationService
 {
 
