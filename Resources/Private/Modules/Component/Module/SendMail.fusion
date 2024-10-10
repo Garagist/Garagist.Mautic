@@ -1,0 +1,98 @@
+prototype(Garagist.Mautic:Backend.Module.SendMail) < prototype(Neos.Fusion:Component) {
+    email = null
+
+    // Redirect after the action is done
+    redirect = null
+    action = 'send'
+
+    class = 'neos-button neos-button-primary'
+    footer = false
+    allSegments = ${allSegments}
+    canSendLater = ${Configuration.Setting('Garagist.Mautic.action.sendLater')}
+    node = ${node}
+
+    @if.hasEmail = ${this.email}
+
+    @private {
+        i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
+        sendDateLabel = ${private.i18n.id('email.send.date').translate()}
+        hasSegments = ${Carbon.Array.check(props.segments)}
+    }
+
+    renderer = Garagist.Mautic:Backend.Block.ActionButton {
+        // class in xlf file: 'block' Don't remove this as it is needed for tailwindcss to get the needed class name
+        label = ${private.i18n.id(props.resend ? 'email.resend' : 'email.send').translate()}
+        icon = 'fa-paper-plane'
+        showText = ${props.detailView}
+        dialogTitle = ${this.label}
+        dialogXData = Neos.Fusion:DataStructure {
+            @process.alpine = ${AlpineJS.object(value)}
+            action = Neos.Fusion:ActionUri {
+                action = ${props.action}
+                arguments = Neos.Fusion:DataStructure {
+                    node = ${props.node}
+                    email = ${props.email}
+                    redirect = ${props.redirect}
+                }
+            }
+            locale = Neos.Fusion:Match {
+                @if.set = ${props.canSendLater}
+                @subject = ${Carbon.Backend.language()}
+                @default = 'en'
+                de = 'de'
+            }
+            date = 'now'
+            sendLater = ${props.canSendLater ? false : null}
+            pickr = ${props.canSendLater ? '' : null}
+            formattedDate = ${props.canSendLater ? '' : null}
+        }
+        dialogxEffect =${props.canSendLater ? "if(date!='now'){formattedDate=new Date(date).toLocaleDateString(locale,{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'numeric',minute:'numeric'})}" : null}
+        confirmLabel = ${this.label}
+        confirmAttributes = Neos.Fusion:DataStructure {
+            :href = "action+'&moduleArguments[date]='+date"
+        }
+        footer = ${props.footer}
+        initalFocusOnConfirm = true
+        type = 'success'
+        dialogMaxWidth = ${props.canSendLater ? '382px' : null}
+        content = afx`
+            <p x-dialog:description @if={!private.hasSegments}>
+                <span x-show="date=='now'" @if={props.canSendLater}>{props._i18n.id('email.send.now.all').translate()}</span>
+                <span x-show="date!='now'" @if={props.canSendLater}>{props._i18n.id('email.send.later.all').translate()}</span>
+                {props.canSendLater ? '' : props._i18n.id('email.send.now.all').translate()}
+            </p>
+            <p x-dialog:description @if={private.hasSegments}>
+                <span x-show="date=='now'" @if={props.canSendLater}>{props._i18n.id('email.send.now.segments').translate()}</span>
+                <span x-show="date!='now'" @if={props.canSendLater}>{props._i18n.id('email.send.later.segments').translate()}</span>
+                {props.canSendLater ? '' : props._i18n.id('email.send.now.segments').translate()}
+                <Neos.Fusion:Loop items={props.segments} @glue=", " content={props.allSegments[item].name} />
+            </p>
+            <Garagist.Mautic:Backend.Atom.Checkbox
+                @if={props.canSendLater}
+                xModel="sendLater"
+                boolean={true}
+                label={props._i18n.id('email.send.later').translate()}
+                value={true}
+            />
+
+            <div
+                @if={props.canSendLater}
+                x-show="sendLater"
+                x-collapse
+                x-effect="date=sendLater&&pickr?pickr:'now'"
+            >
+                <label for="date" class="sr-only">{private.sendDateLabel}</label>
+                <input
+                    x-show="sendLater"
+                    x-model="pickr"
+                    x-flatpickr="{locale}"
+                    placeholder={private.sendDateLabel}
+                    id="date"
+                    class="sr-only"
+                />
+                <!-- Spacer for a smoother animation -->
+                <div aria-hidden="true"  class="h-4"></div>
+            </div>
+        `
+    }
+}

@@ -1,4 +1,4 @@
-prototype(Garagist.Mautic:Settings) {
+prototype(Garagist.Mautic:Helper.Settings) {
     @class = 'Garagist\\Mautic\\FusionObjects\\SettingsImplementation'
 
     siteName = ${site.name}

@@ -1,78 +1,24 @@
 Garagist.Mautic.BackendController.index = Neos.Fusion:Component {
-    hasPages = ${Carbon.Array.check(pages)}
-    hasCategories = ${Carbon.Array.check(categories)}
-    showPagesWithoutEmails = ${this.hasPages && Array.some(pages, page => page.count > 0) ? 'false' : 'true'}
-    logo = ${ping ? 'Logo.svg' : 'LogoInactive.svg'}
-    mauticPublicUrl = ${Configuration.Setting('Garagist.Mautic.publicUrl')}
+    sites = ${sites}
 
-    _i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
+    pages = ${pages}
+    categories = ${categories}
+    mauticPublicUrl = ${mauticPublicUrl}
+    ping = ${ping}
+
+    @private.hasSites = ${Carbon.Array.check(props.sites)}
 
     renderer = afx`
-        <main class="mautic" x-data={"{showPagesWithoutEmails:" + props.showPagesWithoutEmails + "}"}>
-            <Garagist.Mautic:Component.FlashMessages />
-            <h1>
-                <Carbon.Eel:Tag
-                    tagName={props.mauticPublicUrl ? 'a' : null}
-                    attributes.href={props.mauticPublicUrl}
-                    attributes.target="_blank"
-                    attributes.class="inline-block"
-                >
-                    <span class="sr-only">Mautic</span>
-                    <span
-                        class="inline-block"
-                        aria-label={props._i18n.id(ping ? 'status.active' : 'status.inactive').translate()}
-                        x-tooltip
-                    >
-                        <img
-                            width="152"
-                            alt="Mautic Logo"
-                            aria-hidden="true"
-                            src={StaticResource.uri("Garagist.Mautic", "Public/Assets/" + props.logo)}
-                        />
-                    </span>
-                </Carbon.Eel:Tag>
-            </h1>
-            <h2 class="sr-only">{props._i18n.id('newsletter.available').translate()}</h2>
-            <Garagist.Mautic:Component.ToggleSwitch
-                @if={props.showPagesWithoutEmails == 'false'}
-                toggle="showPagesWithoutEmails"
-                label="showPagesWithoutEmails"
-            />
-
-            <p @if={!props.hasPages} class="my-8">{props._i18n.id('newsletter.none').translate()}</p>
-
-            <!-- There are pages with categories -->
-            <Neos.Fusion:Loop @if={props.hasCategories} items={categories}>
-                <div
-                    class={[iterator.isFirst ? null : "xl:mt-16", "mt-12"]}
-                    x-show={item.main.count || Array.some(item.pages, page => page.count > 0) ? null : 'showPagesWithoutEmails'}
-                    x-transition={!!this['x-show']}
-                >
-                    <h3 @if={!item.main} class="text-xl mb-4">{item.title}</h3>
-                    <Garagist.Mautic:Component.IndexLink
-                        @if={item.main}
-                        class="mb-4 text-xl"
-                        show={null}
-                        {...item.main}
-                    />
-                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        <Neos.Fusion:Loop items={item.pages}>
-                            <Garagist.Mautic:Component.IndexLink {...item} />
-                        </Neos.Fusion:Loop>
-                    </div>
-                </div>
-            </Neos.Fusion:Loop>
-
-            <!-- There aren't pages with categories -->
-            <div
-                @if={!props.hasCategories && props.hasPages}
-                class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-            >
-                <Neos.Fusion:Loop items={pages}>
-                    <Garagist.Mautic:Component.IndexLink {...item} />
-                </Neos.Fusion:Loop>
-            </div>
-
-        </main>
+        <Garagist.Mautic:BackendController.Overview
+            @if={private.hasSites}
+            sites={props.sites}
+        />
+        <Garagist.Mautic:BackendController.Site
+            @if={!private.hasSites}
+            mauticPublicUrl={props.mauticPublicUrl}
+            ping={props.ping}
+            pages={props.pages}
+            categories={props.categories}
+        />
     `
 }

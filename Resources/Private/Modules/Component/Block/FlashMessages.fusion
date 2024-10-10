@@ -1,4 +1,4 @@
-prototype(Garagist.Mautic:Component.FlashMessages) < prototype(Neos.Fusion:Tag) {
+prototype(Garagist.Mautic:Backend.Block.FlashMessages) < prototype(Neos.Fusion:Tag) {
     @if.hasMessages = ${Carbon.Array.check(flashMessages)}
 
     attributes {

@@ -1,4 +1,4 @@
-prototype(Garagist.Mautic:Component.Checkbox) < prototype(Neos.Fusion:Component) {
+prototype(Garagist.Mautic:Backend.Atom.Checkbox) < prototype(Neos.Fusion:Component) {
     xModel = null
     value = null
     label = null
@@ -9,7 +9,7 @@ prototype(Garagist.Mautic:Component.Checkbox) < prototype(Neos.Fusion:Component)
     xDisabled = null
 
     renderer = afx`
-        <label class={Carbon.String.merge(props.class, "!p-0 !flex items-center justify-start mt-2 cursor-pointer group has-[:disabled]:cursor-not-allowed")}>
+        <label class={Tailwind.merge(props.class, "!p-0 !flex items-center justify-start mt-2 cursor-pointer group has-[:disabled]:cursor-not-allowed")}>
             <input
                 x-model={!props.number && !props.boolean ? props.xModel : null}
                 "x-model.boolean"={!props.number && props.boolean ? props.xModel : null}

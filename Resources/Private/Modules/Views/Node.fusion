@@ -10,7 +10,7 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
 
     emails = Neos.Fusion:Map {
         items = ${emails}
-        itemRenderer = Garagist.Mautic:Component.EmailData {
+        itemRenderer = Garagist.Mautic:Backend.Helper.EmailData {
             node = ${node}
             email = ${item}
         }
@@ -20,7 +20,7 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
 
     renderer = afx`
         <main class="mautic">
-            <Garagist.Mautic:Component.FlashMessages />
+            <Garagist.Mautic:Backend.Block.FlashMessages />
             <section class="mautic-list">
                 <h1 class="text-2xl mb-4">
                     {props._i18n.id('newsletter.headline').translate()}
@@ -103,7 +103,7 @@ Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
                                         x-data="actions(2)"
                                         class="neos-pull-right"
                                     >
-                                        <Garagist.Mautic:Component.EmailActionButtons {...item} />
+                                        <Garagist.Mautic:Backend.Module.EmailActionButtons {...item} />
                                         <Neos.Fusion:Link.Action
                                             @if={item.properties}
                                             class="neos-button neos-button-primary"
