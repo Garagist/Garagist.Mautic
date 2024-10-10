@@ -19,6 +19,7 @@ class Emails extends MauticEmails
      */
     public function sendExample(int $id, array $recipients)
     {
-        return $this->makeRequest($this->endpoint . '/' . $id . '/example', ['recipients' => $recipients], 'POST');
+        $uri = sprintf('%s/%s/example', $this->endpoint, $id);
+        return $this->makeRequest($uri, ['recipients' => $recipients], 'POST');
     }
 }
