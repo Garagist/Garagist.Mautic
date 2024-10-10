@@ -1,10 +1,43 @@
 privilegeTargets:
   'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
-    'Garagist.Mautic:BackendModule':
+    'Garagist.Mautic:Backend.Methods':
       matcher: 'method(public Garagist\Mautic\Controller\BackendController->(.*)Action())'
+  'Neos\Neos\Security\Authorization\Privilege\ModulePrivilege':
+    'Garagist.Mautic:Backend.Module':
+      matcher: 'management/mautic'
+  'Neos\ContentRepository\Security\Authorization\Privilege\Node\EditNodePropertyPrivilege':
+    'Garagist.Mautic:Backend.Properties':
+      matcher: 'nodePropertyIsIn(["mauticPreviewText"])'
+    'Garagist.Mautic:Backend.Forms':
+      matcher: 'nodePropertyIsIn(["mauticFormId"])'
+    'Garagist.Mautic:Backend.Tracking':
+      matcher: 'nodePropertyIsIn(["mauticDoNotTrack"])'
 
 roles:
   'Neos.Neos:AbstractEditor':
     privileges:
-      - privilegeTarget: 'Garagist.Mautic:BackendModule'
+      - privilegeTarget: 'Garagist.Mautic:Backend.Methods'
+        permission: GRANT
+
+  'Garagist.Mautic:Forms':
+    label: 'Mautic: Create Forms'
+    description: Grants access to create forms with Mautic
+    privileges:
+      - privilegeTarget: 'Garagist.Mautic:Backend.Forms'
+        permission: GRANT
+
+  'Garagist.Mautic:Tracking':
+    label: 'Mautic: Setting Tracking properties'
+    description: Grants access to a property to disable Tracking for Mautic
+    privileges:
+      - privilegeTarget: 'Garagist.Mautic:Backend.Tracking'
+        permission: GRANT
+
+  'Garagist.Mautic:Mails':
+    label: 'Mautic: Create emails'
+    description: Grants access to the backend module to create emails with Mautic
+    privileges:
+      - privilegeTarget: 'Garagist.Mautic:Backend.Module'
+        permission: GRANT
+      - privilegeTarget: 'Garagist.Mautic:Backend.Properties'
         permission: GRANT
