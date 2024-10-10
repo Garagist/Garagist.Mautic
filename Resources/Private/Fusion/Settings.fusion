@@ -1,0 +1,6 @@
+prototype(Garagist.Mautic:Settings) {
+    @class = 'Garagist\\Mautic\\FusionObjects\\SettingsImplementation'
+
+    siteName = ${site.name}
+    path = null
+}
