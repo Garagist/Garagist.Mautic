@@ -31,8 +31,7 @@ flow eventstore:setupall
 ## Configure Mautic
 
 1. Visit your Mautic installation and [create a user for API].
-2. [Enable API and HTTP basic auth]. Optional: Be sure your Mautic installation is running on HTTPS for the sake of
-   security.
+2. [Enable API and HTTP basic auth]. Optional: Be sure your Mautic installation is running on HTTPS for the sake of security.
 3. If you want to send test emails, please install our [GaragistMauticApiBundle] plugin.
 4. Skip this, if your website and Mautic are running on the same server:
    - [Enable CORS], add your site to `valid domains`.

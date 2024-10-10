@@ -40,7 +40,7 @@ Alpine.directive("tooltip", (el, { expression }) => {
 Alpine.directive("tooltips", (el, { expression }) => {
     const zIndex = parseInt(expression) || 9999;
     const instances = [...el.querySelectorAll("[aria-label]")].map((element) =>
-        tippy(element, { content: content(element), delay })
+        tippy(element, { content: content(element), delay }),
     );
     createSingleton(instances, {
         delay: 500,
