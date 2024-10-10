@@ -2,9 +2,9 @@
 
 namespace Garagist\Mautic\EelHelper;
 
+use Garagist\Mautic\Service\SettingsService;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Garagist\Mautic\Service\SettingsService;
 
 class MauticHelper implements ProtectedContextAwareInterface
 {
@@ -15,5 +15,16 @@ class MauticHelper implements ProtectedContextAwareInterface
     public function settings(string $settingPath, ?string $siteName = null, $rootPackage = 'Garagist.Mautic'): string
     {
         return $this->settingsService->path($settingPath, $siteName, $rootPackage);
+    }
+
+    /**
+     * All methods are considered safe
+     *
+     * @param string $methodName The name of the method
+     * @return bool
+     */
+    public function allowsCallOfMethod($methodName)
+    {
+        return true;
     }
 }
