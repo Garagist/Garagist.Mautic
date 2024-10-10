@@ -8,6 +8,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use function \Neos\Flow\var_dump;
 
+// TODO Remove var_dump and replace with proper logging
 #[Flow\Scope('singleton')]
 class MauticCommandController extends CommandController
 {
