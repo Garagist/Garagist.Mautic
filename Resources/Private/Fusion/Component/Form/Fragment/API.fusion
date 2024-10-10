@@ -11,7 +11,7 @@ prototype(Garagist.Mautic:Component.Form.Fragment.API) < prototype(Neos.Fusion:C
     class = null
     renderPrototype = ${Configuration.Setting('Garagist.Mautic.apiRenderer')}
 
-    @if.hasUrl_Id = ${this.url && this.id && this.renderPrototype}
+    @if.hasUrlId = ${this.url && this.id && this.renderPrototype}
 
     renderer = Neos.Fusion:Renderer {
         type = ${props.renderPrototype}

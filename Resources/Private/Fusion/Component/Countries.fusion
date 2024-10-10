@@ -1,4 +1,6 @@
 prototype(Garagist.Mautic:Countries) < prototype(Neos.Fusion:Component) {
+    value = null
+
     countries = Neos.Fusion:DataStructure {
         europe {
             label = 'Europe'
@@ -263,36 +265,32 @@ prototype(Garagist.Mautic:Countries) < prototype(Neos.Fusion:Component) {
         }
     }
 
-    value = null
-
-    renderer = Neos.Fusion:Component {
-        _translatedCountries = Neos.Fusion:Map {
-            @process.filter = ${Array.filter(value)}
-            items = ${props.countries}
-            itemRenderer = Neos.Fusion:DataStructure {
-                @if.hasCountries = ${Carbon.Array.check(item.items)}
-                label = ${Translation.translate(itemKey, item.label, [], 'Countries', 'Garagist.Mautic')}
-                items = Neos.Fusion:Map {
-                    items = ${item.items}
-                    keyRenderer = ${itemKey}
-                    itemRenderer = ${Translation.translate(itemKey, item, [], 'Countries', 'Garagist.Mautic')}
-                }
+    @private.translatedCountries = Neos.Fusion:Map {
+        @process.filter = ${Array.filter(value)}
+        items = ${props.countries}
+        itemRenderer = Neos.Fusion:DataStructure {
+            @if.hasCountries = ${Carbon.Array.check(item.items)}
+            label = ${Translation.translate(itemKey, item.label, [], 'Countries', 'Garagist.Mautic')}
+            items = Neos.Fusion:Map {
+                items = ${item.items}
+                keyRenderer = ${itemKey}
+                itemRenderer = ${Translation.translate(itemKey, item, [], 'Countries', 'Garagist.Mautic')}
             }
         }
-
-        renderer = afx`
-            <Neos.Fusion:Loop items={props._translatedCountries}>
-                <optgroup label={item.label}>
-                    <Neos.Fusion:Loop items={Array.sort(item.items)}>
-                        <option
-                            value={itemKey}
-                            selected={itemKey == props.value}
-                        >
-                          {item}
-                      </option>
-                    </Neos.Fusion:Loop>
-                </optgroup>
-            </Neos.Fusion:Loop>
-        `
     }
+
+    renderer = afx`
+        <Neos.Fusion:Loop items={private.translatedCountries}>
+            <optgroup label={item.label}>
+                <Neos.Fusion:Loop items={Array.sort(item.items)}>
+                    <option
+                        value={itemKey}
+                        selected={itemKey == props.value}
+                    >
+                        {item}
+                    </option>
+                </Neos.Fusion:Loop>
+            </optgroup>
+        </Neos.Fusion:Loop>
+    `
 }
