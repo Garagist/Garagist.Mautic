@@ -9,7 +9,7 @@ prototype(Garagist.Mautic:Component.Form) < prototype(Neos.Fusion:Component) {
     }
 
     id = ${q(node).property('mauticFormId')}
-    url = ${Configuration.Setting('Garagist.Mautic.publicUrl')}
+    url = ${Mautic.getPublicUrl(node)}
     apiUrl = ${Configuration.Setting('Garagist.Mautic.api.baseUrl') || this.url}
     embedType = ${Configuration.Setting('Garagist.Mautic.embedType')}
     iframeClass = null
