@@ -6,12 +6,11 @@
     "require": {
         "ext-intl": "*",
         "ext-json": "*",
-        "neos/neos-ui": "^8.3",
         "neos/event-sourcing": "^2.0",
         "neos/neos": "^8.3",
         "neos/fusion-form": "^2.0",
         "mautic/api-library": "^3.0.0",
-        "carbon/eel": "^2.0"
+        "carbon/eel": "^2.15"
     },
     "autoload": {
         "psr-4": {
@@ -22,27 +21,6 @@
         "neos": {
             "package-key": "Garagist.Mautic"
         }
-    },
-    "archive": {
-        "exclude": [
-            ".github",
-            ".editorconfig",
-            ".eslintignore",
-            ".eslintrc",
-            ".gitattributes",
-            ".gitignore",
-            ".jshintrc",
-            ".nvmrc",
-            ".postcssrc.yml",
-            ".prettierignore",
-            ".prettierrc",
-            ".stylelintrc",
-            ".yarnclean",
-            "CODE_OF_CONDUCT.md",
-            "package.json",
-            "tailwind.config.js",
-            "yarn.lock"
-        ]
     },
     "authors": [
         {
