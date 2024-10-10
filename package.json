@@ -4,10 +4,10 @@
   "scripts": {
     "build": "concurrently -r pnpm:build:*",
     "build:js": "node build.mjs",
-    "build:css": "postcss Resources/Private/Assets/*.pcss --no-map --ext css --dir Resources/Public/Backend/",
+    "build:css": "postcss Resources/Private/Assets/Backend.pcss --no-map -o Resources/Public/Backend/Styles.css",
     "watch": "concurrently -r pnpm:watch:*",
     "watch:js": "node build.mjs --watch",
-    "watch:css": "postcss Resources/Private/Assets/*.pcss --no-map --ext css --dir Resources/Public/Backend/ -w",
+    "watch:css": "postcss Resources/Private/Assets/Backend.pcss --no-map -o Resources/Public/Backend/Styles.css -w",
     "pipeline": "pnpm install --silent --non-interactive;pnpm build"
   },
   "devDependencies": {
