@@ -13,7 +13,6 @@
   properties:
     mauticFormId:
       type: integer
-      defaultValue: 2
       ui:
         label: i18n
         reloadPageIfChanged: true
