@@ -38,6 +38,7 @@ class ApiFormImplementation extends AbstractFusionObject
             $parentsMap[$field['id']] = $field['alias'];
         }
         $page = 1;
+        $prevLabel = null;
         $fields = [
             1 => []
         ];
@@ -60,24 +61,35 @@ class ApiFormImplementation extends AbstractFusionObject
             $tagName = null;
             if (in_array($type, ['email', 'password', 'text', 'file', 'date', 'datetime', 'number', 'captcha', 'url', 'tel'])) {
                 $tagName = 'input';
-            } else if (in_array($type, ['select', 'country'])) {
+            } elseif (in_array($type, ['select', 'country'])) {
                 $tagName = 'select';
-            } else if (in_array($type, ['radiogrp', 'checkboxgrp'])) {
+            } elseif (in_array($type, ['radiogrp', 'checkboxgrp'])) {
                 $tagName = 'inputGroup';
                 $value = $value ? array_map('trim', explode(',', $value)) : [];
-            } else if ($type == 'textarea') {
+            } elseif ($type == 'textarea') {
                 $tagName = $type;
+            }
+
+            if ($type === 'file') {
+                $allowed_file_extensions = $field['properties']['allowed_file_extensions'] ?? null;
+                $accept = $allowed_file_extensions ? '.' . implode(', .', $allowed_file_extensions) : null;
+                $filesize = $field['properties']['allowed_file_size'] ?? null;
             }
 
             if ($tagName) {
                 $defaultValues[] = [$name, $value];
             }
-
+            if (!$prevLabel) {
+                $prevLabel = $field['properties']['prev_page_label'] ?? null;
+            }
             $fields[$page][] = array_filter([
                 'name' => $name,
                 'label' => $field['label'],
                 'showLabel' =>  $field['showLabel'],
                 'type' =>  $type == 'datetime' ? 'datetime-local' : $type,
+                'inputAttributes' => $this->parseStringToArray($field['inputAttributes'] ?? null),
+                'accept' => $accept ?? null,
+                'filesize' => $filesize ?? null,
                 'tagName' =>  $tagName,
                 'value' =>  $field['defaultValue'],
                 'required' => $field['isRequired'],
@@ -110,9 +122,32 @@ class ApiFormImplementation extends AbstractFusionObject
                 'origin' => $url,
                 'showMessage' => $data['postAction'] === 'message',
             ],
+            'lastPrevLabel' => $page > 1 ? $prevLabel : null,
             'fields' => $fields,
             'hiddenFields' => $hiddenFields,
             'defaults' => $defaultValues,
         ];
+    }
+
+    /**
+     * @param string $string
+     * @return array
+     */
+    private function parseStringToArray($string)
+    {
+        if (!$string || !is_string($string)) {
+            return [];
+        }
+        $result = [];
+        // Get key-value pairs
+        preg_match_all('/(\w+)="([^"]*)"/', $string, $matches, PREG_SET_ORDER);
+
+        foreach ($matches as $match) {
+            $key = $match[1];
+            $value = $match[2];
+            $result[$key] = $value;
+        }
+
+        return $result;
     }
 }
