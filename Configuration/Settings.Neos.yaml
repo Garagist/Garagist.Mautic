@@ -45,8 +45,3 @@ Neos:
                 - 'resource://Garagist.Mautic/Public/Backend/Scripts.js'
               styleSheets:
                 - 'resource://Garagist.Mautic/Public/Backend/Styles.css'
-    Ui:
-      resources:
-        javascript:
-          Garagist.Mautic:EmailModuleEditor:
-            resource: resource://Garagist.Mautic/Public/Editor/Plugin.js

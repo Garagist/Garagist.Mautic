@@ -1,5 +1,6 @@
 Garagist.Mautic.BackendController.node = Neos.Fusion:Component {
-    title = ${q(node).property('title')}
+    title = ${titleWeb}
+
     categories = Neos.Fusion:Map {
         items = ${categoryNodes || []}
         itemRenderer = Neos.Fusion:DataStructure {

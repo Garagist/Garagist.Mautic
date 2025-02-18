@@ -6,12 +6,13 @@
     "require": {
         "ext-intl": "*",
         "ext-json": "*",
-        "neos/neos-ui": "^7.3 || ^8.0",
+        "neos/neos-ui": "^8.3",
         "neos/event-sourcing": "^2.0",
-        "neos/neos": "^7.3 || ^8.0",
+        "neos/neos": "^8.3",
         "neos/fusion-form": "^2.0",
         "mautic/api-library": "^3.0.0",
-        "carbon/eel": "^2.0"
+        "carbon/newsletter": "^0.1",
+        "carbon/editor-relativedate": "^0.1"
     },
     "autoload": {
         "psr-4": {
@@ -23,31 +24,12 @@
             "package-key": "Garagist.Mautic"
         }
     },
-    "archive": {
-        "exclude": [
-            ".github",
-            ".editorconfig",
-            ".eslintignore",
-            ".eslintrc",
-            ".gitattributes",
-            ".gitignore",
-            ".jshintrc",
-            ".nvmrc",
-            ".postcssrc.yml",
-            ".prettierignore",
-            ".prettierrc",
-            ".stylelintrc",
-            ".yarnclean",
-            "CODE_OF_CONDUCT.md",
-            "package.json",
-            "tailwind.config.js",
-            "yarn.lock"
-        ]
-    },
     "authors": [
         {
             "name": "David Spiola",
-            "role": "Developer"
+            "email": "servus@capazunda.at",
+            "role": "Developer",
+            "homepage": "https://capazunda.at"
         },
         {
             "name": "Jon Uhlmann",

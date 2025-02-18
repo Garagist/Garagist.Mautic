@@ -1,5 +1,6 @@
 Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
-    title = ${q(node).property('title')}
+    title = ${titleWeb}
+
     action = ${Configuration.Setting('Garagist.Mautic.action')}
 
     categories = Neos.Fusion:Map {
@@ -68,7 +69,7 @@ Garagist.Mautic.BackendController.detail = Neos.Fusion:Component {
                                 <td>{props.emailData.subject}</td>
                             </tr>
                             <tr>
-                                <td>{Translation.translate('properties.mauticPreviewText', null, [], 'NodeTypes/Mixin/Email', 'Garagist.Mautic')}</td>
+                                <td>{Translation.translate('properties.previewText', null, [], 'NodeTypes.Mixin.Preview', 'Carbon.Newsletter')}</td>
                                 <td>{props.emailData.previewText}</td>
                             </tr>
                             <tr>

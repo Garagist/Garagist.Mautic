@@ -10,7 +10,7 @@ Alpine.plugin(collapse);
 Alpine.plugin(focus);
 Alpine.plugin(dialog);
 
-if (window.name == "email-module") {
+if (window.name == "dialog") {
     document.documentElement.classList.add("email-module-integrated");
 }
 

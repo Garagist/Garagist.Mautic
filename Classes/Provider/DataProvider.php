@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Garagist\Mautic\Provider;
 
+use Carbon\Newsletter\Service\PersonalizationService;
 use Garagist\Mautic\Domain\Model\MauticEmail;
 use Garagist\Mautic\Service\ApiService;
 use Garagist\Mautic\Service\MauticService;
-use Garagist\Mautic\Service\PersonalizationService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
@@ -29,15 +29,15 @@ class DataProvider implements DataProviderInterface
 
     /**
      * @Flow\Inject
-     * @var PersonalizationService
-     */
-    protected $personalizationService;
-
-    /**
-     * @Flow\Inject
      * @var MauticService
      */
     protected $mauticService;
+
+    /**
+     * @Flow\Inject
+     * @var PersonalizationService
+     */
+    protected $personalizationService;
 
     /**
      * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
@@ -112,9 +112,7 @@ class DataProvider implements DataProviderInterface
 
         $node = $this->getNode($email->getNodeIdentifier());
         $title = $node->getProperty('title');
-        $titleOverride = $node->getProperty('titleOverride');
-
-        return $titleOverride ? $titleOverride : $title;
+        return $this->personalizationService->mail($title, true, 'mautic');
     }
 
     /**
@@ -140,15 +138,22 @@ class DataProvider implements DataProviderInterface
     {
         $content = $this->mauticService->getNewsletterTemplate($email->getProperty('htmlUrl'));
         $previewText = $email->getProperty('previewText');
-        if ($previewText) {
-            $content = preg_replace('/<body([^>]*)>/i', '<body$1><div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;"> ' . $previewText . ' </div>', $content);
-        }
-        $trackingPixel = $this->settings['mail']['trackingPixel'];
-        if ($trackingPixel) {
-            $content = str_replace('</body>', $trackingPixel . '</body>', $content);
+        if (!$previewText) {
+            return $content;
         }
 
-        return $this->personalizationService->mautic($content);
+        $node = $this->getNode($email->getNodeIdentifier());
+        $previewTextFromNode = $this->personalizationService->mail($node->getProperty('previewText'), true, 'mautic');
+
+        if ($previewTextFromNode != $previewText) {
+            $open = '<div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">';
+            $close = '</div>';
+            $search = $open . $previewTextFromNode . $close;
+            $replace = $open . $previewText . $close;
+            return str_replace($search, $replace, $content);
+        }
+
+        return $content;
     }
 
     /**
@@ -159,8 +164,7 @@ class DataProvider implements DataProviderInterface
      */
     public function getPlaintext(MauticEmail $email): string
     {
-        $content =  $this->mauticService->getNewsletterTemplate($email->getProperty('plaintextUrl'));
-        return $this->personalizationService->mautic($content);
+        return $this->mauticService->getNewsletterTemplate($email->getProperty('plaintextUrl'));
     }
 
     /**

@@ -167,11 +167,7 @@ class MauticService
      */
     public function getPreviewTextPlaceholder(NodeInterface $node): string
     {
-        $mauticPreviewText = $this->cleanString($node->getProperty('mauticPreviewText'));
-        if ($mauticPreviewText) {
-            return $mauticPreviewText;
-        }
-        return $this->cleanString($node->getProperty('metaDescription'));
+        return $this->cleanString($node->getProperty('previewText'));
     }
 
     /**

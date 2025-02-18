@@ -1,0 +1,26 @@
+'Carbon.Newsletter:Document.Newsletter':
+  properties:
+    publishDate:
+      ui:
+        label: 'Garagist.Mautic:NodeTypes.Override.Newsletter:publishDate.start'
+    publishDateRange:
+      type: array
+      defaultValue:
+        amount: 0
+        unit: 'day'
+      ui:
+        label: 'Garagist.Mautic:NodeTypes.Override.Newsletter:publishDate.range'
+        inspector:
+          group: settings
+          position: 'after publishDate'
+          editor: 'Carbon.Editor/RelativeDate'
+          editorOptions:
+            allowPast: false
+            allowEmpty: true
+            timeSpans:
+              minute: true
+              hour: true
+              day: true
+              week: true
+              month: true
+              year: false

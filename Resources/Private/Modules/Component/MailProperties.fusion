@@ -22,7 +22,7 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
     _isEdit = ${!!this.email}
     _type = ${this._isEdit ? 'edit' : 'create'}
     _showSegments = ${Carbon.Array.check(this.chooseSegment) && Carbon.Array.check(this.allSegments)}
-    _placeholder = ${q(node).property('titleOverride') || q(node).property('title')}
+    _placeholder = ${Carbon.Newsletter.personalization(q(node).property('title'), 'mail')}
 
     renderer = Neos.Fusion:Component {
         @apply.props = ${props}
@@ -87,7 +87,7 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
                 </fieldset>
                 <fieldset class="!p-0">
                     <label for="preview">
-                        {Translation.translate('properties.mauticPreviewText', null, [], 'NodeTypes/Mixin/Email', 'Garagist.Mautic')}
+                        {Translation.translate('properties.previewText', null, [], 'NodeTypes.Mixin.Preview', 'Carbon.Newsletter')}
                     </label>
                     <div class="auto-grow-textarea">
                         <textarea x-model="previewText" :placeholder="previewTextPlaceholder"></textarea>
@@ -96,7 +96,7 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
                             <br />
                         </span>
                     </div>
-                    <div class="block my-2 opacity-60">{Translation.translate('properties.mauticPreviewText.ui.help.message', null, [], 'NodeTypes/Mixin/Email', 'Garagist.Mautic')}</div>
+                    <div class="block my-2 opacity-60">{Translation.translate('properties.previewText.options.help', null, [], 'NodeTypes.Mixin.Preview', 'Carbon.Newsletter')}</div>
                     <div @if={props._isEdit} class="block my-2 opacity-60">{Translation.translate('email.need.refresh', null, [], 'Module', 'Garagist.Mautic')}</div>
                 </fieldset>
                 <fieldset @if={props._showSegments} class="!p-0 !mt-8 flex flex-col items-start">

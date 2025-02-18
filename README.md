@@ -65,10 +65,6 @@ in the newsletter module.
 Enable the Javascript tracking code from Mautic. By default it is set to `false` in the development context and to
 `true` in the production context.
 
-### `mail` setting
-
-`trackingPixel` injects the tracking pixel from Mautic right before the closing `body` tag.
-
 ### `form` setting
 
 `hide` sets the IDs of the forms you want to hide in the inpsector. You can pass an array (eg. `[1, 2, 3]`) or an

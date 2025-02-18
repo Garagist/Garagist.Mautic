@@ -1,0 +1,6 @@
+Carbon:
+  Mjml:
+    trackingPixel: '<img src="{tracking_pixel}" alt="" />'
+  Newsletter:
+    personalization:
+      pattern: 'mautic'

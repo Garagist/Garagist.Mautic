@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Garagist\Mautic\Controller;
 
 use Collator;
+use Carbon\Newsletter\Service\PersonalizationService;
 use Garagist\Mautic\Domain\Model\MauticEmail;
 use Garagist\Mautic\Service\ApiService;
 use Garagist\Mautic\Service\MauticService;
@@ -45,6 +46,12 @@ class BackendController extends AbstractModuleController
      * @var Context
      */
     protected $securityContext;
+
+    /**
+     * @Flow\Inject
+     * @var PersonalizationService
+     */
+    protected $personalizationService;
 
     /**
      * @Flow\Inject
@@ -108,7 +115,7 @@ class BackendController extends AbstractModuleController
 
     /**
      * @var string
-     * @Flow\InjectConfiguration(path="mail.trackingPixel", package="Garagist.Mautic")
+     * @Flow\InjectConfiguration(path="trackingPixel", package="Carbon.Mjml")
      */
     protected $trackingPixel;
 
@@ -164,6 +171,7 @@ class BackendController extends AbstractModuleController
             $category = $this->getCategories($node);
             $identifier = $node->getIdentifier();
             $title = $node->getProperty('title');
+            $title = $this->personalizationService->web($title);
             $count = count($this->mauticService->getEmailsNodeIdentifier(
                 $node->getIdentifier()
             ));
@@ -418,9 +426,14 @@ class BackendController extends AbstractModuleController
         $prefilledSegments = $this->mauticService->getPrefilledSegments($node);
         $allSegments = $this->apiService->getAllSegments();
         $testEmailRecipients = $this->testEmailService->getTestEmailRecipients();
+        $title = $node->getProperty('title');
+        $titleWeb = $this->personalizationService->web($title);
+        $titleEmail = $this->personalizationService->mail($title, true, 'mautic');
         $this->view->assignMultiple([
             'emails' => $emails,
             'node' => $node,
+            'titleWeb' => $titleWeb,
+            'titleEmail' => $titleEmail,
             'categoryNodes' => $categories ? $categories['nodes'] : null,
             'prefilledSegments' => $prefilledSegments,
             'allSegments' => $allSegments,
@@ -455,9 +468,15 @@ class BackendController extends AbstractModuleController
             $mauticRecord['customHtml'] = str_replace($this->trackingPixel, '<!-- Tracking Pixel disabled for preview ' . $this->trackingPixel . '-->', $mauticRecord['customHtml']);
         }
 
+        $title = $node->getProperty('title');
+        $titleWeb = $this->personalizationService->web($title);
+        $titleEmail = $this->personalizationService->mail($title, true, 'mautic');
+
         $this->view->assignMultiple([
             'email' => $email,
             'node' => $node,
+            'titleWeb' => $titleWeb,
+            'titleEmail' => $titleEmail,
             'categoryNodes' => $categories ? $categories['nodes'] : null,
             'history' => $history,
             'mauticRecord' => $mauticRecord,
@@ -508,8 +527,7 @@ class BackendController extends AbstractModuleController
         }
 
         if (!$subject) {
-            $titleOverride = $node->getProperty('titleOverride');
-            $subject = $titleOverride ? $titleOverride : $title;
+            $subject = $title;
         }
 
         $properties = [
