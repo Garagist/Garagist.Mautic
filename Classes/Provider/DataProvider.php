@@ -110,7 +110,26 @@ class DataProvider implements DataProviderInterface
 
         $node = $this->getNode($email->getNodeIdentifier());
         $title = $node->getProperty('title');
-        return $this->personalizationService->mail($title, true, 'mautic');
+        return $this->personalizationService->mail($title, pattern: 'mautic');
+    }
+
+    /**
+     * Get preheaderText from email
+     *
+     * @param MauticEmail $email
+     * @return string
+     */
+    public function getPreheaderText(MauticEmail $email): string
+    {
+        $text = $email->getProperty('preheaderText');
+
+        if (is_string($text) && $text !== '') {
+            return $text;
+        }
+
+        $node = $this->getNode($email->getNodeIdentifier());
+        $text = $node->getProperty('previewText');
+        return $this->personalizationService->mail($text, pattern: 'mautic');
     }
 
     /**
@@ -134,25 +153,7 @@ class DataProvider implements DataProviderInterface
      */
     public function getHtml(MauticEmail $email): string
     {
-        $content = $this->mauticService->getNewsletterTemplate($email->getProperty('htmlUrl'));
-        $previewText = $email->getProperty('previewText');
-        if (!$previewText) {
-            return $content;
-        }
-
-        $node = $this->getNode($email->getNodeIdentifier());
-        $previewTextFromNode = $this->personalizationService->mail($node->getProperty('previewText'), true, 'mautic');
-
-        if ($previewTextFromNode != $previewText) {
-            $open =
-                '<div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">';
-            $close = '</div>';
-            $search = $open . $previewTextFromNode . $close;
-            $replace = $open . $previewText . $close;
-            return str_replace($search, $replace, $content);
-        }
-
-        return $content;
+        return $this->mauticService->getNewsletterTemplate($email->getProperty('htmlUrl'));
     }
 
     /**
@@ -198,15 +199,57 @@ class DataProvider implements DataProviderInterface
         $emailIdentifier = $email->getEmailIdentifier();
 
         $html = $this->getHtml($email);
-        $plaintext = $this->getPlaintext($email);
-        $title = $node->getProperty('title');
-        $subject = $this->getSubject($email);
-        $language = $this->getLanguageFromHtml($html);
+        $title = $this->personalizationService->web($node->getProperty('title'), pattern: 'mautic');
+        $publishUp = $node->getProperty('publishDate');
 
-        $name = [$emailIdentifier, $title];
-        if ($title != $subject) {
-            $name[] = $subject;
+        $publishDown = null;
+        $format = 'Y-m-d H:i';
+        if ($publishUp) {
+            $publishDown = clone $publishUp;
+            $publishDateRange = $node->getProperty('publishDateRange');
+            $amount = $publishDateRange['amount'] ?? null;
+            $unit = $publishDateRange['unit'] ?? 'day';
+            $publishUp = $publishUp->format($format);
+            if ($amount) {
+                $publishDown->modify(sprintf('+%s %s%s', $amount, $unit, $amount > 1 ? 's' : ''));
+                $publishDown = $publishDown->format($format);
+            } elseif ($amount === 0) {
+                // If the amount is 0 we take the unit as the amount
+                // Example 0 hour == Till the next hour // 0 day == Till the next day
+                switch ($unit) {
+                    case 'minute':
+                        $publishDown->modify('+1 minute');
+                        break;
+                    case 'hour':
+                        // The next full hour
+                        $publishDown->modify('+1 hour');
+                        $hours = $publishDown->format('H');
+                        $publishDown->modify($hours . ':00');
+                        break;
+                    case 'week':
+                        $publishDown->modify('next monday');
+                        $publishDown->modify('midnight');
+                        break;
+                    case 'month':
+                        $publishDown->modify('+1 month');
+                        $publishDown->modify('01.' . $publishDown->format('m.Y') . '00:00');
+                        break;
+                    default:
+                        // We take day as default
+                        $publishDown->modify('midnight');
+                        $publishDown->modify('+1 day');
+                        break;
+                }
+
+                $publishDown = $publishDown->format($format);
+            } else {
+                $publishDown = null;
+            }
         }
+
+        $subject = $this->getSubject($email);
+
+        $name = [$title, $emailIdentifier];
 
         // TODO
         // * dynamicContent
@@ -217,12 +260,15 @@ class DataProvider implements DataProviderInterface
             'subject' => $subject,
             'category' => (int) $this->settings['category']['newsletter'],
             'template' => 'blank',
-            'isPublished' => 0,
+            'isPublished' => true,
             'customHtml' => $html,
-            'plainText' => $plaintext,
+            'plainText' => $this->getPlaintext($email),
+            'preheaderText' => $this->getPreheaderText($email),
+            'publishUp' => $publishUp,
+            'publishDown' => $publishDown,
             'emailType' => 'list',
             'lists' => $segmentIds,
-            'language' => $language,
+            'language' => $this->getLanguageFromHtml($html),
             'utmTags' => $this->getUtmTags($emailIdentifier),
         ];
     }
