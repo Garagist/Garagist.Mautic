@@ -7,6 +7,7 @@ Garagist:
       baseUrl: null
       userName: null
       password: null
+      ignoreHttpsErrors: false
     publicUrl: null
     enableTracking: false
     # Can be javascript, iframe, plain or api

@@ -1,0 +1,4 @@
+Garagist:
+  Mautic:
+    api:
+      ignoreHttpsErrors: true
