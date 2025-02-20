@@ -14,6 +14,9 @@ importers:
       '@alpinejs/focus':
         specifier: ^3.14.8
         version: 3.14.8
+      '@prettier/plugin-php':
+        specifier: ^0.22.4
+        version: 0.22.4(prettier@3.5.1)
       alpinejs:
         specifier: ^3.14.8
         version: 3.14.8
@@ -253,6 +256,11 @@ packages:
 
   '@popperjs/core@2.11.8':
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
+
+  '@prettier/plugin-php@0.22.4':
+    resolution: {integrity: sha512-uZWqfyrwsxScIYkmVcfnoQGFmKVMXTHD5pqYT4l8fxzm5P3XY94hTPbf8X6TFCi2QTZBIot7GS8lfIjQjldc2g==}
+    peerDependencies:
+      prettier: ^3.0.0
 
   '@sindresorhus/merge-streams@2.3.0':
     resolution: {integrity: sha512-LtoMMhxAlorcGhmFYI+LhPgbPZCkgP6ra1YL604EeF6U98pLlQ3iWIGMdWSC+vWmPBWBNgmDBAhnAobLROJmwg==}
@@ -590,6 +598,9 @@ packages:
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
 
+  linguist-languages@7.27.0:
+    resolution: {integrity: sha512-Wzx/22c5Jsv2ag+uKy+ITanGA5hzvBZngrNGDXLTC7ZjGM6FLCYGgomauTkxNJeP9of353OM0pWqngYA180xgw==}
+
   lodash.memoize@4.1.2:
     resolution: {integrity: sha512-t7j+NzmgnQzTAYXcsHYLgimltOV1MXHtlOWf6GjL9Kj8GK5FInw5JotxvbOs+IvV1/Dzo04/fCGfLVs7aXb4Ag==}
 
@@ -671,6 +682,9 @@ packages:
   path-type@6.0.0:
     resolution: {integrity: sha512-Vj7sf++t5pBD637NSfkxpHSMfWaeig5+DKWLhcqIYx6mWQz5hdJTGDVMQiJcw1ZYkhs7AazKDGpRVji1LJCZUQ==}
     engines: {node: '>=18'}
+
+  php-parser@3.2.2:
+    resolution: {integrity: sha512-voj3rzCJmEbwHwH3QteON28wA6K+JbcaJEofyUZkUXmcViiXofjbSbcE5PtqtjX6nstnnAEYCFoRq0mkjP5/cg==}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -1245,6 +1259,12 @@ snapshots:
 
   '@popperjs/core@2.11.8': {}
 
+  '@prettier/plugin-php@0.22.4(prettier@3.5.1)':
+    dependencies:
+      linguist-languages: 7.27.0
+      php-parser: 3.2.2
+      prettier: 3.5.1
+
   '@sindresorhus/merge-streams@2.3.0': {}
 
   '@trysound/sax@0.2.0': {}
@@ -1627,6 +1647,8 @@ snapshots:
 
   lines-and-columns@1.2.4: {}
 
+  linguist-languages@7.27.0: {}
+
   lodash.memoize@4.1.2: {}
 
   lodash.uniq@4.5.0: {}
@@ -1686,6 +1708,8 @@ snapshots:
       minipass: 7.1.2
 
   path-type@6.0.0: {}
+
+  php-parser@3.2.2: {}
 
   picocolors@1.1.1: {}
 

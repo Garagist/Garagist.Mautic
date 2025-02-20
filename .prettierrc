@@ -1,7 +1,7 @@
 {
   "overrides": [
     {
-      "files": ["*.yaml", "*.yml"],
+      "files": ["*.yaml", "*.yml", "*.php"],
       "options": {
         "singleQuote": true
       }
@@ -12,5 +12,8 @@
         "proseWrap": "always"
       }
     }
+  ],
+  "plugins": [
+    "@prettier/plugin-php"
   ]
 }
