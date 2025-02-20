@@ -67,7 +67,7 @@ class ApiService
         if ($emailRecord) {
             $response = $this->delete(self::ENDPOINT_EMAILS, $emailRecord['id']);
             $this->mauticLogger->info(sprintf('Delete mautic record with identifier %s', $emailIdentifier));
-            $this->handleError($response);
+            $this->errorCheck($response);
         }
     }
 
@@ -89,7 +89,7 @@ class ApiService
             $this->mauticLogger->info(sprintf('Create new mautic record with identifier %s', $emailIdentifier));
         }
 
-        $this->handleError($response);
+        $this->errorCheck($response, title: 'Error while altering email');
 
         return $response;
     }
@@ -111,7 +111,7 @@ class ApiService
      */
     public function findMauticRecordByEmailIdentifier(string $emailIdentifier)
     {
-        $match = $this->validateResponse($this->getList(self::ENDPOINT_EMAILS, search: $emailIdentifier));
+        $match = $this->getList(self::ENDPOINT_EMAILS, search: $emailIdentifier);
         if ($match['total'] === 1) {
             //match found
             return array_pop($match['emails']);
@@ -136,9 +136,7 @@ class ApiService
             // string "sentCount" (9) => integer 0
             // string "failedRecipients" (16) => integer 0
 
-            return $this->validateResponse(
-                $this->makeCall([self::ENDPOINT_EMAILS, $mauticIdentifier, 'send'], [], 'POST')
-            );
+            return $this->makeCall([self::ENDPOINT_EMAILS, $mauticIdentifier, 'send'], [], 'POST');
         }
 
         throw new Exception('Email could not be send because it does not exist or ist not published');
@@ -159,12 +157,10 @@ class ApiService
             // string "success" (7) => integer 1
             // string "recipients" (16) => integer 0
 
-            return $this->validateResponse(
-                $this->makeCall(
-                    [self::ENDPOINT_EMAILS, $emailRecord['id'], 'example'],
-                    ['recipients' => $recipients],
-                    'POST'
-                )
+            return $this->makeCall(
+                [self::ENDPOINT_EMAILS, $emailRecord['id'], 'example'],
+                ['recipients' => $recipients],
+                'POST'
             );
         }
 
@@ -176,7 +172,7 @@ class ApiService
      */
     public function getAllSegments(): array
     {
-        return $this->validateResponse($this->makeCall([self::ENDPOINT_CONTACTS, 'list/segments']));
+        return $this->makeCall([self::ENDPOINT_CONTACTS, 'list/segments']);
     }
 
     /**
@@ -187,7 +183,7 @@ class ApiService
      */
     public function getForm(int $id): array
     {
-        $data = $this->validateResponse($this->makeCall([self::ENDPOINT_FORMS, $id]), null, false);
+        $data = $this->makeCall([self::ENDPOINT_FORMS, $id], throwExeptions: false);
         if (isset($data['form']) && $data['form']['isPublished']) {
             return $data['form'];
         }
@@ -202,11 +198,7 @@ class ApiService
      */
     public function getForms(): array
     {
-        $response = $this->validateResponse(
-            $this->getList(self::ENDPOINT_FORMS, orderBy: 'id', publishedOnly: true),
-            null,
-            false
-        );
+        $response = $this->getList(self::ENDPOINT_FORMS, orderBy: 'id', publishedOnly: true, throwExeptions: false);
 
         if ($response['total'] === 0) {
             return [];
@@ -241,59 +233,10 @@ class ApiService
     public function ping(): bool
     {
         try {
-            $this->validateResponse($this->getList(self::ENDPOINT_EMAILS, limit: 1));
+            $this->getList(self::ENDPOINT_EMAILS, limit: 1);
             return true;
         } catch (Throwable $th) {
             return false;
-        }
-    }
-
-    /**
-     * Validate the response from mautic
-     *
-     * @param array $response
-     * @param string|null $additionalText
-     * @param bool $throwExeptions
-     * @return array
-     */
-    protected function validateResponse(
-        array $response,
-        ?string $additionalText = null,
-        bool $throwExeptions = true
-    ): array {
-        if (!isset($additionalText)) {
-            $additionalText = '';
-        }
-
-        if (isset($response['error'])) {
-            $json = json_encode($response['error']);
-            $this->mauticLogger->error($additionalText . $json);
-            if ($throwExeptions) {
-                throw new Exception($json);
-            }
-        }
-        if (isset($response['errors'])) {
-            $json = json_encode($response['errors']);
-            $this->mauticLogger->error($additionalText . $json);
-            if ($throwExeptions) {
-                throw new Exception($json);
-            }
-        }
-
-        return $response;
-    }
-
-    /**
-     * @throws NodeException|Exception
-     * @return void
-     */
-    protected function handleError($response): void
-    {
-        if (isset($response['error'])) {
-            throw new Exception(json_encode($response['error']));
-        }
-        if (isset($response['errors'])) {
-            throw new Exception(json_encode($response['errors']));
         }
     }
 
@@ -308,6 +251,7 @@ class ApiService
      * @param string $orderByDir
      * @param bool $publishedOnly
      * @param bool $minimal
+     * @param bool $throwExeptions,
      * @return array
      */
     public function getList(
@@ -318,7 +262,8 @@ class ApiService
         string $orderBy = '',
         string $orderByDir = 'ASC',
         bool $publishedOnly = false,
-        bool $minimal = false
+        bool $minimal = false,
+        bool $throwExeptions = true
     ): array {
         $parameters = [
             'search' => $search,
@@ -331,7 +276,7 @@ class ApiService
         ];
 
         $parameters = array_filter($parameters);
-        return $this->makeCall($endpoint, $parameters);
+        return $this->makeCall($endpoint, $parameters, throwExeptions: $throwExeptions);
     }
 
     /**
@@ -384,11 +329,16 @@ class ApiService
      * @param array|string $endpoint
      * @param array|null $parameters key value pairs.
      * @param string $method GET, POST, DELETE, PATCH, or PUT
+     * @param bool $throwExeptions
      * @return array
      * @throws Exception
      */
-    public function makeCall(array|string $endpoint, ?array $parameters = null, string $method = 'GET'): array
-    {
+    public function makeCall(
+        array|string $endpoint,
+        ?array $parameters = null,
+        string $method = 'GET',
+        bool $throwExeptions = true
+    ): ?array {
         if (is_array($endpoint)) {
             $endpoint = implode('/', $endpoint);
         }
@@ -417,41 +367,79 @@ class ApiService
                 $options[RequestOptions::QUERY] = $parameters;
             }
         }
-
+        $json = [];
         try {
             $response = $client->request($method, $endpoint, $options);
-
             $contents = $response->getBody()->getContents();
-
-            return json_decode($contents, true);
+            $json = json_decode($contents, true);
         } catch (ClientException $exception) {
             $message = $exception->getResponse()->getBody()->getContents();
-
-            if (function_exists('ray')) {
-                ray()
-                    ->newScreen('ClientException ' . date('h:i:s'))
-                    ->orange();
-                ray()->exception($exception);
-                ray()->json($message)->label('Message');
-                ray()->showApp();
-                ray()->die('ClientException, see ray app for more information');
-            }
-
-            throw new Exception($message, 1739916383);
+            $this->errorHandling('ClientException', $message, $exception, $throwExeptions);
+            $this->mauticLogger->error($message);
         } catch (ServerException $exception) {
             $message = $exception->getResponse()->getBody()->getContents();
+            $this->errorHandling('ServerException', $message, $exception, $throwExeptions);
+        }
 
-            if (function_exists('ray')) {
-                ray()
-                    ->newScreen('ServerException ' . date('h:i:s'))
-                    ->red();
+        return $this->errorCheck($json, $throwExeptions);
+    }
+
+    private function errorHandling(?string $type = null, mixed $data = null, $exception = null, bool $die = true): void
+    {
+        if (function_exists('ray')) {
+            $type = $type ? $type : 'Error';
+            ray()
+                ->newScreen(sprintf('%s %s', $type, date('H:i:s')))
+                ->red();
+            if ($exception) {
                 ray()->exception($exception)->hide();
-                ray()->json($message)->label('Message');
-                ray()->showApp();
-                ray()->die('ServerException, see ray app for more information');
             }
 
-            throw new Exception($message, 1739916384);
+            if (is_string($data)) {
+                ray()->json($data)->label('Message');
+            } elseif ($data) {
+                ray()->toJson($data)->label('Message');
+            }
+
+            ray()->showApp();
+            if ($die) {
+                ray()->die(sprintf('%s, see ray app for more information', $type));
+            }
+            return;
         }
+
+        if (is_array($data)) {
+            $data = json_encode($data);
+        }
+        if (!is_string($data)) {
+            $data = (string) $data;
+        }
+        $this->mauticLogger->error($data);
+
+        if ($die) {
+            throw new Exception($data, 1739916383);
+        }
+    }
+
+    private function errorCheck(array $array, bool $throwExeptions = true, string $title = 'Error'): ?array
+    {
+        $error = isset($array['error']) ? $array['error'] : null;
+        $errors = isset($array['errors']) ? $array['errors'] : null;
+
+        if ($error === null && $errors === null) {
+            return $array;
+        }
+
+        if ($error && $errors) {
+            $error = [
+                'error' => $error,
+                'errors' => $errors,
+            ];
+        } elseif ($errors) {
+            $error = $errors;
+        }
+
+        $this->errorHandling($title, $array, null, $throwExeptions);
+        return null;
     }
 }
