@@ -25,7 +25,9 @@ final class Version20220917134958 extends AbstractMigration
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MariaDb1027Platform'."
         );
 
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_82D9319035B9BD5C ON garagist_mautic_domain_model_mauticemail (emailidentifier)');
+        $this->addSql(
+            'CREATE UNIQUE INDEX UNIQ_82D9319035B9BD5C ON garagist_mautic_domain_model_mauticemail (emailidentifier)'
+        );
     }
 
     public function down(Schema $schema): void

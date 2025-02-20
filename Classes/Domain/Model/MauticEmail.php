@@ -12,7 +12,6 @@ use DateTime;
  */
 class MauticEmail
 {
-
     /**
      * @var string
      */
@@ -92,7 +91,6 @@ class MauticEmail
      * @var DateTime
      */
     protected $dateModified;
-
 
     /**
      * @var string
@@ -202,7 +200,6 @@ class MauticEmail
     {
         return array_keys($this->properties);
     }
-
 
     /**
      * @return DateTime

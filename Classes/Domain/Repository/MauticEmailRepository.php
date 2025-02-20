@@ -8,6 +8,4 @@ use Neos\Flow\Persistence\Doctrine\Repository;
 /**
  * @Flow\Scope("singleton")
  */
-class MauticEmailRepository extends Repository
-{
-}
+class MauticEmailRepository extends Repository {}

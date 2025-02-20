@@ -22,7 +22,6 @@ final class MauticEmailSync implements DomainEventInterface
      */
     private $emailIdentifier;
 
-
     public function __construct(string $emailIdentifier, string $nodeIdentifier)
     {
         $this->emailIdentifier = $emailIdentifier;

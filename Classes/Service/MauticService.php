@@ -102,11 +102,8 @@ class MauticService
      * @throws \Doctrine\ORM\ORMException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
-    public function saveEmail(
-        string $emailIdentifier,
-        string $nodeIdentifier,
-        array $properties
-    ): MauticEmail {
+    public function saveEmail(string $emailIdentifier, string $nodeIdentifier, array $properties): MauticEmail
+    {
         $email = new MauticEmail();
         foreach ($properties as $property => $value) {
             $email->setProperty($property, $value);
@@ -207,7 +204,10 @@ class MauticService
             $this->taskService->fireTaskFinishedEvent($email);
             $this->mauticLogger->info(sprintf('Update email with identifier %s', $emailIdentifier));
         } catch (Exception $e) {
-            $this->taskService->fireTaskFinishedEvent($email, sprintf('Update email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
+            $this->taskService->fireTaskFinishedEvent(
+                $email,
+                sprintf('Update email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage())
+            );
         }
     }
 
@@ -222,8 +222,16 @@ class MauticService
     public function publishEmail(MauticEmail $email, DateTime $datePublish = null, DateTime $dateUnpublish = null): bool
     {
         $emailIdentifier = $email->getEmailIdentifier();
-        if ($this->apiService->isEmailPublished($emailIdentifier) && ($datePublish !== null || $dateUnpublish !== null)) {
-            throw new Exception(sprintf("The email with identifier %s is already published and can therefore not be rescheduled for publishing. ", $emailIdentifier));
+        if (
+            $this->apiService->isEmailPublished($emailIdentifier) &&
+            ($datePublish !== null || $dateUnpublish !== null)
+        ) {
+            throw new Exception(
+                sprintf(
+                    'The email with identifier %s is already published and can therefore not be rescheduled for publishing. ',
+                    $emailIdentifier
+                )
+            );
         } else {
             $data = $datePublish === null ? ['isPublished' => true] : ['publishUp' => $datePublish]; // publish right away or at a sustain date.
             $this->apiService->alterEmail($emailIdentifier, $data);
@@ -245,7 +253,11 @@ class MauticService
      */
     public function unpublishEmail(MauticEmail $email): bool
     {
-        $data = ['isPublished' => false, 'publishUp' => null, 'publishDown' => null]; // remove all publishing settings
+        $data = [
+            'isPublished' => false,
+            'publishUp' => null,
+            'publishDown' => null,
+        ]; // remove all publishing settings
         $this->apiService->alterEmail($email->getEmailIdentifier(), $data);
 
         $email->setPublished(false);
@@ -269,7 +281,10 @@ class MauticService
             $email->setDeleted(true);
             $this->taskService->fireTaskFinishedEvent($email, '');
         } catch (Exception $e) {
-            $this->taskService->fireTaskFinishedEvent($email, sprintf('Delete email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
+            $this->taskService->fireTaskFinishedEvent(
+                $email,
+                sprintf('Delete email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage())
+            );
         }
     }
 
@@ -297,13 +312,21 @@ class MauticService
 
             $this->mauticEmailRepository->update($email);
 
-            $eventSuccess = new MauticEmailSent($emailIdentifier, $mauticIdentifier, $success, $sentCount, $failedRecipients);
+            $eventSuccess = new MauticEmailSent(
+                $emailIdentifier,
+                $mauticIdentifier,
+                $success,
+                $sentCount,
+                $failedRecipients
+            );
             $streamName = StreamName::fromString('email-' . $emailIdentifier);
 
             $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($eventSuccess));
             $this->mauticLogger->info(sprintf('Sending email with identifier %s was successful', $emailIdentifier));
         } catch (Exception $e) {
-            $this->mauticLogger->error(sprintf('Sending email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
+            $this->mauticLogger->error(
+                sprintf('Sending email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage())
+            );
         }
     }
 
@@ -323,7 +346,9 @@ class MauticService
         try {
             $this->apiService->sendTestEmail($emailIdentifier, $recipients);
         } catch (Exception $e) {
-            $this->mauticLogger->error(sprintf('Sending test email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
+            $this->mauticLogger->error(
+                sprintf('Sending test email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage())
+            );
         }
     }
 
@@ -339,7 +364,9 @@ class MauticService
         if ($emailRecord != null) {
             $email->setPublished($emailRecord['isPublished']);
             $this->mauticEmailRepository->update($email);
-            $this->mauticLogger->info(sprintf('Mautic record with email identifier %s has been synced.', $emailIdentifier));
+            $this->mauticLogger->info(
+                sprintf('Mautic record with email identifier %s has been synced.', $emailIdentifier)
+            );
         }
     }
 
@@ -393,11 +420,7 @@ class MauticService
                     $message = $this->translationHelper->translate(
                         'message.sent',
                         '{0} sent ({1} successful and {2} failed)',
-                        [
-                            $domainEvent->getSentCount(),
-                            $domainEvent->getSuccess(),
-                            $domainEvent->getFailedRecipients()
-                        ],
+                        [$domainEvent->getSentCount(), $domainEvent->getSuccess(), $domainEvent->getFailedRecipients()],
                         'Module',
                         'Garagist.Mautic'
                     );
@@ -429,16 +452,6 @@ class MauticService
         $space = ' ';
         $string = (string) str_replace('&nbsp;', $space, $string);
 
-        return trim(
-            preg_replace(
-                '/\s\s+/',
-                $space,
-                str_replace(
-                    ' ',
-                    $space,
-                    $string
-                )
-            )
-        );
+        return trim(preg_replace('/\s\s+/', $space, str_replace(' ', $space, $string)));
     }
 }

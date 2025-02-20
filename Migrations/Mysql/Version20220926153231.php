@@ -7,7 +7,6 @@ namespace Neos\Flow\Persistence\Doctrine\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-
 final class Version20220926153231 extends AbstractMigration
 {
     public function getDescription(): string

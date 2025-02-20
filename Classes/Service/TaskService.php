@@ -87,7 +87,9 @@ class TaskService
         $this->mauticEmailRepository->update($email);
         $this->persistenceManager->persistAll();
 
-        $this->mauticLogger->info(sprintf('Set currently running task "%s" for email with identifier %s', $task, $email->getEmailIdentifier()));
+        $this->mauticLogger->info(
+            sprintf('Set currently running task "%s" for email with identifier %s', $task, $email->getEmailIdentifier())
+        );
     }
 
     /**
@@ -137,7 +139,12 @@ class TaskService
      */
     public function fireTaskFinishedEvent(MauticEmail $email, string $error = ''): void
     {
-        $event = new MauticEmailTaskFinished($email->getEmailIdentifier(), $email->getNodeIdentifier(), $email->getTask(), $error);
+        $event = new MauticEmailTaskFinished(
+            $email->getEmailIdentifier(),
+            $email->getNodeIdentifier(),
+            $email->getTask(),
+            $error
+        );
         $streamName = StreamName::fromString('email-' . $email->getEmailIdentifier());
 
         $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
@@ -159,7 +166,9 @@ class TaskService
 
             $this->eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
         } else {
-            throw new Exception(sprintf("The email with identifier %s could not be send because it's not published.", $emailIdentifier));
+            throw new Exception(
+                sprintf("The email with identifier %s could not be send because it's not published.", $emailIdentifier)
+            );
         }
     }
 

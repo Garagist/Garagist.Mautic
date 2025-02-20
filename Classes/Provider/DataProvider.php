@@ -77,12 +77,10 @@ class DataProvider implements DataProviderInterface
      */
     private function initContext(string $workspace = 'live', array $dimensions = []): void
     {
-        $this->context = $this->contextFactory->create(
-            [
-                'workspaceName' => $workspace,
-                'dimensions' => $dimensions,
-            ]
-        );
+        $this->context = $this->contextFactory->create([
+            'workspaceName' => $workspace,
+            'dimensions' => $dimensions,
+        ]);
     }
 
     /**
@@ -125,7 +123,7 @@ class DataProvider implements DataProviderInterface
     {
         preg_match('/<html.+?lang="([^"]+)"/im', $html, $languageMatch);
         $language = $languageMatch[1] ?? 'en';
-        return str_replace("-", "_", $language);
+        return str_replace('-', '_', $language);
     }
 
     /**
@@ -146,7 +144,8 @@ class DataProvider implements DataProviderInterface
         $previewTextFromNode = $this->personalizationService->mail($node->getProperty('previewText'), true, 'mautic');
 
         if ($previewTextFromNode != $previewText) {
-            $open = '<div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">';
+            $open =
+                '<div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">';
             $close = '</div>';
             $search = $open . $previewTextFromNode . $close;
             $replace = $open . $previewText . $close;
@@ -216,7 +215,7 @@ class DataProvider implements DataProviderInterface
             'title' => $title,
             'name' => join(' ❯ ', $name),
             'subject' => $subject,
-            'category' => (int)$this->settings['category']['newsletter'],
+            'category' => (int) $this->settings['category']['newsletter'],
             'template' => 'blank',
             'isPublished' => 0,
             'customHtml' => $html,

@@ -74,7 +74,9 @@ final class MauticProcessManager implements EventListenerInterface
             $this->taskService->fireUpdateEmailEvent($email);
             $this->mauticLogger->info(sprintf('Creating email with identifier %s', $emailIdentifier));
         } catch (Exception $e) {
-            $this->mauticLogger->error(sprintf('Creating email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage()));
+            $this->mauticLogger->error(
+                sprintf('Creating email with identifier %s failed! Reason: %s', $emailIdentifier, $e->getMessage())
+            );
         }
     }
 
@@ -183,7 +185,9 @@ final class MauticProcessManager implements EventListenerInterface
         if ($error === '') {
             $this->mauticLogger->info(sprintf('Task "%s" finished with email %s', $task, $emailIdentifier));
         } else {
-            $this->mauticLogger->error(sprintf('Task "%s" finished with an error! Email %s - Reason: %s', $task, $emailIdentifier, $error));
+            $this->mauticLogger->error(
+                sprintf('Task "%s" finished with an error! Email %s - Reason: %s', $task, $emailIdentifier, $error)
+            );
         }
         $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
         $this->taskService->finishTask($email, $error !== '');

@@ -37,8 +37,13 @@ final class MauticEmailSent implements DomainEventInterface
      */
     private $failedRecipients;
 
-    public function __construct(string $emailIdentifier, int $mauticIdentifier, int $success, int $sentCount, int $failedRecipients)
-    {
+    public function __construct(
+        string $emailIdentifier,
+        int $mauticIdentifier,
+        int $success,
+        int $sentCount,
+        int $failedRecipients
+    ) {
         $this->emailIdentifier = $emailIdentifier;
         $this->mauticIdentifier = $mauticIdentifier;
         $this->success = $success;

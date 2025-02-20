@@ -21,7 +21,6 @@ use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
  */
 class NodeService
 {
-
     /**
      * @Flow\Inject
      * @var ContentDimensionPresetSourceInterface
@@ -51,7 +50,6 @@ class NodeService
      */
     protected array $options = [];
 
-
     /**
      * Get node by id
      *
@@ -80,10 +78,13 @@ class NodeService
             $context = $this->getContentContextDimension();
         }
 
-        $flowQuery = new FlowQuery(array($context->getCurrentSiteNode()));
-        return $flowQuery->context([
-            'invisibleContentShown' => false
-        ])->find('[instanceof ' . $nodeTypeName . ']')->get();
+        $flowQuery = new FlowQuery([$context->getCurrentSiteNode()]);
+        return $flowQuery
+            ->context([
+                'invisibleContentShown' => false,
+            ])
+            ->find('[instanceof ' . $nodeTypeName . ']')
+            ->get();
     }
 
     /**
@@ -96,8 +97,11 @@ class NodeService
      */
     public function getParentByType(NodeInterface $node, string $nodeTypeName): ?NodeInterface
     {
-        $flowQuery = new FlowQuery(array($node));
-        return $flowQuery->parent()->closest('[instanceof ' . $nodeTypeName . ']')->get(0);
+        $flowQuery = new FlowQuery([$node]);
+        return $flowQuery
+            ->parent()
+            ->closest('[instanceof ' . $nodeTypeName . ']')
+            ->get(0);
     }
 
     /**
@@ -107,7 +111,6 @@ class NodeService
      */
     public function getContentContextDimension(): Context
     {
-
         $dimensionName = $this->options['dimensionName'] ?? 'language';
         $workspaceName = $this->options['workspaceName'] ?? 'live';
 
@@ -123,7 +126,6 @@ class NodeService
         return $this->createContentContext($dimensionArray, $workspaceName);
     }
 
-
     /**
      * Create a ContentContext based on the given workspace name
      *
@@ -134,13 +136,13 @@ class NodeService
      */
     protected function createContentContext(array $dimensions = [], string $workspaceName = 'live'): Context
     {
-        $contextProperties = array(
+        $contextProperties = [
             'workspaceName' => $workspaceName,
             'invisibleContentShown' => true,
-            'inaccessibleContentShown' => true
-        );
+            'inaccessibleContentShown' => true,
+        ];
 
-        if ($dimensions !== array()) {
+        if ($dimensions !== []) {
             $contextProperties['dimensions'] = $dimensions;
             $contextProperties['targetDimensions'] = array_map(function ($dimensionValues) {
                 return array_shift($dimensionValues);

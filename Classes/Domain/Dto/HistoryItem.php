@@ -6,7 +6,6 @@ use DateTime;
 
 class HistoryItem
 {
-
     /**
      * @var string,
      */

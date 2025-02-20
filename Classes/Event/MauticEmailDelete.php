@@ -17,7 +17,6 @@ final class MauticEmailDelete implements DomainEventInterface
      */
     private $emailIdentifier;
 
-
     public function __construct(string $emailIdentifier)
     {
         $this->emailIdentifier = $emailIdentifier;
