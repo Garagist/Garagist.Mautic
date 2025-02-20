@@ -114,12 +114,6 @@ class BackendController extends AbstractModuleController
     protected $routeArgument;
 
     /**
-     * @var string
-     * @Flow\InjectConfiguration(path="trackingPixel", package="Carbon.Mjml")
-     */
-    protected $trackingPixel;
-
-    /**
      * @var array
      */
     protected $viewFormatToObjectNameMap = [
@@ -176,7 +170,7 @@ class BackendController extends AbstractModuleController
             $category = $this->getCategories($node);
             $identifier = $node->getIdentifier();
             $title = $node->getProperty('title');
-            $title = $this->personalizationService->web($title);
+            $title = $this->personalizationService->web($title, pattern: 'mautic');
             $count = count($this->mauticService->getEmailsNodeIdentifier($node->getIdentifier()));
             if ($category) {
                 $categoryList[$category['identifier']] = $category['title'];
@@ -395,8 +389,8 @@ class BackendController extends AbstractModuleController
         $allSegments = $this->apiService->getAllSegments();
         $testEmailRecipients = $this->testEmailService->getTestEmailRecipients();
         $title = $node->getProperty('title');
-        $titleWeb = $this->personalizationService->web($title);
-        $titleEmail = $this->personalizationService->mail($title, true, 'mautic');
+        $titleWeb = $this->personalizationService->web($title, pattern: 'mautic');
+        $titleEmail = $this->personalizationService->mail($title, pattern: 'mautic');
         $this->view->assignMultiple([
             'emails' => $emails,
             'node' => $node,
@@ -431,18 +425,9 @@ class BackendController extends AbstractModuleController
         $allSegments = $this->apiService->getAllSegments();
         $testEmailRecipients = $this->testEmailService->getTestEmailRecipients();
 
-        // Disable tracking pixel for the preview
-        if ($mauticRecord) {
-            $mauticRecord['customHtml'] = str_replace(
-                $this->trackingPixel,
-                '<!-- Tracking Pixel disabled for preview ' . $this->trackingPixel . '-->',
-                $mauticRecord['customHtml']
-            );
-        }
-
         $title = $node->getProperty('title');
-        $titleWeb = $this->personalizationService->web($title);
-        $titleEmail = $this->personalizationService->mail($title, true, 'mautic');
+        $titleWeb = $this->personalizationService->web($title, pattern: 'mautic');
+        $titleEmail = $this->personalizationService->mail($title, pattern: 'mautic');
 
         $this->view->assignMultiple([
             'email' => $email,
