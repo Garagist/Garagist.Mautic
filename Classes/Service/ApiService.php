@@ -35,6 +35,7 @@ class ApiService
     const ENDPOINT_REPORTS = 'reports';
     const ENDPOINT_SEGMENTS = 'segments';
     const ENDPOINT_SMSES = 'smses';
+    const ENDPOINT_THEMES = 'themes';
 
     #[Flow\InjectConfiguration]
     protected array $settings;
@@ -304,6 +305,18 @@ class ApiService
     }
 
     /**
+     * Delete an item.
+     *
+     * @param string $endpoint
+     * @param array $ids
+     * @return array
+     */
+    public function deleteBatch(string $endpoint, array $ids): array
+    {
+        return $this->makeCall([$endpoint, 'batch/delete'], parameters: ['ids' => $ids] , method: 'DELETE');
+    }
+
+    /**
      * Edit an item with option to create if it doesn't exist.
      *
      * @param string $endpoint
@@ -359,7 +372,7 @@ class ApiService
 
         if (isset($parameters)) {
             // Call is a post request
-            if (in_array($method, ['POST', 'PUT', 'PATCH'])) {
+            if (in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'])) {
                 // We don't send files in the backend, the forms are handled by the frontend
                 $options[RequestOptions::HEADERS]['Content-Type'] = 'application/json';
                 $options[RequestOptions::JSON] = $parameters;
