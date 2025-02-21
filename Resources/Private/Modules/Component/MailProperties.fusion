@@ -31,7 +31,7 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
         _i18n = ${Translation.id('').package('Garagist.Mautic').source('Module')}
 
         _label = ${this._i18n.id('email.' + props._type + (props._isEdit && props._showSegments ? '.withSegments'  : '')).translate()}
-        _actionUri = Neos.Fusion:UriBuilder {
+        _actionUri = Neos.Fusion:ActionUri {
             action = ${props._type}
             arguments = Neos.Fusion:DataStructure {
                 node = ${node}
@@ -46,7 +46,7 @@ prototype(Garagist.Mautic:Component.MailProperties) < prototype(Neos.Fusion:Comp
         }
 
         _xData = Neos.Fusion:DataStructure {
-            action = Neos.Fusion:UriBuilder {
+            action = Neos.Fusion:ActionUri {
                 action = ${props._type}
                 arguments = Neos.Fusion:DataStructure {
                     node = ${node}

@@ -9,7 +9,7 @@ prototype(Garagist.Mautic:Component.Checkbox) < prototype(Neos.Fusion:Component)
     xDisabled = null
 
     renderer = afx`
-        <label class={Carbon.String.merge(props.class, "!p-0 !flex items-center justify-start mt-2 cursor-pointer group has-[:disabled]:cursor-not-allowed")}>
+        <label class={Carbon.String.classNames(props.class, "!p-0 !flex items-center justify-start mt-2 cursor-pointer group has-[:disabled]:cursor-not-allowed")}>
             <input
                 x-model={!props.number && !props.boolean ? props.xModel : null}
                 "x-model.boolean"={!props.number && props.boolean ? props.xModel : null}

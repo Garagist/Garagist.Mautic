@@ -15,20 +15,22 @@ prototype(Garagist.Mautic:Component.Form.Fragment.Plain) < prototype(Neos.Fusion
 
     @if.hasUrl_Id_ApiUrl = ${this.url && this.id && this.apiUrl}
 
-    _javascript = ${this.url + '/media/js/mautic-form.js'}
-    _embededFile = ${File.readFile(this.apiUrl + "/form/embed/" + this.id)}
-    _embededFile.@process.removeStyles = ${this.removeStyles && value ? String.pregReplace(value, '~<style([.\s\S]*?)</style>~', ''): value}
-    _hasReplacements = ${Carbon.Array.check(this.replacements)}
-    _globalVariables = ${'window.MauticDomain="' + this.url + '";window.MauticLang={submittingMessage:"' + this.waitMessage + '"}'}
+    @private {
+        javascript = ${props.url + '/media/js/mautic-form.js'}
+        embededFile = ${File.readFile(props.apiUrl + "/form/embed/" + props.id)}
+        embededFile.@process.removeStyles = ${props.removeStyles && value ? String.pregReplace(value, '~<style([.\s\S]*?)</style>~', ''): value}
+        hasReplacements = ${Carbon.Array.check(props.replacements)}
+        globalVariables = ${'window.MauticDomain="' + props.url + '";window.MauticLang={submittingMessage:"' + props.waitMessage + '"}'}
+    }
 
     renderer = afx`
-        <script data-slipstream>{props._globalVariables}</script>
-        <script src={props._javascript} data-slipstream defer onload="MauticSDK.onLoad()"></script>
-        {props._hasReplacements ? '' : props._embededFile}
+        <script data-slipstream>{private.globalVariables}</script>
+        <script src={private.javascript} data-slipstream defer onload="MauticSDK.onLoad()"></script>
+        {private.hasReplacements ? '' : private.embededFile}
         <Neos.Fusion:Reduce
-            @if={props._hasReplacements}
+            @if={private.hasReplacements}
             items={props.replacements}
-            initialValue={props._embededFile}
+            initialValue={private.embededFile}
             itemReducer={String.replace(carry, item.search, item.replace)}
         />
     `

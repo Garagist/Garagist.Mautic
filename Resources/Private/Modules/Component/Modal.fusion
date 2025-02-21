@@ -4,8 +4,8 @@ prototype(Garagist.Mautic:Component.Modal) < prototype(Neos.Fusion:Component) {
     content = null
 
     confirmAttributes = Neos.Fusion:DataStructure {
-
     }
+
     initalFocusOnConfirm = false
     confirmLabel = 'OK'
     confirmType = null
@@ -14,7 +14,6 @@ prototype(Garagist.Mautic:Component.Modal) < prototype(Neos.Fusion:Component) {
     xEffect = null
 
     maxWidth = null
-
 
     renderer = afx`
         <template x-teleport="body">

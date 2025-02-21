@@ -2,15 +2,11 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
     action = ${Configuration.Setting('Garagist.Mautic.action')}
     detailView = false
 
-    _buttonClass = 'whitespace-nowrap neos-button !bg-neos-gray-medium '
-    _default = 'hover:!bg-neos-blue focus:!bg-neos-blue'
-    _canResend = ${this.action.resend && this.canResend}
-
-    @if.hasPing = ${ping}
-
-    renderer = Neos.Fusion:Component {
-        @apply.props = ${props}
-        _actions = Neos.Fusion:DataStructure {
+    @private {
+        buttonClass = 'whitespace-nowrap neos-button !bg-neos-gray-medium '
+        default = 'hover:!bg-neos-blue focus:!bg-neos-blue'
+        canResend = ${props.action.resend && props.canResend}
+        actions = Neos.Fusion:DataStructure {
             @if.ping = ${ping}
             @process.filter = ${Array.filter(value)}
             mailProperties = afx`
@@ -19,7 +15,7 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
                     subject={props.subject}
                     previewText={props.previewText}
                     segments={props.segments}
-                    class={props._buttonClass + props._default}
+                    class={private.buttonClass + private.default}
                     detailView={props.detailView}
                     {...props.hrefArguments}
                 />
@@ -27,7 +23,7 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
             sendTestMail = afx`
                 <Garagist.Mautic:Component.SendTestMail
                     @if={props.action.test}
-                    @if={props.canTest || props._canResend}
+                    @if={props.canTest || private.canResend}
                     detailView={props.detailView}
                     {...props.hrefArguments}
                 />
@@ -47,7 +43,7 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
             }
             send = afx`
                 <Garagist.Mautic:Component.SendMail
-                    @if={(props.action.send && props.canSend) || props._canResend}
+                    @if={(props.action.send && props.canSend) || private.canResend}
                     action='send'
                     resend={props.canResend}
                     detailView={props.detailView}
@@ -92,17 +88,17 @@ prototype(Garagist.Mautic:Component.EmailActionButtons) < prototype(Neos.Fusion:
                 confirm = true
             }
         }
-
-        renderer = afx`
-            <Neos.Fusion:Loop items={props._actions}>
-                {Type.isString(item) ? item : ''}
-                <Garagist.Mautic:Component.ActionButton
-                    @if={!Type.isString(item)}
-                    showText={props.detailView}
-                    actionArguments={props.hrefArguments}
-                    {...item}
-                />
-            </Neos.Fusion:Loop>
-        `
     }
+
+    renderer = afx`
+        <Neos.Fusion:Loop items={private.actions}>
+            {Type.isString(item) ? item : ''}
+            <Garagist.Mautic:Component.ActionButton
+                @if={!Type.isString(item)}
+                showText={props.detailView}
+                actionArguments={props.hrefArguments}
+                {...item}
+            />
+        </Neos.Fusion:Loop>
+    `
 }
