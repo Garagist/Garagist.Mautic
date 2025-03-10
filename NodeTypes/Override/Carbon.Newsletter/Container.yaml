@@ -1,0 +1,18 @@
+'Carbon.Newsletter:Mixin.Container':
+  options:
+    template:
+      childNodes:
+        main:
+          name: 'main'
+          childNodes:
+            form:
+              type: 'Garagist.Mautic:Mixin.Form'
+        system:
+          childNodes:
+            settings:
+              childNodes:
+                main:
+                  name: 'main'
+                  childNodes:
+                    form:
+                      type: 'Garagist.Mautic:Mixin.Form'

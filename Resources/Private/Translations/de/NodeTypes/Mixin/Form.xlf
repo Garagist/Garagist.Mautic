@@ -7,6 +7,10 @@
                 <source>Mautic form</source>
                 <target>Mautic Formular</target>
             </trans-unit>
+            <trans-unit id="noId" xml:space="preserve">
+                <source>No Mautic form has been selected. Please set in the inspector.</source>
+                <target>Es wurde kein Mautic Formular ausgewählt. Bitte im Inspektor setzen.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -170,7 +170,7 @@ class BackendController extends AbstractModuleController
             $category = $this->getCategories($node);
             $identifier = $node->getIdentifier();
             $title = $node->getProperty('title');
-            $title = $this->personalizationService->web($title, pattern: 'mautic');
+            $title = $this->personalizationService->web($title);
             $count = count($this->mauticService->getEmailsNodeIdentifier($node->getIdentifier()));
             if ($category) {
                 $categoryList[$category['identifier']] = $category['title'];
@@ -389,8 +389,8 @@ class BackendController extends AbstractModuleController
         $allSegments = $this->apiService->getAllSegments();
         $testEmailRecipients = $this->testEmailService->getTestEmailRecipients();
         $title = $node->getProperty('title');
-        $titleWeb = $this->personalizationService->web($title, pattern: 'mautic');
-        $titleEmail = $this->personalizationService->mail($title, pattern: 'mautic');
+        $titleWeb = $this->personalizationService->web($title);
+        $titleEmail = $this->personalizationService->mail($title);
         $this->view->assignMultiple([
             'emails' => $emails,
             'node' => $node,
@@ -426,8 +426,8 @@ class BackendController extends AbstractModuleController
         $testEmailRecipients = $this->testEmailService->getTestEmailRecipients();
 
         $title = $node->getProperty('title');
-        $titleWeb = $this->personalizationService->web($title, pattern: 'mautic');
-        $titleEmail = $this->personalizationService->mail($title, pattern: 'mautic');
+        $titleWeb = $this->personalizationService->web($title);
+        $titleEmail = $this->personalizationService->mail($title);
 
         $this->view->assignMultiple([
             'email' => $email,

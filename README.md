@@ -127,10 +127,6 @@ Add this mixin to any document to enable the ability to send newsletter.
 Add this mixin to any document to define this as a category for newsletters. This is used in the overview of the
 newsletter module.
 
-### [Garagist.Mautic:Mixin.DoNotTrack]
-
-Add this mixin to any document to have the ability to disable the Mautic tracking for this specific page.
-
 ### [Garagist.Mautic:Mixin.Form]
 
 Add this mixin to a node to add the selector for Mautic forms. Be aware that you need to include the Fusion prototype

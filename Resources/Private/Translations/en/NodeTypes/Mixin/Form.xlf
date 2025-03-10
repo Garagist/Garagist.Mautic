@@ -6,6 +6,9 @@
             <trans-unit id="properties.mauticFormId" xml:space="preserve">
                 <source>Mautic form</source>
             </trans-unit>
+            <trans-unit id="noId" xml:space="preserve">
+                <source>No Mautic form has been selected. Please set in the inspector.</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

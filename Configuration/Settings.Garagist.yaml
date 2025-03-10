@@ -1,5 +1,6 @@
 Garagist:
   Mautic:
+    # TODO: Remove route argument
     routeArgument:
       htmlTemplate: email
       plaintextTemplate: plaintext
@@ -9,7 +10,7 @@ Garagist:
       password: null
       ignoreHttpsErrors: false
     publicUrl: null
-    enableTracking: false
+    enableTracking: true
     # Can be javascript, iframe, plain or api
     embedType: javascript
     apiRenderer: null

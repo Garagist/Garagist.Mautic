@@ -1,0 +1,7 @@
+'Carbon.Newsletter:Mixin.Name':
+  properties:
+    name:
+      ui:
+        inspector:
+          editorOptions:
+            dataSource: garagist-mautic-update

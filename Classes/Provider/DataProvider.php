@@ -110,7 +110,7 @@ class DataProvider implements DataProviderInterface
 
         $node = $this->getNode($email->getNodeIdentifier());
         $title = $node->getProperty('title');
-        return $this->personalizationService->mail($title, pattern: 'mautic');
+        return $this->personalizationService->mail($title);
     }
 
     /**
@@ -129,7 +129,7 @@ class DataProvider implements DataProviderInterface
 
         $node = $this->getNode($email->getNodeIdentifier());
         $text = $node->getProperty('previewText');
-        return $this->personalizationService->mail($text, pattern: 'mautic');
+        return $this->personalizationService->mail($text);
     }
 
     /**
@@ -199,7 +199,7 @@ class DataProvider implements DataProviderInterface
         $emailIdentifier = $email->getEmailIdentifier();
 
         $html = $this->getHtml($email);
-        $title = $this->personalizationService->web($node->getProperty('title'), pattern: 'mautic');
+        $title = $this->personalizationService->web($node->getProperty('title'));
         $publishUp = $node->getProperty('publishDate');
 
         $publishDown = null;

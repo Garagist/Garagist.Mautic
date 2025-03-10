@@ -1,5 +1,4 @@
 Carbon:
   Newsletter:
     placePreviewText: false
-    personalization:
-      pattern: 'mautic'
+    system: 'mautic'

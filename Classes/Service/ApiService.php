@@ -226,6 +226,16 @@ class ApiService
         return $data;
     }
 
+    public function check(mixed $endpoint): bool
+    {
+        try {
+            $this->makeCall($endpoint);
+            return true;
+        } catch (Throwable $th) {
+            return false;
+        }
+    }
+
     /**
      * Ping the mautic service
      *
@@ -313,14 +323,14 @@ class ApiService
      */
     public function deleteBatch(string $endpoint, array $ids): array
     {
-        return $this->makeCall([$endpoint, 'batch/delete'], parameters: ['ids' => $ids] , method: 'DELETE');
+        return $this->makeCall([$endpoint, 'batch/delete'], parameters: ['ids' => $ids], method: 'DELETE');
     }
 
     /**
      * Edit an item with option to create if it doesn't exist.
      *
      * @param string $endpoint
-     * @param int|string  $id
+     * @param int|string|null  $id
      * @param array $parameters
      * @param bool $createIfNotExists = false
      *
@@ -328,7 +338,7 @@ class ApiService
      */
     public function edit(
         string $endpoint,
-        int|string $id,
+        mixed $id = null,
         ?array $parameters = null,
         bool $createIfNotExists = false
     ): array {
@@ -353,7 +363,7 @@ class ApiService
         bool $throwExeptions = true
     ): ?array {
         if (is_array($endpoint)) {
-            $endpoint = implode('/', $endpoint);
+            $endpoint = implode('/', array_filter($endpoint));
         }
 
         $method = strtoupper($method);
