@@ -8,11 +8,8 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 class ApiFormImplementation extends AbstractFusionObject
 {
-    /**
-     * @Flow\Inject
-     * @var ApiService
-     */
-    protected $apiService;
+    #[Flow\Inject]
+    protected ApiService $apiService;
 
     /**
      * @return string

@@ -3,9 +3,9 @@
 namespace Garagist\Mautic\DataSource;
 
 use Garagist\Mautic\Service\ApiService;
-use Neos\Neos\Service\DataSource\AbstractDataSource;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Service\DataSource\AbstractDataSource;
 
 class FormsDataSource extends AbstractDataSource
 {
@@ -14,11 +14,8 @@ class FormsDataSource extends AbstractDataSource
      */
     protected static $identifier = 'garagist-mautic-forms';
 
-    /**
-     * @Flow\Inject
-     * @var ApiService
-     */
-    protected $apiService;
+    #[Flow\Inject]
+    protected ApiService $apiService;
 
     /**
      * Get data

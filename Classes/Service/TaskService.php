@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Garagist\Mautic\Service;
 
 use Garagist\Mautic\Domain\Model\MauticEmail;
@@ -18,59 +16,38 @@ use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Neos\EventSourcing\EventStore\StreamName;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Utility\Algorithms;
 use ProxyManager\Exception\ExceptionInterface;
 use Psr\Log\LoggerInterface;
-use Neos\Flow\Annotations as Flow;
 
 class TaskService
 {
-    /**
-     * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
-     * @var LoggerInterface
-     */
-    protected $mauticLogger;
+    #[Flow\Inject(name: 'Garagist.Mautic:MauticLogger')]
+    protected LoggerInterface $mauticLogger;
 
     /**
      * @var EventStore
      */
     protected $eventStore;
 
-    /**
-     * @Flow\Inject
-     * @var MauticService
-     */
-    protected $mauticService;
+    #[Flow\Inject]
+    protected MauticService $mauticService;
 
-    /**
-     * @Flow\Inject
-     * @var ApiService
-     */
-    protected $apiService;
+    #[Flow\Inject]
+    protected ApiService $apiService;
 
-    /**
-     * @Flow\Inject
-     * @var MauticEmailRepository
-     */
-    protected $mauticEmailRepository;
+    #[Flow\Inject]
+    protected MauticEmailRepository $mauticEmailRepository;
 
-    /**
-     * @Flow\Inject
-     * @var PersistenceManager
-     */
-    protected $persistenceManager;
+    #[Flow\Inject]
+    protected PersistenceManager $persistenceManager;
 
-    /**
-     * @Flow\Inject
-     * @var EventStoreFactory
-     */
-    protected $eventStoreFactory;
+    #[Flow\Inject]
+    protected EventStoreFactory $eventStoreFactory;
 
-    /**
-     * @return void
-     */
     protected function initializeObject(): void
     {
         $this->eventStore = $this->eventStoreFactory->create('Garagist.Mautic:EventStore');

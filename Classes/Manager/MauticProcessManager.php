@@ -1,57 +1,43 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Garagist\Mautic\Manager;
 
-use Garagist\Mautic\Service\TaskService;
-use Neos\Flow\Annotations as Flow;
 use Garagist\Mautic\Event\MauticEmailCreate;
+use Garagist\Mautic\Event\MauticEmailDelete;
 use Garagist\Mautic\Event\MauticEmailPublish;
+use Garagist\Mautic\Event\MauticEmailSend;
 use Garagist\Mautic\Event\MauticEmailSent;
 use Garagist\Mautic\Event\MauticEmailSync;
-use Garagist\Mautic\Event\MauticEmailDelete;
 use Garagist\Mautic\Event\MauticEmailTaskFinished;
 use Garagist\Mautic\Event\MauticEmailUnpublish;
 use Garagist\Mautic\Event\MauticEmailUpdate;
 use Garagist\Mautic\Service\MauticService;
+use Garagist\Mautic\Service\TaskService;
+use Neos\EventSourcing\EventListener\EventListenerInterface;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStoreFactory;
-use Garagist\Mautic\Event\MauticEmailSend;
-use Neos\EventSourcing\EventListener\EventListenerInterface;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Psr\Log\LoggerInterface;
 
 final class MauticProcessManager implements EventListenerInterface
 {
-    /**
-     * @Flow\Inject
-     * @var MauticService
-     */
-    protected $mauticService;
+    #[Flow\Inject]
+    protected MauticService $mauticService;
 
-    /**
-     * @Flow\Inject
-     * @var TaskService
-     */
-    protected $taskService;
+    #[Flow\Inject]
+    protected TaskService $taskService;
 
     /**
      * @var EventStore
      */
     protected $eventStore;
 
-    /**
-     * @Flow\Inject
-     * @var EventStoreFactory
-     */
-    protected $eventStoreFactory;
+    #[Flow\Inject]
+    protected EventStoreFactory $eventStoreFactory;
 
-    /**
-     * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
-     * @var LoggerInterface
-     */
-    protected $mauticLogger;
+    #[Flow\Inject(name: 'Garagist.Mautic:MauticLogger')]
+    protected LoggerInterface $mauticLogger;
 
     protected function initializeObject(): void
     {

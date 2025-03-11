@@ -1,10 +1,7 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Garagist\Mautic\Controller;
 
-use Collator;
 use Carbon\Newsletter\Service\PersonalizationService;
 use Garagist\Mautic\Domain\Model\MauticEmail;
 use Garagist\Mautic\Service\ApiService;
@@ -25,10 +22,9 @@ use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Service\LinkingService;
 use Neos\Neos\Service\UserService;
 use Neos\Neos\TypeConverter\NodeConverter;
+use Collator;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class BackendController extends AbstractModuleController
 {
     /**
@@ -41,76 +37,40 @@ class BackendController extends AbstractModuleController
      */
     protected $defaultViewObjectName = FusionView::class;
 
-    /**
-     * @Flow\Inject
-     * @var Context
-     */
-    protected $securityContext;
+    #[Flow\Inject]
+    protected Context $securityContext;
 
-    /**
-     * @Flow\Inject
-     * @var PersonalizationService
-     */
-    protected $personalizationService;
+    #[Flow\Inject]
+    protected PersonalizationService $personalizationService;
 
-    /**
-     * @Flow\Inject
-     * @var NodeService
-     */
-    protected $nodeService;
+    #[Flow\Inject]
+    protected NodeService $nodeService;
 
-    /**
-     * @Flow\Inject
-     * @var LinkingService
-     */
-    protected $linkingService;
+    #[Flow\Inject]
+    protected LinkingService $linkingService;
 
-    /**
-     * @Flow\Inject
-     * @var MauticService
-     */
-    protected $mauticService;
+    #[Flow\Inject]
+    protected MauticService $mauticService;
 
-    /**
-     * @Flow\Inject
-     * @var TaskService
-     */
-    protected $taskService;
+    #[Flow\Inject]
+    protected TaskService $taskService;
 
-    /**
-     * @Flow\Inject
-     * @var TestEmailService
-     */
-    protected $testEmailService;
+    #[Flow\Inject]
+    protected TestEmailService $testEmailService;
 
-    /**
-     * @Flow\Inject
-     * @var ApiService
-     */
-    protected $apiService;
+    #[Flow\Inject]
+    protected ApiService $apiService;
 
-    /**
-     * @Flow\Inject
-     * @var FlashMessageService
-     */
-    protected $flashMessageService;
+    #[Flow\Inject]
+    protected FlashMessageService $flashMessageService;
 
-    /**
-     * @Flow\Inject
-     * @var TranslationHelper
-     */
-    protected $translationHelper;
+    #[Flow\Inject]
+    protected TranslationHelper $translationHelper;
 
-    /**
-     * @Flow\Inject
-     * @var UserService
-     */
-    protected $userService;
+    #[Flow\Inject]
+    protected UserService $userService;
 
-    /**
-     * @var array
-     * @Flow\InjectConfiguration(path="routeArgument", package="Garagist.Mautic")
-     */
+    #[Flow\InjectConfiguration('routeArgument')]
     protected $routeArgument;
 
     /**

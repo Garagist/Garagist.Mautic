@@ -1,16 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Garagist\Mautic\Event;
 
-use Neos\EventSourcing\Event\DomainEventInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 class MauticEmailCreate implements DomainEventInterface
 {
     /**
