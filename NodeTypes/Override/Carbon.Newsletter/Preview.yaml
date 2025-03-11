@@ -1,4 +1,4 @@
-'Carbon.Newsletter:Mixin.Preview':
+'Carbon.Newsletter:Document.Newsletter':
   superTypes:
     'Garagist.Mautic:Mixin.Email': true
   properties:
