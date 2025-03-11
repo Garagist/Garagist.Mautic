@@ -291,8 +291,8 @@ class MauticCommandController extends CommandController
             $this->deleteThemesCommand();
         }
 
-        $service->setCategory();
-        $this->successMessage('Configure system category in Mautic');
+        $service->setCategories();
+        $this->successMessage('Configure categories in Mautic');
 
         $service->setSegments();
         $this->successMessage('Configure segments in Mautic');

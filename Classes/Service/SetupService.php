@@ -23,6 +23,7 @@ class SetupService
 
     protected array $fetchedForms = [];
     protected array $fetchedCampaigns = [];
+    protected array $fetchedCategories = [];
 
     protected array $emails = [];
 
@@ -41,7 +42,10 @@ class SetupService
      */
     protected array $nodes = [];
 
-    protected int|null $category = null;
+    /**
+     * @var int[]
+     */
+    protected array $categories = [];
 
     protected array $segments = [];
 
@@ -63,32 +67,37 @@ class SetupService
         $this->nodes = $nodes;
     }
 
+    public function setCategories(): void
+    {
+        $this->fetchedCategories = $this->apiService->getList(ApiService::ENDPOINT_CATEGORIES)['categories'];
+        $this->categories = [
+            'system' => $this->setCategory('system', '#d1ffcf'),
+            'newsletter' => $this->setCategory('newsletter', '#cfd5ff'),
+        ];
+    }
+
     /**
      * Setup managed category in mautic
      */
-    public function setCategory(): void
+    private function setCategory(string $alias, string $color): int
     {
-        $alias = 'system';
-        $categories = $this->apiService->getList(ApiService::ENDPOINT_CATEGORIES);
-
-        foreach ($categories['categories'] as $category) {
+        foreach ($this->fetchedCategories as $category) {
             if ($category['alias'] == $alias) {
-                $this->category = $category['id'];
-                return;
+                return $category['id'];
             }
         }
 
         $data = [
-            'title' => Utils::translate('category', $this->language),
+            'title' => Utils::translate(['category', $alias], $this->language),
             'alias' => $alias,
-            'description' => Utils::translate('category.description', $this->language),
-            'color' => '#d1ffcf',
+            'description' => Utils::translate(['category', $alias, 'description'], $this->language),
+            'color' => $color,
             'bundle' => 'global',
         ];
 
         $category = $this->apiService->create(ApiService::ENDPOINT_CATEGORIES, $data);
 
-        $this->category = $category['category']['id'];
+        return $category['category']['id'];
     }
 
     /**
@@ -108,8 +117,8 @@ class SetupService
 
         foreach ($segmentNames as $key) {
             if (!isset($segments[$key])) {
-                $isPreferenceCenter = $key == 'newsletter-default';
-                $segments[$key] = $this->segment($key, $isPreferenceCenter);
+                $category = $key == 'newsletter-default' ? 'newsletter' : 'system';
+                $segments[$key] = $this->segment($key, $category);
             }
         }
 
@@ -120,18 +129,18 @@ class SetupService
      * Create a segment
      *
      * @param string $alias
-     * @param boolean $isPreferenceCenter
+     * @param string $category
      * @return array
      */
-    private function segment(string $alias, bool $isPreferenceCenter = false)
+    private function segment(string $alias, string $category)
     {
         $data = [
             'name' => Utils::translate(['segment', $alias], $this->language),
             'alias' => $alias,
             'description' => Utils::translate(['segment', $alias, 'description'], $this->language),
             'isPublished' => true,
-            'isPreferenceCenter' => $isPreferenceCenter,
-            'category' => $this->category,
+            'isPreferenceCenter' => $category !== 'system',
+            'category' => $this->categories[$category],
         ];
         return $this->apiService->create(ApiService::ENDPOINT_SEGMENTS, $data)['list'];
     }
@@ -204,7 +213,7 @@ class SetupService
             ],
         ];
 
-        return $this->createOrEditForm('settings', $fields);
+        return $this->createOrEditForm('settings', $fields, 'system');
     }
 
     /**
@@ -253,7 +262,7 @@ class SetupService
             ],
         ];
 
-        return $this->createOrEditForm('newsletter', $fields);
+        return $this->createOrEditForm('newsletter', $fields, 'newsletter');
     }
 
     /**
@@ -261,9 +270,10 @@ class SetupService
      *
      * @param string $alias
      * @param array $fields
+     * @param string $category
      * @return array
      */
-    private function createOrEditForm(string $alias, array $fields): array
+    private function createOrEditForm(string $alias, array $fields, string $category): array
     {
         $availableForm = null;
         // You can't set the alias in the API, we have to depend it on the name
@@ -285,7 +295,7 @@ class SetupService
                     ['form', $alias, 'message', $this->salutation, $this->typeOfContact],
                     $this->language
                 ),
-                'category' => $this->category,
+                'category' => $this->categories[$category],
                 'fields' => $fields,
                 'language' => $this->language,
             ];
@@ -310,7 +320,7 @@ class SetupService
             $availableForm['id'],
             array_merge($availableForm, [
                 'fields' => $fields,
-                'category' => $this->category,
+                'category' => $this->categories[$category],
                 'language' => $this->language,
             ])
         )['form'];
@@ -325,7 +335,7 @@ class SetupService
             $this->domain,
             $this->language,
             $this->nodes['mailSubscribe'],
-            $this->category,
+            $this->categories['newsletter'],
             $this->sender
         );
 
@@ -333,7 +343,7 @@ class SetupService
             $this->domain,
             $this->language,
             $this->nodes['mailSubscribeRepeat'],
-            $this->category,
+            $this->categories['newsletter'],
             $this->sender
         );
 
@@ -341,7 +351,7 @@ class SetupService
             $this->domain,
             $this->language,
             $this->nodes['mailSettings'],
-            $this->category,
+            $this->categories['system'],
             $this->sender
         );
 
@@ -349,7 +359,7 @@ class SetupService
             $this->domain,
             $this->language,
             $this->nodes['mailDelete'],
-            $this->category,
+            $this->categories['system'],
             $this->sender
         );
 
@@ -382,7 +392,7 @@ class SetupService
         $data = [
             'name' => $name,
             'description' => Utils::translate([$key, 'description'], $this->language),
-            'category' => $this->category,
+            'category' => $this->categories['system'],
             'isPublished' => true,
             'allowRestart' => false,
             'sourceType' => 'forms',
@@ -455,16 +465,6 @@ class SetupService
         $this->apiService->create(ApiService::ENDPOINT_CAMPAIGNS, $data)['campaign'];
     }
 
-    private function positionInCanvas(string $id, int $x, int $y): array
-    {
-        $gridSize = 65;
-        return [
-            'id' => $id,
-            'positionX' => $x * $gridSize,
-            'positionY' => $y * $gridSize,
-        ];
-    }
-
     private function setNewsletterCampaign(): void
     {
         $key = 'campaign.newsletter';
@@ -478,7 +478,7 @@ class SetupService
         $data = [
             'name' => $name,
             'description' => Utils::translate([$key, 'description'], $this->language),
-            'category' => $this->category,
+            'category' => $this->categories['newsletter'],
             'isPublished' => true,
             'allowRestart' => false,
             'sourceType' => 'forms',
@@ -562,7 +562,7 @@ class SetupService
         $data = [
             'name' => $name,
             'description' => Utils::translate([$key, 'description'], $this->language),
-            'category' => $this->category,
+            'category' => $this->categories['system'],
             'isPublished' => true,
             'allowRestart' => false,
             'sourceType' => 'lists',
@@ -775,6 +775,16 @@ class SetupService
         ];
 
         $this->apiService->create(ApiService::ENDPOINT_CAMPAIGNS, $data)['campaign'];
+    }
+
+    private function positionInCanvas(string $id, int $x, int $y): array
+    {
+        $gridSize = 65;
+        return [
+            'id' => $id,
+            'positionX' => $x * $gridSize,
+            'positionY' => $y * $gridSize,
+        ];
     }
 
     private function checkFormValue(
