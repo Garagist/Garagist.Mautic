@@ -10,6 +10,10 @@ Garagist:
     # Can be javascript, iframe, plain or api
     embedType: javascript
     apiRenderer: null
+
+     # TODO Get rid of this down below
+
+
     form:
       # Add here the IDs of the forms you want to hide
       # You can pass an array (eg. [1, 2, 3]) or an integer

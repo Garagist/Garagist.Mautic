@@ -36,8 +36,11 @@ final class MauticProcessManager implements EventListenerInterface
     #[Flow\Inject]
     protected EventStoreFactory $eventStoreFactory;
 
-    #[Flow\Inject(name: 'Garagist.Mautic:MauticLogger')]
-    protected LoggerInterface $mauticLogger;
+    /**
+     * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
+     * @var LoggerInterface
+     */
+    protected $mauticLogger;
 
     protected function initializeObject(): void
     {

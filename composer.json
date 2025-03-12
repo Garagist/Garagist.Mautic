@@ -10,7 +10,6 @@
         "neos/event-sourcing": "^2.0",
         "neos/neos": "^8.3",
         "neos/fusion-form": "^2.0",
-        "mautic/api-library": "^3.0.0",
         "carbon/newsletter": "^0.1",
         "carbon/notification": "^2.4",
         "carbon/editor-relativedate": "^0.1"

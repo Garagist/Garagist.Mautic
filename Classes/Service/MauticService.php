@@ -46,8 +46,11 @@ class MauticService
      */
     protected $eventStore;
 
-    #[Flow\Inject(name: 'Garagist.Mautic:MauticLogger')]
-    protected LoggerInterface $mauticLogger;
+    /**
+     * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
+     * @var LoggerInterface
+     */
+    protected $mauticLogger;
 
     #[Flow\Inject]
     protected DataProviderInterface $dataProvider;
@@ -354,7 +357,7 @@ class MauticService
 
     public function getSegmentsForEmail(MauticEmail $email)
     {
-        return $this->dataProvider->filterSegments($email);
+        return $this->dataProvider->filterSegments($email, []);
     }
 
     /**

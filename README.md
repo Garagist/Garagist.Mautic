@@ -41,15 +41,6 @@ flow eventstore:setupall
 
 The default values are set in [`Settings.Garagist.yaml`].
 
-### `routeArgument` setting
-
-`htmlTemplate` sets the argument used to call the `HTML` variant of the newsletter and send it to Mautic.
-
-`plaintextTemplate` sets the argument used to call the plaintext variant of the newsletter and send it to Mautic.
-
-If you use [Garagist.Mjml] `htmlTemplate` is automatically set to `mjml`. The important thing is simply to respect the
-loading order of the composer and load [Garagist.Mjml] after Garagist.Mautic.
-
 ### `api` setting
 
 Set your credentials `userName` and `password` from Mautic. `baseUrl` is the URL where Mautic can be reached via PHP.

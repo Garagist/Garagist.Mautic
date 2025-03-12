@@ -38,8 +38,11 @@ class ApiService
     #[Flow\InjectConfiguration]
     protected array $settings;
 
-    #[Flow\Inject('Garagist.Mautic:MauticLogger', false)]
-    protected LoggerInterface $mauticLogger;
+    /**
+     * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
+     * @var LoggerInterface
+     */
+    protected $mauticLogger;
 
     /**
      * @throws Exception

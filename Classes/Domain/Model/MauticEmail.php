@@ -6,7 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use DateTime;
 
-#[Flow\Entity]
+/**
+ * @Flow\Entity
+ */
 class MauticEmail
 {
     /**

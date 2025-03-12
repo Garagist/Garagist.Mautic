@@ -25,8 +25,11 @@ use Psr\Log\LoggerInterface;
 
 class TaskService
 {
-    #[Flow\Inject(name: 'Garagist.Mautic:MauticLogger')]
-    protected LoggerInterface $mauticLogger;
+    /**
+     * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
+     * @var LoggerInterface
+     */
+    protected $mauticLogger;
 
     /**
      * @var EventStore

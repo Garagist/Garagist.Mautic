@@ -26,8 +26,11 @@ class DataProvider implements DataProviderInterface
     #[Flow\Inject]
     protected PersonalizationService $personalizationService;
 
-    #[Flow\Inject(name: 'Garagist.Mautic:MauticLogger')]
-    protected LoggerInterface $mauticLogger;
+    /**
+     * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
+     * @var LoggerInterface
+     */
+    protected $mauticLogger;
 
     #[Flow\Inject]
     protected ApiService $apiService;
@@ -42,7 +45,6 @@ class DataProvider implements DataProviderInterface
 
     /**
      * @throws Exception
-     * @throws \Mautic\Exception\ContextNotFoundException
      */
     protected function initializeObject(): void
     {
