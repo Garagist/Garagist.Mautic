@@ -1,9 +1,5 @@
 Garagist:
   Mautic:
-    # TODO: Remove route argument
-    routeArgument:
-      htmlTemplate: email
-      plaintextTemplate: plaintext
     api:
       baseUrl: null
       userName: null

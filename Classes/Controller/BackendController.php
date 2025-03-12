@@ -70,9 +70,6 @@ class BackendController extends AbstractModuleController
     #[Flow\Inject]
     protected UserService $userService;
 
-    #[Flow\InjectConfiguration('routeArgument')]
-    protected $routeArgument;
-
     /**
      * @var array
      */
@@ -446,10 +443,10 @@ class BackendController extends AbstractModuleController
             'previewText' => $this->mauticService->cleanPreviewText($previewText),
             'segments' => $convertedSegments,
             'htmlUrl' => $linkingService->createNodeUri($controllerContext, null, $node, 'html', true, [
-                $this->routeArgument['htmlTemplate'] => true,
+                'email' => true,
             ]),
             'plaintextUrl' => $linkingService->createNodeUri($controllerContext, null, $node, 'html', true, [
-                $this->routeArgument['plaintextTemplate'] => true,
+                'plaintext' => true,
             ]),
         ];
 
