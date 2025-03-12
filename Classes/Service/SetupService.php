@@ -333,7 +333,6 @@ class SetupService
     {
         $subscribe = $this->emailService->call(
             $this->domain,
-            $this->language,
             $this->nodes['mailSubscribe'],
             $this->categories['newsletter'],
             $this->sender
@@ -341,7 +340,6 @@ class SetupService
 
         $subscribeRepeat = $this->emailService->call(
             $this->domain,
-            $this->language,
             $this->nodes['mailSubscribeRepeat'],
             $this->categories['newsletter'],
             $this->sender
@@ -349,7 +347,6 @@ class SetupService
 
         $settings = $this->emailService->call(
             $this->domain,
-            $this->language,
             $this->nodes['mailSettings'],
             $this->categories['system'],
             $this->sender
@@ -357,7 +354,6 @@ class SetupService
 
         $delete = $this->emailService->call(
             $this->domain,
-            $this->language,
             $this->nodes['mailDelete'],
             $this->categories['system'],
             $this->sender
@@ -850,7 +846,6 @@ class SetupService
         ];
 
         foreach ($this->segments as $key => $segment) {
-            ray($key, $segment['id']);
             if (in_array($key, $add)) {
                 $properties['addToLists'][] = $segment['id'];
             }
@@ -858,8 +853,6 @@ class SetupService
                 $properties['removeFromLists'][] = $segment['id'];
             }
         }
-
-        ray('createActionEventChangeList', $properties);
 
         return $this->createEvent([
             'id' => $id,

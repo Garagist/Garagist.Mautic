@@ -11,6 +11,10 @@
                 <source>Broadcast time range</source>
                 <target>Sendezeitbereich</target>
             </trans-unit>
+            <trans-unit id="mauticIsOffline" xml:space="preserve">
+                <source>Mautic is offline, please try again later</source>
+                <target>Mautic ist offline, bitte versuchen Sie es später noch einmal</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

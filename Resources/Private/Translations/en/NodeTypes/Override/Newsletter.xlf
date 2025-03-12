@@ -9,6 +9,9 @@
             <trans-unit id="publishDate.range" xml:space="preserve">
                 <source>Broadcast time range</source>
             </trans-unit>
+            <trans-unit id="mauticIsOffline" xml:space="preserve">
+                <source>Mautic is offline, please try again later</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>
