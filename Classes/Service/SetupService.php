@@ -332,13 +332,16 @@ class SetupService
     public function setEmails(): void
     {
         $subscribe = $this->emailService->call(
+            false,
             $this->domain,
             $this->nodes['mailSubscribe'],
             $this->categories['newsletter'],
             $this->sender
         );
 
+
         $subscribeRepeat = $this->emailService->call(
+            false,
             $this->domain,
             $this->nodes['mailSubscribeRepeat'],
             $this->categories['newsletter'],
@@ -346,6 +349,7 @@ class SetupService
         );
 
         $settings = $this->emailService->call(
+            false,
             $this->domain,
             $this->nodes['mailSettings'],
             $this->categories['system'],
@@ -353,6 +357,7 @@ class SetupService
         );
 
         $delete = $this->emailService->call(
+            false,
             $this->domain,
             $this->nodes['mailDelete'],
             $this->categories['system'],
