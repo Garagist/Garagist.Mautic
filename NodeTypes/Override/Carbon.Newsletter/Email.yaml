@@ -1,0 +1,8 @@
+'Carbon.Newsletter:Mixin.Email':
+  properties:
+    id:
+      ui:
+        inspector:
+          editorOptions:
+            system: Mautic
+            dataSource: garagist-mautic-email
