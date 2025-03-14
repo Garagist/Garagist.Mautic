@@ -24,6 +24,10 @@ class SetupService
     protected array $fetchedForms = [];
     protected array $fetchedCampaigns = [];
     protected array $fetchedCategories = [];
+    protected array $newsletterSystemConfig = [
+        'systemCategory' => null,
+        'systemSegments' => [],
+    ];
 
     protected array $emails = [];
 
@@ -70,10 +74,13 @@ class SetupService
     public function setCategories(): void
     {
         $this->fetchedCategories = $this->apiService->getList(ApiService::ENDPOINT_CATEGORIES)['categories'];
+        $systemId = $this->setCategory('system', '#d1ffcf');
+        $newsletterId = $this->setCategory('newsletter', '#cfd5ff');
         $this->categories = [
-            'system' => $this->setCategory('system', '#d1ffcf'),
-            'newsletter' => $this->setCategory('newsletter', '#cfd5ff'),
+            'system' => $systemId,
+            'newsletter' => $newsletterId,
         ];
+        $this->newsletterSystemConfig['systemCategory'] = $systemId;
     }
 
     /**
@@ -96,7 +103,6 @@ class SetupService
         ];
 
         $category = $this->apiService->create(ApiService::ENDPOINT_CATEGORIES, $data);
-
         return $category['category']['id'];
     }
 
@@ -120,6 +126,11 @@ class SetupService
                 $category = $key == 'newsletter-default' ? 'newsletter' : 'system';
                 $segments[$key] = $this->segment($key, $category);
             }
+        }
+
+        // Save system segments into newsletter config
+        foreach(['opt-in-pending', 'opt-in-confirmed'] as $key) {
+            $this->newsletterSystemConfig['systemSegments'][$key] = $segments[$key]['id'];
         }
 
         $this->segments = $segments;
@@ -332,7 +343,6 @@ class SetupService
     public function setEmails(): void
     {
         $subscribe = $this->emailService->call(
-            false,
             $this->domain,
             $this->nodes['mailSubscribe'],
             $this->categories['newsletter'],
@@ -341,7 +351,6 @@ class SetupService
 
 
         $subscribeRepeat = $this->emailService->call(
-            false,
             $this->domain,
             $this->nodes['mailSubscribeRepeat'],
             $this->categories['newsletter'],
@@ -349,7 +358,6 @@ class SetupService
         );
 
         $settings = $this->emailService->call(
-            false,
             $this->domain,
             $this->nodes['mailSettings'],
             $this->categories['system'],
@@ -357,7 +365,6 @@ class SetupService
         );
 
         $delete = $this->emailService->call(
-            false,
             $this->domain,
             $this->nodes['mailDelete'],
             $this->categories['system'],
@@ -1017,7 +1024,6 @@ class SetupService
                 'triggerMode' => $triggerMode,
                 'triggerInterval' => $triggerInterval,
                 'triggerIntervalUnit' => $triggerIntervalUnit,
-                // 'triggerWindow' => 0,
             ],
             $eventData
         );
@@ -1046,5 +1052,10 @@ class SetupService
                 $settingsFormNode->setProperty('mauticFormId', $this->forms['settings']['id']);
             }
         }
+    }
+
+    public function saveConfig(): void
+    {
+        $this->nodes['container']->setProperty('newsletterSystemConfig', $this->newsletterSystemConfig);
     }
 }

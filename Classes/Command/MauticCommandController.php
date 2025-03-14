@@ -307,7 +307,10 @@ class MauticCommandController extends CommandController
         $this->successMessage('Configure campaigns in Mautic');
 
         $service->setFormId();
-        $this->successMessage('Configure forms in Neos', marginBottom: true);
+        $this->successMessage('Configure forms in Neos');
+
+        $service->saveConfig();
+        $this->successMessage('Save configuration in Neos', marginBottom: true);
     }
 
     /**
