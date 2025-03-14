@@ -245,7 +245,7 @@ class ApiService
     public function ping(): bool
     {
         try {
-            $this->getList(self::ENDPOINT_EMAILS, limit: 1);
+            $this->getList(self::ENDPOINT_EMAILS, limit: 1, throwExeptions: true, ray: false);
             return true;
         } catch (Throwable $th) {
             return false;
@@ -264,6 +264,7 @@ class ApiService
      * @param bool $publishedOnly
      * @param bool $minimal
      * @param bool $throwExeptions,
+     * @param bool $ray,
      * @return array
      */
     public function getList(
@@ -275,7 +276,8 @@ class ApiService
         string $orderByDir = 'ASC',
         bool $publishedOnly = false,
         bool $minimal = false,
-        bool $throwExeptions = true
+        bool $throwExeptions = true,
+        bool $ray = true
     ): array {
         $parameters = [
             'search' => $search,
@@ -286,9 +288,8 @@ class ApiService
             'publishedOnly' => $publishedOnly,
             'minimal' => $minimal,
         ];
-
         $parameters = array_filter($parameters);
-        return $this->makeCall($endpoint, $parameters, throwExeptions: $throwExeptions);
+        return $this->makeCall($endpoint, $parameters, throwExeptions: $throwExeptions, ray: $ray);
     }
 
     /**
@@ -361,7 +362,8 @@ class ApiService
         array|string $endpoint,
         ?array $parameters = null,
         string $method = 'GET',
-        bool $throwExeptions = true
+        bool $throwExeptions = true,
+        bool $ray = true
     ): ?array {
         if (is_array($endpoint)) {
             $endpoint = implode('/', array_filter($endpoint));
@@ -398,24 +400,24 @@ class ApiService
             $json = json_decode($contents, true);
         } catch (ClientException $exception) {
             $message = $exception->getResponse()->getBody()->getContents();
-            $this->errorHandling('ClientException', $message, $exception, $throwExeptions);
+            $this->errorHandling('ClientException', $message, $exception, $throwExeptions, $ray);
             $this->mauticLogger->error($message);
         } catch (ServerException $exception) {
             $message = $exception->getResponse()->getBody()->getContents();
-            $this->errorHandling('ServerException', $message, $exception, $throwExeptions);
+            $this->errorHandling('ServerException', $message, $exception, $throwExeptions, $ray);
         }
 
-        return $this->errorCheck($json, $throwExeptions);
+        return $this->errorCheck($json, $throwExeptions, $ray);
     }
 
-    private function errorHandling(?string $type = null, mixed $data = null, $exception = null, bool $die = true): void
+    private function errorHandling(?string $type = null, mixed $data = null, $exception = null, bool $die = true, bool $ray = true): void
     {
-        if (function_exists('ray')) {
+        if (function_exists('ray') && $ray) {
             $type = $type ? $type : 'Error';
             ray()
                 ->newScreen(sprintf('%s %s', $type, date('H:i:s')))
                 ->red();
-            if ($exception) {
+            if ($exception && $die) {
                 ray()->exception($exception)->hide();
             }
 
@@ -426,9 +428,7 @@ class ApiService
             }
 
             ray()->showApp();
-            if ($die) {
-                ray()->die(sprintf('%s, see ray app for more information', $type));
-            }
+            ray()->die(sprintf('%s, see ray app for more information', $type));
             return;
         }
 
@@ -445,7 +445,7 @@ class ApiService
         }
     }
 
-    private function errorCheck(array $array, bool $throwExeptions = true, string $title = 'Error'): ?array
+    private function errorCheck(array $array, bool $throwExeptions = true, string $title = 'Error', bool $ray = true): ?array
     {
         $error = isset($array['error']) ? $array['error'] : null;
         $errors = isset($array['errors']) ? $array['errors'] : null;
@@ -463,7 +463,7 @@ class ApiService
             $error = $errors;
         }
 
-        $this->errorHandling($title, $array, null, $throwExeptions);
+        $this->errorHandling($title, $array, null, $throwExeptions, $ray);
         return null;
     }
 }
