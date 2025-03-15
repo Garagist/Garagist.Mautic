@@ -35,8 +35,8 @@ class ApiService
     const ENDPOINT_SMSES = 'smses';
     const ENDPOINT_THEMES = 'themes';
 
-    #[Flow\InjectConfiguration]
-    protected array $settings;
+    #[Flow\InjectConfiguration('api')]
+    protected array $apiSettings;
 
     /**
      * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
@@ -50,61 +50,12 @@ class ApiService
     protected function initializeObject(): void
     {
         if (
-            !isset($this->settings['api']['baseUrl']) ||
-            !isset($this->settings['api']['userName']) ||
-            !isset($this->settings['api']['password'])
+            !isset($this->apiSettings['baseUrl']) ||
+            !isset($this->apiSettings['userName']) ||
+            !isset($this->apiSettings['password'])
         ) {
             throw new Exception('Mautic API settings are not correct');
         }
-    }
-
-    /**
-     * @param string $emailIdentifier
-     * @return void
-     *@throws NodeException|Exception
-     */
-    public function deleteEmail(string $emailIdentifier): void
-    {
-        $emailRecord = $this->findMauticRecordByEmailIdentifier($emailIdentifier);
-        if ($emailRecord) {
-            $response = $this->delete(self::ENDPOINT_EMAILS, $emailRecord['id']);
-            $this->mauticLogger->info(sprintf('Delete mautic record with identifier %s', $emailIdentifier));
-            $this->errorCheck($response);
-        }
-    }
-
-    /**
-     * @throws NodeException|Exception
-     * @return array
-     */
-    public function alterEmail(string $emailIdentifier, array $data): array
-    {
-        $emailRecord = $this->findMauticRecordByEmailIdentifier($emailIdentifier);
-
-        if ($emailRecord) {
-            //match found -> update
-            $response = $this->edit(self::ENDPOINT_EMAILS, $emailRecord['id'], $data);
-            $this->mauticLogger->info(sprintf('Edit mautic record with identifier %s', $emailIdentifier));
-        } else {
-            // no match found -> create
-            $response = $this->create(self::ENDPOINT_EMAILS, $data);
-            $this->mauticLogger->info(sprintf('Create new mautic record with identifier %s', $emailIdentifier));
-        }
-
-        $this->errorCheck($response, title: 'Error while altering email');
-
-        return $response;
-    }
-
-    /**
-     * @param string $emailIdentifier
-     * @return int|null
-     */
-    public function isEmailPublished(string $emailIdentifier): ?int
-    {
-        $emailRecord = $this->findMauticRecordByEmailIdentifier($emailIdentifier);
-
-        return $emailRecord['isPublished'] === true ? (int) $emailRecord['id'] : null;
     }
 
     /**
@@ -124,28 +75,6 @@ class ApiService
 
     /**
      * @param string $emailIdentifier
-     * @return array
-     * @throws Exception
-     */
-    public function sendEmail(string $emailIdentifier, $mauticIdentifier): array
-    {
-        $mauticIdentifier = $this->isEmailPublished($emailIdentifier);
-
-        if ($mauticIdentifier) {
-            //TODO: new contacts, that are in the same list, will be added as pending contacts at any point in time. Therefore it's hard to say when a send out is done
-            //array(3)
-            // string "success" (7) => integer 1
-            // string "sentCount" (9) => integer 0
-            // string "failedRecipients" (16) => integer 0
-
-            return $this->makeCall([self::ENDPOINT_EMAILS, $mauticIdentifier, 'send'], [], 'POST');
-        }
-
-        throw new Exception('Email could not be send because it does not exist or ist not published');
-    }
-
-    /**
-     * @param string $emailIdentifier
      * @param array $recipients
      * @return array
      * @throws Exception
@@ -155,10 +84,6 @@ class ApiService
         $emailRecord = $this->findMauticRecordByEmailIdentifier($emailIdentifier);
 
         if (!empty($emailRecord['id'])) {
-            //array(3)
-            // string "success" (7) => integer 1
-            // string "recipients" (16) => integer 0
-
             return $this->makeCall(
                 [self::ENDPOINT_EMAILS, $emailRecord['id'], 'example'],
                 ['recipients' => $recipients],
@@ -167,14 +92,6 @@ class ApiService
         }
 
         throw new Exception('TestEmail could not be send because it does not exist');
-    }
-
-    /**
-     * @return array
-     */
-    public function getAllSegments(): array
-    {
-        return $this->makeCall([self::ENDPOINT_CONTACTS, 'list/segments']);
     }
 
     /**
@@ -207,21 +124,9 @@ class ApiService
         }
 
         $data = [];
-        $hideFormIds = $this->settings['form']['hide'];
-
-        if (is_int($hideFormIds)) {
-            $hideFormIds = [$hideFormIds];
-        }
-
-        if (!is_array($hideFormIds)) {
-            $hideFormIds = [];
-        }
-
         foreach ($response['forms'] as $form) {
             $id = $form['id'];
-            if (!in_array($id, $hideFormIds)) {
-                $data[$id] = $form['name'];
-            }
+            $data[$id] = $form['name'];
         }
 
         return $data;
@@ -370,10 +275,10 @@ class ApiService
         }
 
         $method = strtoupper($method);
-        $endpoint = sprintf('%s/api/%s', rtrim($this->settings['api']['baseUrl'], '/'), ltrim($endpoint, '/'));
-        $userName = $this->settings['api']['userName'];
-        $password = $this->settings['api']['password'];
-        $ignoreHttpsErrors = $this->settings['api']['ignoreHttpsErrors'];
+        $endpoint = sprintf('%s/api/%s', rtrim($this->apiSettings['baseUrl'], '/'), ltrim($endpoint, '/'));
+        $userName = $this->apiSettings['userName'];
+        $password = $this->apiSettings['password'];
+        $ignoreHttpsErrors = $this->apiSettings['ignoreHttpsErrors'];
 
         $client = new Client(['verify' => !$ignoreHttpsErrors]);
         $options = [
@@ -410,8 +315,13 @@ class ApiService
         return $this->errorCheck($json, $throwExeptions, $ray);
     }
 
-    private function errorHandling(?string $type = null, mixed $data = null, $exception = null, bool $die = true, bool $ray = true): void
-    {
+    private function errorHandling(
+        ?string $type = null,
+        mixed $data = null,
+        $exception = null,
+        bool $die = true,
+        bool $ray = true
+    ): void {
         if (function_exists('ray') && $ray) {
             $type = $type ? $type : 'Error';
             ray()
@@ -445,8 +355,12 @@ class ApiService
         }
     }
 
-    private function errorCheck(array $array, bool $throwExeptions = true, string $title = 'Error', bool $ray = true): ?array
-    {
+    private function errorCheck(
+        array $array,
+        bool $throwExeptions = true,
+        string $title = 'Error',
+        bool $ray = true
+    ): ?array {
         $error = isset($array['error']) ? $array['error'] : null;
         $errors = isset($array['errors']) ? $array['errors'] : null;
 

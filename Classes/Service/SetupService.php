@@ -3,6 +3,7 @@
 namespace Garagist\Mautic\Service;
 
 use Carbon\Newsletter\Service\NodeService;
+use Carbon\Newsletter\Service\SettingService;
 use Carbon\Newsletter\Utils;
 use Garagist\Mautic\Service\ApiService;
 use Garagist\Mautic\Service\EmailService;
@@ -21,12 +22,16 @@ class SetupService
     #[Flow\Inject]
     protected EmailService $emailService;
 
+    #[Flow\Inject]
+    protected SettingService $settingService;
+
     protected array $fetchedForms = [];
     protected array $fetchedCampaigns = [];
     protected array $fetchedCategories = [];
     protected array $newsletterSystemConfig = [
-        'systemCategory' => null,
+        'categories' => [],
         'systemSegments' => [],
+        'newsletterSegment' => null,
     ];
 
     protected array $emails = [];
@@ -38,8 +43,6 @@ class SetupService
     protected string $typeOfContact = 'group';
 
     protected string $domain = '';
-
-    protected string $sender = '';
 
     /**
      * @var NodeInterface[]
@@ -60,33 +63,48 @@ class SetupService
         string $salutation,
         string $typeOfContact,
         string $domain,
-        string $sender,
-        array $nodes
+        array $nodes,
     ) {
         $this->language = $language;
         $this->salutation = $salutation;
         $this->typeOfContact = $typeOfContact;
         $this->domain = $domain;
-        $this->sender = $sender;
         $this->nodes = $nodes;
     }
 
     public function setCategories(): void
     {
         $this->fetchedCategories = $this->apiService->getList(ApiService::ENDPOINT_CATEGORIES)['categories'];
-        $systemId = $this->setCategory('system', '#d1ffcf');
-        $newsletterId = $this->setCategory('newsletter', '#cfd5ff');
-        $this->categories = [
-            'system' => $systemId,
-            'newsletter' => $newsletterId,
-        ];
-        $this->newsletterSystemConfig['systemCategory'] = $systemId;
+        $categoriesNames = $this->settingService->path('categories');
+
+        if (!isset($categoriesNames['system'])) {
+            $categoriesNames['system'] = 'system';
+        }
+        if (!isset($categoriesNames['newsletter'])) {
+            $categoriesNames['newsletter'] = 'newsletter';
+        }
+
+        $categories = [];
+        foreach ($categoriesNames as $key => $alias) {
+            $color = null;
+            switch ($key) {
+                case 'system':
+                    $color = '#d1ffcf';
+                    break;
+                case 'newsletter':
+                    $color = '#cfd5ff';
+                    break;
+            }
+            $categories[$key] = $this->setCategory($alias, $color);
+        }
+        $this->newsletterSystemConfig['categories'] = $categories;
+        $this->categories = $categories;
     }
 
     /**
      * Setup managed category in mautic
      */
-    private function setCategory(string $alias, string $color): int
+    private function setCategory(string $alias, ?string $color = null): int
     {
         foreach ($this->fetchedCategories as $category) {
             if ($category['alias'] == $alias) {
@@ -95,7 +113,7 @@ class SetupService
         }
 
         $data = [
-            'title' => Utils::translate(['category', $alias], $this->language),
+            'title' => Utils::translate(['category', $alias], $this->language, fallback: true),
             'alias' => $alias,
             'description' => Utils::translate(['category', $alias, 'description'], $this->language),
             'color' => $color,
@@ -112,25 +130,44 @@ class SetupService
     public function setSegments(): void
     {
         $fetchedSegments = $this->apiService->getList(ApiService::ENDPOINT_SEGMENTS);
-        $segmentNames = ['opt-in-pending', 'opt-in-confirmed', 'newsletter-default'];
+        $segmentNames = $this->settingService->path('segments');
+
+        if (!isset($segmentNames['optInPending'])) {
+            $segmentNames['optInPending'] = 'opt-in-pending';
+        }
+        if (!isset($segmentNames['optInConfirmed'])) {
+            $segmentNames['optInConfirmed'] = 'opt-in-confirmed';
+        }
+        if (!isset($segmentNames['newsletter'])) {
+            $segmentNames['newsletter'] = 'newsletter-default';
+        }
 
         $segments = [];
-        foreach ($fetchedSegments['lists'] as $segment) {
-            if (in_array($segment['alias'], $segmentNames)) {
-                $segments[$segment['alias']] = $segment;
+        foreach ($segmentNames as $key => $alias) {
+            $isSystemSegment = in_array($key, ['optInPending', 'optInConfirmed']);
+            // Get already existing segments
+            $segmentExists = false;
+            foreach ($fetchedSegments['lists'] as $segment) {
+                if ($segment['alias'] == $alias) {
+                    $segments[$key] = $segment;
+                    $segmentExists = true;
+                }
             }
-        }
 
-        foreach ($segmentNames as $key) {
-            if (!isset($segments[$key])) {
-                $category = $key == 'newsletter-default' ? 'newsletter' : 'system';
-                $segments[$key] = $this->segment($key, $category);
+            // Create segment if it does not exist
+            if (!$segmentExists) {
+                $category = $isSystemSegment ? 'system' : 'newsletter';
+                $segments[$key] = $this->segment($key, $alias, $category);
             }
-        }
 
-        // Save system segments into newsletter config
-        foreach(['opt-in-pending', 'opt-in-confirmed'] as $key) {
-            $this->newsletterSystemConfig['systemSegments'][$key] = $segments[$key]['id'];
+            // Save system segments into newsletter config
+            if ($isSystemSegment) {
+                $this->newsletterSystemConfig['systemSegments'][$key] = $segments[$key]['id'];
+            }
+            // Save newsletter segment into config
+            if ($key === 'newsletter') {
+                $this->newsletterSystemConfig['newsletterSegment'] = $segments[$key]['id'];
+            }
         }
 
         $this->segments = $segments;
@@ -139,16 +176,17 @@ class SetupService
     /**
      * Create a segment
      *
+     * @param string $key
      * @param string $alias
      * @param string $category
      * @return array
      */
-    private function segment(string $alias, string $category)
+    private function segment(string $key, string $alias, string $category)
     {
         $data = [
-            'name' => Utils::translate(['segment', $alias], $this->language),
+            'name' => Utils::translate(['segment', $key], $this->language, fallback: true),
             'alias' => $alias,
-            'description' => Utils::translate(['segment', $alias, 'description'], $this->language),
+            'description' => Utils::translate(['segment', $key, 'description'], $this->language),
             'isPublished' => true,
             'isPreferenceCenter' => $category !== 'system',
             'category' => $this->categories[$category],
@@ -342,41 +380,28 @@ class SetupService
      */
     public function setEmails(): void
     {
-        $subscribe = $this->emailService->call(
+        $emails = [];
+        // Newsletter emails
+        foreach (['subscribe', 'subscribeRepeat'] as $key) {
+            $emails[$key] = $this->setEmail($key, $this->categories['newsletter']);
+        }
+        // System emails
+        foreach (['settings', 'delete'] as $key) {
+            $emails[$key] = $this->setEmail($key, $this->categories['system']);
+        }
+
+        $this->emails = $emails;
+    }
+
+    private function setEmail(string $key, int $category): ?array
+    {
+        $node = $this->nodes['mail' . ucfirst($key)];
+        $node->setProperty('category', $category);
+        return $this->emailService->call(
             $this->domain,
-            $this->nodes['mailSubscribe'],
-            $this->categories['newsletter'],
-            $this->sender
+            $node,
+            $category,
         );
-
-
-        $subscribeRepeat = $this->emailService->call(
-            $this->domain,
-            $this->nodes['mailSubscribeRepeat'],
-            $this->categories['newsletter'],
-            $this->sender
-        );
-
-        $settings = $this->emailService->call(
-            $this->domain,
-            $this->nodes['mailSettings'],
-            $this->categories['system'],
-            $this->sender
-        );
-
-        $delete = $this->emailService->call(
-            $this->domain,
-            $this->nodes['mailDelete'],
-            $this->categories['system'],
-            $this->sender
-        );
-
-        $this->emails = [
-            'subscribe' => $subscribe,
-            'subscribeRepeat' => $subscribeRepeat,
-            'settings' => $settings,
-            'delete' => $delete,
-        ];
     }
 
     public function setCampaigns(): void
@@ -495,7 +520,7 @@ class SetupService
                 $this->createActionEventChangeList(
                     'newAddToNewsletterList',
                     'addToNewsletterList',
-                    add: ['newsletter-default']
+                    add: ['newsletter']
                 ),
                 $this->createConditionEventIsContactConfirmed('newCheckIsContactConfirmed'),
 
@@ -506,7 +531,7 @@ class SetupService
                 $this->createActionEventChangeList(
                     'newAddToUnconfirmedList',
                     'addToUnconfirmedList',
-                    add: ['opt-in-pending']
+                    add: ['optInPending']
                 ),
             ],
             'canvasSettings' => [
@@ -574,7 +599,7 @@ class SetupService
             'isPublished' => true,
             'allowRestart' => false,
             'sourceType' => 'lists',
-            'lists' => [$this->segments['opt-in-pending']],
+            'lists' => [$this->segments['optInPending']],
             'events' => [
                 $this->createConditionEventIsContactConfirmed('newCheckIsContactConfirmed'),
 
@@ -582,7 +607,7 @@ class SetupService
                 $this->createActionEventChangeList(
                     'newContactIsConfirmed',
                     'removeFromUnconfirmedList',
-                    remove: ['opt-in-pending']
+                    remove: ['optInPending']
                 ),
 
                 // If newCheckIsContactConfirmed is false
@@ -597,8 +622,8 @@ class SetupService
                 $this->createActionEventChangeList(
                     'newContactConfirmed',
                     'removeFromUnconfirmedList',
-                    add: ['opt-in-confirmed'],
-                    remove: ['opt-in-pending']
+                    add: ['optInConfirmed'],
+                    remove: ['optInPending']
                 ),
                 $this->createActionEventChangePoints('newAddPoints', 10),
 
@@ -613,8 +638,8 @@ class SetupService
                 $this->createActionEventChangeList(
                     'newContactConfirmedRepeat',
                     'removeFromUnconfirmedList',
-                    add: ['opt-in-confirmed'],
-                    remove: ['opt-in-pending']
+                    add: ['optInConfirmed'],
+                    remove: ['optInPending']
                 ),
                 $this->createActionEventChangePoints('newAddPointsRepeat', 5),
 
@@ -832,7 +857,7 @@ class SetupService
             'eventType' => 'condition',
             'type' => 'lead.segments',
             'properties' => [
-                'segments' => [$this->segments['opt-in-confirmed']['id']],
+                'segments' => [$this->segments['optInConfirmed']['id']],
             ],
         ]);
     }
@@ -966,7 +991,6 @@ class SetupService
             'name' => Utils::translate(['campaign.action', $translationKey], $this->language),
             'eventType' => 'action',
             'type' => 'lead.changepoints',
-            //'decisionPath' => 'yes',
             'properties' => [
                 'points' => $points,
             ],

@@ -281,7 +281,13 @@ class MauticCommandController extends CommandController
         $salutation = $informal ? 'informal' : 'formal';
         $typeOfContact = $singlePerson ? 'single' : 'group';
 
-        $service = new SetupService($language, $salutation, $typeOfContact, $domain, $sender, $nodes);
+        if ($sender) {
+            $nodes['container']->setProperty('globalSenderName', $sender);
+            sleep(1);
+            $this->successMessage('Set sender name to %s', [$sender]);
+        }
+
+        $service = new SetupService($language, $salutation, $typeOfContact, $domain, $nodes);
 
         if ($deleteThemes) {
             $this->deleteThemesCommand();

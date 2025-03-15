@@ -36,6 +36,7 @@ class EmailDataSource extends AbstractDataSource
 
         if (!$node) {
             return [
+                'id' => null,
                 'canCreate' => false,
                 'canUpdate' => false,
                 'canDelete' => false,
@@ -46,7 +47,10 @@ class EmailDataSource extends AbstractDataSource
 
         $ping = $this->apiService->ping();
         if (!$ping) {
+            sleep(8);
             return [
+                'id' => null,
+                'offline' => true,
                 'canCreate' => false,
                 'canUpdate' => false,
                 'canDelete' => false,
@@ -56,29 +60,47 @@ class EmailDataSource extends AbstractDataSource
         }
 
         $action = $arguments['action'] ?? null;
-        $segmentEmail = $arguments['segmentEmail'] ?? null;
-        $segmentEmail = $segmentEmail == 'true' ? true : false;
-
         if ($action === 'create' || $action === 'update') {
-            $email = $this->emailService->call($segmentEmail, $arguments['domain'], $node, allowSave: false);
-            $returnValue = [
+            $segmentIds = null;
+            $excludedSegmentIds = null;
+            $category = null;
+
+            $category = $node->getProperty('category') ?? null;
+
+            if ($node->getNodeType()->isOfType('Carbon.Newsletter:Document.Newsletter')) {
+                $rootNode = $fQ->closest('[instanceof Carbon.Newsletter:Mixin.Container]')->get(0);
+                $newsletterSystemConfig = $rootNode->getProperty('newsletterSystemConfig') ?? [];
+                $category = $category ?? $newsletterSystemConfig['categories']['newsletter'] ?? null;
+                $segmentsFromNode = $node->getProperty('segments') ?? [];
+                $segmentIds = count($segmentsFromNode)
+                    ? $segmentsFromNode
+                    : $newsletterSystemConfig['newsletterSegment'];
+                $excludedSegmentIds = $newsletterSystemConfig['systemSegments']['optInPending'] ?? null;
+            }
+
+            $email = $this->emailService->call(
+                $arguments['domain'],
+                $node,
+                $category,
+                segmentIds: $segmentIds,
+                excludedSegmentIds: $excludedSegmentIds
+            );
+            $id = $email['id'];
+
+            return [
+                'id' => $id,
+                'idle' => true,
                 'canCreate' => false,
                 'canUpdate' => false,
                 'canDelete' => true,
-                'message' => 'Carbon.Newsletter:NodeTypes.EmailDataSource:done.' . $action,
-                'messageType' => 'success',
             ];
-            if ($action === 'create') {
-                $returnValue['value'] = $email['id'];
-            }
-
-            return $returnValue;
         }
 
         if ($action === 'delete') {
-            $this->emailService->call($segmentEmail, $arguments['domain'], $node, mode: 'delete', allowSave: false);
+            $this->emailService->call($arguments['domain'], $node, mode: 'delete');
+
             return [
-                'value' => '',
+                'id' => null,
                 'canCreate' => true,
                 'canUpdate' => false,
                 'canDelete' => false,
