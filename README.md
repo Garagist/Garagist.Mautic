@@ -4,12 +4,7 @@
 [![GitHub license]][license] [![GitHub issues]][issues] [![GitHub forks]][network]
 
 This package makes it possible to **send personalized newsletters** from Neos with [Mautic], **include forms** from
-Mautic as a content element and add **Mautic tracking**. The forms are integrated via the Javascript API. All backend
-requests to Mautic are event-sourced. This ensures that the tasks are processed even if Mautic is not available.
-
-![Screenshot with the overview of emails](https://user-images.githubusercontent.com/4510166/192508665-7dded40f-34e4-4035-b794-ca42eb8f12f0.png)
-![Screenshot with the view of a document](https://user-images.githubusercontent.com/4510166/192508719-a5c3e5c0-4994-4e24-b989-0943cce25ec6.png)
-![Screenshot with the detail view of an email](https://user-images.githubusercontent.com/4510166/192508772-b8958a6b-fc75-4d78-8b4d-756395e4d8a5.png)
+Mautic as a content element and add **Mautic tracking**.
 
 ## Installation
 
@@ -20,13 +15,6 @@ composer require --no-update garagist/mautic
 ```
 
 The run `composer update` in your project root.
-
-Finally you need to run the following commands:
-
-```bash
-flow doctrine:migrate
-flow eventstore:setupall
-```
 
 ## Configure Mautic
 
@@ -61,42 +49,6 @@ Enable the Javascript tracking code from Mautic. By default it is set to `false`
 `hide` sets the IDs of the forms you want to hide in the inpsector. You can pass an array (eg. `[1, 2, 3]`) or an
 integer
 
-### `category` setting
-
-`newsletter` sets the ID of the category you want to use for the newsletters. Be aware that the category must exist in
-Mautic.
-
-### `testMail` setting
-
-`recipients` defines the email addresses you want to use for send test emails. You can pass an array (eg.
-`['test@mail.example', 'user@mail.example']`) or an string (eg. `'test@mail.example'`). Note that the
-[GaragistMauticApiBundle] plugin must be installed in your Mautic installation. Also the setting `action.test` need to
-set to `true`.
-
-### `segment` setting
-
-- `lockPrefilled` set if an segment is prefilled from the creation/edit dialog, the user can't unselect it. Defaults to
-  `true`
-- `mapping`: The ID of the segment to use for the newsletter. But you can also define an array/object to handle the
-  segment in your own data provider.
-- `choose`: Add here to segments to choose from on creation/edit dialog. You can pass an array (eg. `[1, 2, 3]`) or an
-  integer.
-- `hide`: Add here the IDs of the segments you want to hide (eg. for unconfirmed contacts). You can pass an array (eg.
-  `[1, 2, 3]`) or an integer.
-
-### `action` setting
-
-In this group you can enable/disable folwing actions:
-
-- `delete` Ability to delete emails, defaults to `true`
-- `publish` Ability to publish emails, defaults to `true`
-- `unpublish` Ability to unpublish emails, defaults to `true`
-- `send` Ability to send emails, defaults to `true`
-- `update` Ability to update emails, defaults to `true`
-- `edit` Ability to change subject, preview text and/or receiver, defaults to `true`
-- `test` Ability to send test (aka example) emails, defaults to `false`. You need to install the
-  [GaragistMauticApiBundle] plugin in your Mautic installation
-
 ## Personalization
 
 It is possible to send personalized emails. To use this, simply apply the following markup in the text on your page:
@@ -112,11 +64,6 @@ Availble fields are every field from contactfield, surounded by an # on both sid
 ### [Garagist.Mautic:Mixin.Email]
 
 Add this mixin to any document to enable the ability to send newsletter.
-
-### [Garagist.Mautic:Mixin.Category]
-
-Add this mixin to any document to define this as a category for newsletters. This is used in the overview of the
-newsletter module.
 
 ### [Garagist.Mautic:Mixin.Form]
 

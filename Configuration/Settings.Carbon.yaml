@@ -1,4 +1,3 @@
 Carbon:
   Newsletter:
-    placePreviewText: false
     system: 'mautic'
