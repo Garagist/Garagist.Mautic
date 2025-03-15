@@ -7,7 +7,6 @@
         "ext-intl": "*",
         "ext-json": "*",
         "neos/neos-ui": "^8.3",
-        "neos/event-sourcing": "^2.0",
         "neos/neos": "^8.3",
         "neos/fusion-form": "^2.0",
         "carbon/newsletter": "^0.1",

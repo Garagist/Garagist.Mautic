@@ -4,7 +4,6 @@ namespace Garagist\Mautic\Command;
 
 use Carbon\Newsletter\Service\NodeService;
 use Garagist\Mautic\Service\ApiService;
-use Garagist\Mautic\Service\MauticService;
 use Garagist\Mautic\Service\SetupService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
@@ -16,9 +15,6 @@ class MauticCommandController extends CommandController
 {
     #[Flow\Inject]
     protected ApiService $apiService;
-
-    #[Flow\Inject]
-    protected MauticService $mauticService;
 
     #[Flow\Inject]
     protected NodeService $nodeService;
