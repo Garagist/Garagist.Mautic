@@ -1,13 +1,3 @@
 'Carbon.Newsletter:Document.Newsletter':
   superTypes:
     'Garagist.Mautic:Mixin.Email': true
-  properties:
-    previewText:
-      ui:
-        inspector:
-          editorOptions:
-            backendModuleLink: >-
-              ClientEval:
-              "/neos/management/mautic/node?"
-              + encodeURIComponent("moduleArguments[node]")
-              + "=" + encodeURIComponent(node.contextPath.replace(/([^@]*)@([^;]*)/, '$1@live'))

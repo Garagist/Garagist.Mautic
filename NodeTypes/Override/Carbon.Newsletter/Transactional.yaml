@@ -1,0 +1,12 @@
+'Carbon.Newsletter:Document.Transactional':
+  superTypes:
+    'Garagist.Mautic:Mixin.Category': true
+
+'Carbon.Newsletter:Document.Transactional.Generated':
+  properties:
+    category:
+      ui:
+        inspector:
+          hidden: true
+          editorOptions:
+            disabled: true

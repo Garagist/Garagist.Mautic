@@ -1,4 +1,11 @@
 'Carbon.Newsletter:Mixin.Container':
+  ui:
+    inspector:
+      groups:
+        email:
+          icon: paper-plane
+          label: 'Garagist.Mautic:NodeTypes.Override.Container:groups.email'
+          position: 20
   options:
     template:
       childNodes:
@@ -9,10 +16,35 @@
               type: 'Garagist.Mautic:Mixin.Form'
         system:
           childNodes:
+            confirmed:
+              childNodes:
+                mail-subscribe:
+                  properties:
+                    globalSenderName: '${data.globalSenderName}'
+                mail-subscribe-repeat:
+                  properties:
+                    globalSenderName: '${data.globalSenderName}'
             settings:
               childNodes:
+                mail-settings:
+                  properties:
+                    globalSenderName: '${data.globalSenderName}'
                 main:
                   name: 'main'
                   childNodes:
                     form:
                       type: 'Garagist.Mautic:Mixin.Form'
+            deleted:
+              childNodes:
+                mail-delete:
+                  properties:
+                    globalSenderName: '${data.globalSenderName}'
+  properties:
+    globalSenderName:
+      type: string
+      ui:
+        label: 'Garagist.Mautic:NodeTypes.Override.Container:properties.globalSenderName'
+        showInCreationDialog: true
+        inspector:
+          group: email
+          position: 10

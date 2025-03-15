@@ -1,4 +1,8 @@
 'Carbon.Newsletter:Mixin.Email':
+  options:
+    template:
+      properties:
+        globalSenderName: '${Carbon.Newsletter.globalProperty(node, "globalSenderName")}'
   properties:
     id:
       ui:
@@ -6,3 +10,14 @@
           editorOptions:
             system: Mautic
             dataSource: garagist-mautic-email
+    globalSenderName:
+      type: string
+    senderName:
+      type: string
+      ui:
+        label: 'Garagist.Mautic:NodeTypes.Override.Email:properties.senderName'
+        inspector:
+          group: document
+          position: 210
+          editorOptions:
+            placeholder: 'ClientEval: node.properties.globalSenderName'
