@@ -4,6 +4,7 @@ namespace Garagist\Mautic\Service;
 
 use Carbon\Newsletter\Service\NodeService;
 use Carbon\Newsletter\Service\PersonalizationService;
+use Carbon\Newsletter\Service\UtmTagsService;
 use Carbon\Newsletter\Utils;
 use Garagist\Mautic\Service\ApiService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -21,6 +22,9 @@ class EmailService
 
     #[Flow\Inject]
     protected PersonalizationService $personalizationService;
+
+    #[Flow\Inject]
+    protected UtmTagsService $utmTagsService;
 
     #[Flow\InjectConfiguration('removeEmailIfNodeRemoved')]
     protected $removeEmailIfNodeRemoved;
@@ -144,6 +148,7 @@ class EmailService
             'emailType' => $emailType,
             'isPublished' => 1,
             'language' => $this->nodeService->getLanguage($node),
+            'utmTags' => $this->utmTagsService->getUtmTags($node),
             'dynamicContent' => [
                 [
                     'tokenName' => 'NodeIdentifier',
