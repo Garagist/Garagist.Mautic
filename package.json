@@ -1,35 +1,8 @@
 {
   "license": "UNLICENSED",
   "private": true,
-  "scripts": {
-    "build": "concurrently -r pnpm:build:*",
-    "build:js": "node build.mjs",
-    "build:css": "postcss Resources/Private/Assets/Backend.pcss --no-map -o Resources/Public/Backend/Styles.css",
-    "watch": "concurrently -r pnpm:watch:*",
-    "watch:js": "node build.mjs --watch",
-    "watch:css": "postcss Resources/Private/Assets/Backend.pcss --no-map -o Resources/Public/Backend/Styles.css -w",
-    "pipeline": "pnpm install --silent --non-interactive;pnpm build"
-  },
   "devDependencies": {
-    "@alpinejs/collapse": "^3.14.8",
-    "@alpinejs/focus": "^3.14.8",
     "@prettier/plugin-php": "^0.22.4",
-    "alpinejs": "^3.14.8",
-    "autoprefixer": "^10.4.20",
-    "concurrently": "^9.1.2",
-    "cssnano": "^7.0.6",
-    "esbuild": "^0.24.2",
-    "flatpickr": "^4.6.13",
-    "postcss": "^8.5.2",
-    "postcss-cli": "^11.0.0",
-    "postcss-import": "^16.1.0",
-    "prettier": "^3.5.1",
-    "tailwindcss": "^3.4.17",
-    "tippy.js": "^6.3.7"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
+    "prettier": "^3.5.3"
   }
 }
