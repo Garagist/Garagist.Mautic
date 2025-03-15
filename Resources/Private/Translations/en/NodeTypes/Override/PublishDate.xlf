@@ -3,14 +3,11 @@
     xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file original="" product-name="Garagist.Mautic" source-language="en" datatype="plaintext">
         <body>
-            <trans-unit id="publishDate.start" xml:space="preserve">
+            <trans-unit id="properties.publishDate" xml:space="preserve">
                 <source>Start broadcast date</source>
             </trans-unit>
-            <trans-unit id="publishDate.range" xml:space="preserve">
+            <trans-unit id="propertis.publishDateRange" xml:space="preserve">
                 <source>Broadcast time range</source>
-            </trans-unit>
-            <trans-unit id="mauticIsOffline" xml:space="preserve">
-                <source>Mautic is offline, please try again later</source>
             </trans-unit>
         </body>
     </file>
