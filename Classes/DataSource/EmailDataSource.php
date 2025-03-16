@@ -2,6 +2,7 @@
 
 namespace Garagist\Mautic\DataSource;
 
+use Carbon\Newsletter\Service\NodeService;
 use Carbon\Newsletter\Service\VariantEmailService;
 use Garagist\Mautic\Service\ApiService;
 use Garagist\Mautic\Service\EmailService;
@@ -25,6 +26,9 @@ class EmailDataSource extends AbstractDataSource
 
     #[Flow\Inject]
     protected ApiService $apiService;
+
+    #[Flow\Inject]
+    protected NodeService $nodeService;
 
     #[Flow\InjectConfiguration('emailAutomatation')]
     protected $emailAutomatation;
@@ -53,9 +57,7 @@ class EmailDataSource extends AbstractDataSource
         }
 
         $action = $arguments['action'] ?? null;
-
-        $fQ = new FlowQuery([$node]);
-        $node = $fQ->context(['workspaceName' => 'live'])->get(0);
+        $node = $this->nodeService->getLiveNode($node);
 
         if (!$node || $action == 'publishFirst') {
             if ($this->emailAutomatation['create']) {
