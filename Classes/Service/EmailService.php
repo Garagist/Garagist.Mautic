@@ -5,15 +5,21 @@ namespace Garagist\Mautic\Service;
 use Carbon\Newsletter\Service\NodeService;
 use Carbon\Newsletter\Service\PersonalizationService;
 use Carbon\Newsletter\Service\UtmTagsService;
+use Carbon\Newsletter\Service\VariantEmailService;
 use Carbon\Newsletter\Utils;
 use Garagist\Mautic\Service\ApiService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
+use DateTime;
 
 #[Flow\Scope('singleton')]
 class EmailService
 {
+    const NEOS_DATA_TOKEN = 'NeosData';
+    const MAUTIC_EMAIL_DATE_FORMAT = 'Y-m-d H:i:s';
+
     #[Flow\Inject]
     protected ApiService $apiService;
 
@@ -26,17 +32,38 @@ class EmailService
     #[Flow\Inject]
     protected UtmTagsService $utmTagsService;
 
-    #[Flow\InjectConfiguration('removeEmailIfNodeRemoved')]
-    protected $removeEmailIfNodeRemoved;
+    #[Flow\Inject]
+    protected VariantEmailService $variantEmailService;
+
+    #[Flow\InjectConfiguration('emailAutomatation')]
+    protected $emailAutomatation;
 
     /**
-     * Check email
-     *
-     * @param NodeInterface $node
-     * @return array
+     * Check the status of the email node
      */
     public function emailCheck(NodeInterface $node): array
     {
+        // Check if the parent is published (if it is a variant email)
+        if ($this->variantEmailService->isVariantEmail($node)) {
+            $parentNodeIsPublished = false;
+            try {
+                $parentNodeIsPublished = !!$this->getEmail($node->findParentNode());
+            } catch (\Exception $e) {
+                // Do nothing
+            }
+            if (!$parentNodeIsPublished) {
+                return [
+                    'id' => null,
+                    'canDelete' => false,
+                    'canUpdate' => false,
+                    'canCreate' => false,
+                    'idle' => false,
+                    'parentNeedPublishFirst' => true,
+                ];
+            }
+        }
+
+        // Check if the email exists
         $email = $this->getEmail($node);
         if (!isset($email)) {
             return [
@@ -48,6 +75,7 @@ class EmailService
             ];
         }
 
+        // Get the lastest publication date of the document and content
         $fQ = new FlowQuery([$node]);
         $newestNode = $fQ
             ->children('[instanceof Neos.Neos:ContentCollection]')
@@ -56,7 +84,11 @@ class EmailService
             ->sort('_lastPublicationDateTime', 'DESC')
             ->get(0);
         $lastNodePublication = $newestNode->getLastPublicationDateTime()->getTimestamp();
-        $lastEmailModification = strtotime($email['dateModified']);
+
+        // On variant email the dateModified will not get updated, so we use the DynamicContent token
+        $lastEmailModification = strtotime($this->getNeosData($email, 'DateModified'));
+
+        // Compare the dates
         $canUpdate = $lastNodePublication > $lastEmailModification;
 
         return [
@@ -68,18 +100,40 @@ class EmailService
         ];
     }
 
-    public function nodeRemoved(NodeInterface $node): void
+    private function nodeEventCheck(NodeInterface $node, bool $checkLive = false, bool $checkRemoved = false, bool $checkVisible = false): bool
     {
-        if (!$this->removeEmailIfNodeRemoved) {
-           return;
+        if ($checkLive && $node->getWorkspace()->getName() !== 'live') {
+            return false;
         }
-        $email = $this->getEmail($node);
-        if ($email) {
-            $this->apiService->delete('emails', $email['id']);
+        if ($checkRemoved && $node->isRemoved()) {
+            return false;
+        }
+        if ($checkVisible && !$node->isVisible()) {
+            return false;
+        }
+
+        return $node->getNodeType()->isOfType('Carbon.Newsletter:Mixin.Email');
+    }
+
+    public function repositoryObjectsPersisted() {
+
+    }
+
+    public function afterNodePublishing(NodeInterface $node)
+    {
+        if (!$node->getNodeType()->isOfType('Carbon.Newsletter:Mixin.Email')) {
+            return;
+        }
+
+        if ($this->emailAutomatation['remove'] && $node->isRemoved()) {
+            $this->delete($node);
         }
     }
 
-    public function nodePropertyChanged(NodeInterface $node, $propertyName, $oldValue, $value): void
+    /**
+     * Adjust global sender name if changed on the container
+     */
+    public function nodePropertyChanged(NodeInterface $node, string $propertyName, mixed $oldValue, mixed $value): void
     {
         if ($propertyName !== 'globalSenderName' || !$node->getNodeType()->isOfType('Carbon.Newsletter:Mixin.Container')) {
             return;
@@ -92,45 +146,34 @@ class EmailService
     }
 
     /**
+     * Delete email
+     */
+    public function delete(NodeInterface $node): void
+    {
+        $email = $this->getEmail($node);
+        if ($email) {
+            $this->apiService->delete(ApiService::ENDPOINT_EMAILS, $email['id']);
+        }
+    }
+
+    /**
      * Create or edit email
      *
+     * @param NodeInterface $node
      * @param string $domain
-     * @param NodeInterface|null $node
      * @param integer|null $category
-     * @param string|null $from
-     * @param string|null $mode 'create' / 'edit' / delete. If null, it will be created if not exists, otherwise edited.
      * @param int[]|int|null $segmentIds
      * @param int[]|int|null $excludedSegmentIds
      * @return array|null
      */
     public function call(
+        NodeInterface $node,
         string $domain,
-        ?NodeInterface $node = null,
         ?int $category = null,
-        ?string $from = null,
-        ?string $mode = null,
         array|int|null $segmentIds = null,
-        array|int|null $excludedSegmentIds = null
+        array|int|null $excludedSegmentIds = null,
     ): ?array {
-        if (!$node) {
-            return null;
-        }
-
         $email = $this->getEmail($node);
-
-        if ($mode === 'delete') {
-            if ($email) {
-                $this->apiService->delete('emails', $email['id']);
-            }
-            return null;
-        }
-
-        if ($mode === 'edit' && !isset($email)) {
-            return null;
-        }
-        if ($mode === 'create' && isset($email)) {
-            return null;
-        }
 
         $preheaderText = $node->getProperty('previewText') ?: '';
         $emailType = isset($segmentIds) ? 'list' : 'template';
@@ -146,44 +189,75 @@ class EmailService
             'customHtml' => Utils::contentsFromUrl($this->nodeService->getNodeUri($node, $domain, 'email')),
             'template' => 'mautic_code_mode',
             'emailType' => $emailType,
-            'isPublished' => 1,
+            'isPublished' => !$node->isHidden(),
             'language' => $this->nodeService->getLanguage($node),
             'utmTags' => $this->utmTagsService->getUtmTags($node),
-            'dynamicContent' => [
-                [
-                    'tokenName' => 'NodeIdentifier',
-                    'content' => $this->getNodeIdentifier($node),
-                ],
-            ],
+            'fromName' => $node->getProperty('senderName') ?: $node->getProperty('globalSenderName') ?: null,
         ];
 
+        if (isset($category)) {
+            $data['category'] = $category;
+        }
+
+        $dynamicContentData = [
+            'NodeIdentifier' => $this->getNodeIdentifier($node),
+            'DateModified' => (new DateTime())->format(self::MAUTIC_EMAIL_DATE_FORMAT),
+        ];
+
+        $isVariantEmail = $this->variantEmailService->isVariantEmail($node);
+        if ($isVariantEmail) {
+            $parentNode = $this->variantEmailService->getParentEmailNode($node);
+            $dynamicContentData['ParentNodeIdentifier'] = $this->getNodeIdentifier($parentNode);
+            $parentEmail = $this->getEmail($parentNode);
+            if (!$parentEmail) {
+                return null;
+            }
+            $data['variantParent'] = $parentEmail['id'];
+            $data['variantSettings'] = [
+                'weight' => $node->getProperty('variantSettingsWeight'),
+                'winnerCriteria' => $node->getProperty('variantSettingsWinnerCriteria'),
+            ];
+        }
         if ($emailType === 'list') {
-            $publish = $this->getPublishDateRange($node);
+            $publish = $isVariantEmail ? [] : $this->generatePublishDateRange($node);
             $lists = is_array($segmentIds) ? $segmentIds : [$segmentIds];
             $excludedLists =
                 !isset($excludedSegmentIds) || is_array($excludedSegmentIds)
                     ? $excludedSegmentIds
                     : [$excludedSegmentIds];
-            $data = array_merge($data, $publish, [
+            $data = array_filter(array_merge($data, $publish, [
                 'lists' => $lists,
                 'excludedLists' => $excludedLists ?? [],
-            ]);
+            ]));
         }
 
-        if (isset($from)) {
-            $data['fromName'] = $from;
-        } else {
-            $data['fromName'] = $node->getProperty('senderName') ?: $node->getProperty('globalSenderName') ?: null;
-        }
-        if (isset($category)) {
-            $data['category'] = $category;
-        }
+        $data['dynamicContent'] = $this->generateNeosData($dynamicContentData, $email);
 
         if (isset($email)) {
-            return $this->apiService->edit('emails', $email['id'], $data)['email'];
+            $email = $this->apiService->edit(ApiService::ENDPOINT_EMAILS, $email['id'], $data)['email'];
+        } else {
+            $email = $this->apiService->create(ApiService::ENDPOINT_EMAILS, $data)['email'];
         }
 
-        return $this->apiService->create('emails', $data)['email'];
+        if ($isVariantEmail) {
+            $variantChildren = [$email['id']];
+            $parentEmailVariantChildren = $parentEmail['variantChildren'] ?? [];
+            foreach ($parentEmailVariantChildren as $value) {
+                if ($value['id'] !== $email['id']) {
+                    $variantChildren[] = $value['id'];
+                }
+            }
+
+            // We have to set dynamicContent, otherwise it will be overriden
+            $parentData = [
+                'variantChildren' => $variantChildren,
+                'dynamicContent' => $parentEmail['dynamicContent'],
+            ];
+
+            $this->apiService->edit(ApiService::ENDPOINT_EMAILS, $parentEmail['id'], $parentData);
+        }
+
+        return $email;
     }
 
     private function getNodeIdentifier(NodeInterface $node): string
@@ -203,31 +277,117 @@ class EmailService
         $emails = $this->apiService->getList(ApiService::ENDPOINT_EMAILS);
         $nodeIdentifier = $this->getNodeIdentifier($node);
 
+        $variants = [];
+
         foreach ($emails['emails'] as $email) {
-            $dynamicContent = $email['dynamicContent'];
-            foreach ($dynamicContent as $value) {
-                if ($value['tokenName'] === 'NodeIdentifier' && $value['content'] === $nodeIdentifier) {
-                    return $email;
+            $result = $this->compareNodeIdentifier($email, $nodeIdentifier);
+            if ($result) {
+                return $result;
+            }
+            if (isset($email['variantChildren']) && count($email['variantChildren'])) {
+                $variants = array_merge($variants, $email['variantChildren']);
+            }
+        }
+        $variantId = null;
+        foreach ($variants as $variant) {
+            $result = $this->compareNodeIdentifier($variant, $nodeIdentifier);
+            if ($result) {
+                $variantId = $result['id'];
+                break;
+            }
+        }
+        if (isset($variantId)) {
+            return $this->apiService->makeCall([ApiService::ENDPOINT_EMAILS, $variantId])['email'];
+        }
+
+        return null;
+    }
+
+    /**
+     * Return the email if the NodeIdentifier matches in the dynamicContent field
+     *
+     * @param array $email
+     * @param string $nodeIdentifier
+     * @return array|null
+     */
+    private function compareNodeIdentifier(array $email, string $nodeIdentifier): ?array
+    {
+        if ($this->getNeosData($email, 'NodeIdentifier') === $nodeIdentifier) {
+            return $email;
+        }
+        return null;
+    }
+
+    /**
+     * Return Neos data in the dynamic Content field as JSON
+     *
+     * @param array $data
+     * @param array|null $email
+     * @param string|null $key
+     * @return array
+     */
+    // private function generateNeosData(array $data, ?array $email = null, ?string $key = null): array
+    private function generateNeosData(array $data, ?array $email = null): array
+    {
+        $data['Label'] = 'Do not change or remove this field';
+        $dataAsString = json_encode($data);
+        $dynamicContent = $email['dynamicContent'] ?? [];
+        $hasToken = false;
+
+        if (count($dynamicContent)) {
+            foreach ($dynamicContent as $key => $value) {
+                if ($value['tokenName'] === self::NEOS_DATA_TOKEN) {
+                    $hasToken = true;
+                    $dynamicContent[$key]['content'] = $dataAsString;
+                    break;
                 }
+            }
+        }
+
+        if (!$hasToken) {
+            $dynamicContent[] = [
+                'tokenName' => self::NEOS_DATA_TOKEN,
+                'content' => $dataAsString,
+            ];
+        }
+
+        return $dynamicContent;
+    }
+
+    /**
+     * Get Neos data from the dynamic Content field
+     */
+    private function getNeosData(array $email, ?string $key = null): mixed
+    {
+        $dynamicContent = $email['dynamicContent'];
+        foreach ($dynamicContent as $value) {
+            if ($value['tokenName'] === self::NEOS_DATA_TOKEN) {
+                $data = json_decode($value['content'], true);
+                if (isset($key)) {
+                    return $data[$key] ?? null;
+                }
+                return $data;
             }
         }
         return null;
     }
 
-    private function getPublishDateRange(NodeInterface $node): array
+    /**
+     * Generate the publish date range
+     */
+    private function generatePublishDateRange(NodeInterface $node): array
     {
         $publishUp = $node->getProperty('publishDate');
         $publishDown = null;
-        $format = 'Y-m-d H:i';
         if ($publishUp) {
             $publishDown = clone $publishUp;
             $publishDateRange = $node->getProperty('publishDateRange');
             $amount = $publishDateRange['amount'] ?? null;
             $unit = $publishDateRange['unit'] ?? 'day';
-            $publishUp = $publishUp->format($format);
+            $publishUp = $publishUp->format(self::MAUTIC_EMAIL_DATE_FORMAT);
             if ($amount) {
                 $publishDown->modify(sprintf('+%s %s%s', $amount, $unit, $amount > 1 ? 's' : ''));
-                $publishDown = $publishDown->format($format);
+                $publishDown = $publishDown->format(self::MAUTIC_EMAIL_DATE_FORMAT);
             } elseif ($amount === 0) {
                 // If the amount is 0 we take the unit as the amount
                 // Example 0 hour == Till the next hour // 0 day == Till the next day
@@ -256,7 +416,7 @@ class EmailService
                         break;
                 }
 
-                $publishDown = $publishDown->format($format);
+                $publishDown = $publishDown->format(self::MAUTIC_EMAIL_DATE_FORMAT);
             } else {
                 $publishDown = null;
             }

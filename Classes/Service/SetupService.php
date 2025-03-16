@@ -398,8 +398,8 @@ class SetupService
         $node = $this->nodes['mail' . ucfirst($key)];
         $node->setProperty('category', $category);
         return $this->emailService->call(
-            $this->domain,
             $node,
+            $this->domain,
             $category,
         );
     }

@@ -4,6 +4,7 @@ namespace Garagist\Mautic;
 
 use Garagist\Mautic\Service\EmailService;
 use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Package\Package as BasePackage;
 
@@ -19,7 +20,7 @@ class Package extends BasePackage
     public function boot(Bootstrap $bootstrap)
     {
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
-        $dispatcher->connect(Node::class, 'nodeRemoved', EmailService::class, 'nodeRemoved');
         $dispatcher->connect(Node::class, 'nodePropertyChanged', EmailService::class, 'nodePropertyChanged');
+        $dispatcher->connect(Workspace::class, 'afterNodePublishing', EmailService::class, 'afterNodePublishing');
     }
 }

@@ -284,7 +284,7 @@ class MauticCommandController extends CommandController
         if ($sender) {
             $nodes['container']->setProperty('globalSenderName', $sender);
             sleep(1);
-            $this->successMessage('Set sender name to %s', [$sender]);
+            $this->successMessage('Set global sender name to %s', [$sender]);
         }
 
         $service = new SetupService($language, $salutation, $typeOfContact, $domain, $nodes);

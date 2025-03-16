@@ -10,4 +10,7 @@ Garagist:
     # Can be javascript, iframe, plain or api
     embedType: javascript
     apiRenderer: null
-    removeEmailIfNodeRemoved: true
+    emailAutomatation:
+      remove: true
+      create: true
+      update: true

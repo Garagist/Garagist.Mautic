@@ -59,42 +59,6 @@ class ApiService
     }
 
     /**
-     * @param string $emailIdentifier
-     * @return mixed|null
-     */
-    public function findMauticRecordByEmailIdentifier(string $emailIdentifier)
-    {
-        $match = $this->getList(self::ENDPOINT_EMAILS, search: $emailIdentifier);
-        if ($match['total'] === 1) {
-            //match found
-            return array_pop($match['emails']);
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string $emailIdentifier
-     * @param array $recipients
-     * @return array
-     * @throws Exception
-     */
-    public function sendTestEmail(string $emailIdentifier, array $recipients): array
-    {
-        $emailRecord = $this->findMauticRecordByEmailIdentifier($emailIdentifier);
-
-        if (!empty($emailRecord['id'])) {
-            return $this->makeCall(
-                [self::ENDPOINT_EMAILS, $emailRecord['id'], 'example'],
-                ['recipients' => $recipients],
-                'POST'
-            );
-        }
-
-        throw new Exception('TestEmail could not be send because it does not exist');
-    }
-
-    /**
      * Get a single form. Fails gracefully
      *
      * @param integer $id
@@ -290,7 +254,7 @@ class ApiService
 
         if (isset($parameters)) {
             // Call is a post request
-            if (in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'])) {
+            if (in_array($method, ['POST', 'PUT', 'PATCH'])) {
                 // We don't send files in the backend, the forms are handled by the frontend
                 $options[RequestOptions::HEADERS]['Content-Type'] = 'application/json';
                 $options[RequestOptions::JSON] = $parameters;
