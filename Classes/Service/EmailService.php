@@ -141,7 +141,7 @@ class EmailService
         $fQ = new FlowQuery([$node]);
         $nodes = $fQ->find('[instanceof Carbon.Newsletter:Mixin.Email]')->get();
         foreach ($nodes as $node) {
-            $node->setProperty('globalSenderName', $value);
+            $node->setProperty($propertyName, $value);
         }
     }
 
@@ -207,7 +207,6 @@ class EmailService
         $isVariantEmail = $this->variantEmailService->isVariantEmail($node);
         if ($isVariantEmail) {
             $parentNode = $this->variantEmailService->getParentEmailNode($node);
-            $dynamicContentData['ParentNodeIdentifier'] = $this->getNodeIdentifier($parentNode);
             $parentEmail = $this->getEmail($parentNode);
             if (!$parentEmail) {
                 return null;
