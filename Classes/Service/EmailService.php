@@ -100,25 +100,6 @@ class EmailService
         ];
     }
 
-    private function nodeEventCheck(NodeInterface $node, bool $checkLive = false, bool $checkRemoved = false, bool $checkVisible = false): bool
-    {
-        if ($checkLive && $node->getWorkspace()->getName() !== 'live') {
-            return false;
-        }
-        if ($checkRemoved && $node->isRemoved()) {
-            return false;
-        }
-        if ($checkVisible && !$node->isVisible()) {
-            return false;
-        }
-
-        return $node->getNodeType()->isOfType('Carbon.Newsletter:Mixin.Email');
-    }
-
-    public function repositoryObjectsPersisted() {
-
-    }
-
     public function afterNodePublishing(NodeInterface $node)
     {
         if (!$node->getNodeType()->isOfType('Carbon.Newsletter:Mixin.Email')) {
