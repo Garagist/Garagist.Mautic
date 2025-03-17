@@ -51,43 +51,31 @@ class EmailDataSource extends AbstractDataSource
                 'canCreate' => false,
                 'canUpdate' => false,
                 'canDelete' => false,
-                'message' => 'Carbon.Newsletter:NodeTypes.EmailDataSource:isOffline',
+                'message' => $this->getMessage('isOffline'),
                 'messageType' => 'error',
             ];
         }
 
         $action = $arguments['action'] ?? null;
-        $node = $this->nodeService->getLiveNode($node);
-
-        if (!$node || $action == 'publishFirst') {
-            if ($this->emailAutomatation['create']) {
-                $key = 'publishFirst.create';
-            } else if (!$node) {
-                $key = 'nodeNotLive';
-            } else {
-                $key = 'publishFirst';
-            }
-
-            return [
+        $liveNode = $this->nodeService->getLiveNode($node);
+        if (!$liveNode || $action == 'publishFirst') {
+            $returnValue = [
                 'id' => null,
                 'canCreate' => false,
                 'canUpdate' => false,
                 'canDelete' => false,
-                'message' => 'Carbon.Newsletter:NodeTypes.EmailDataSource:' . $key,
             ];
-        }
 
-        if ($action === 'create' || $action === 'update') {
-            $email = $this->createOrUpdate($node, $arguments['domain']);
-            $id = $email['id'];
-
-            return [
-                'id' => $id,
-                'idle' => true,
-                'canCreate' => false,
-                'canUpdate' => false,
-                'canDelete' => true,
-            ];
+            if ($this->emailAutomatation['create'] || $this->emailAutomatation['update']) {
+                $check = $this->emailService->emailCheck($node);
+                $key = $check['canCreate'] ? 'publishFirst.create' : 'publishFirst.update';
+            } else if ($liveNode) {
+                $key = 'nodeNotLive';
+            } else {
+                $key = 'publishFirst';
+            }
+            $returnValue['message'] = $this->getMessage($key);
+            return $returnValue;
         }
 
         if ($action === 'delete') {
@@ -98,8 +86,22 @@ class EmailDataSource extends AbstractDataSource
                 'canCreate' => true,
                 'canUpdate' => false,
                 'canDelete' => false,
-                'message' => 'Carbon.Newsletter:NodeTypes.EmailDataSource:done.delete',
+                'message' => $this->getMessage('done.delete'),
                 'messageType' => 'dark',
+            ];
+        }
+
+        $canDelete = !$this->emailAutomatation['create'];
+        if ($action === 'create' || $action === 'update') {
+            $email = $this->createOrUpdate($node, $arguments['domain']);
+            $id = $email['id'];
+
+            return [
+                'id' => $id,
+                'idle' => true,
+                'canCreate' => false,
+                'canUpdate' => false,
+                'canDelete' => $canDelete,
             ];
         }
 
@@ -107,24 +109,45 @@ class EmailDataSource extends AbstractDataSource
 
         if (($this->emailAutomatation['create'] && $check['canCreate']) || $this->emailAutomatation['update'] && $check['canUpdate']) {
             $email = $this->createOrUpdate($node, $arguments['domain']);
+            $message = $this->messageCheck($node, $check, false);
             return [
                 'id' => $email['id'],
-                'canDelete' => true,
+                'canDelete' => $canDelete,
                 'canUpdate' => false,
                 'canCreate' => false,
                 'idle' => true,
+                'message' => $message,
+                'messageType' => 'warn'
             ];
         }
 
-        if ($check['canUpdate']) {
-            $check['message'] = 'Carbon.Newsletter:NodeTypes.EmailDataSource:outdated';
+        $message = $this->messageCheck($node, $check, true);
+        if ($message) {
+            $check['message'] = $message;
             $check['messageType'] = 'warn';
         }
-        if ($check['parentNeedPublishFirst'] ?? false) {
-            $check['message'] = 'Carbon.Newsletter:NodeTypes.EmailDataSource:parentNeedPublishFirst';
-            $check['messageType'] = 'warn';
+
+        if ($check['canDelete']) {
+            $check['canDelete'] = $canDelete;
         }
         return $check;
+    }
+
+    private function messageCheck(NodeInterface $node, array $check, $canUpdateCheck = false): ?string
+    {
+        if ($check['parentNeedPublishFirst'] ?? false) {
+            return $this->getMessage('parentNeedPublishFirst');
+        } else if ($node->isHidden()) {
+            return $this->getMessage('isHidden');
+        } else if ($canUpdateCheck && $check['canUpdate']) {
+            return $this->getMessage('outdated');
+        }
+        return null;
+    }
+
+    private function getMessage($key): string
+    {
+        return 'Carbon.Newsletter:NodeTypes.EmailDataSource:' . $key;
     }
 
 
