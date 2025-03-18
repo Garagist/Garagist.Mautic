@@ -6,12 +6,10 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\RequestOptions;
-use Neos\ContentRepository\Exception\NodeException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Psr\Log\LoggerInterface;
 use Throwable;
-use function array_pop;
 use function in_array;
 use function sprintf;
 
