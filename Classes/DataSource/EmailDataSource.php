@@ -94,10 +94,12 @@ class EmailDataSource extends AbstractDataSource
         $canDelete = !$this->emailAutomatation['create'];
         if ($action === 'create' || $action === 'update') {
             $email = $this->createOrUpdate($node, $arguments['domain']);
-            $id = $email['id'];
+            if (!isset($email['id'])) {
+                return $this->returnReloadWindow();
+            }
 
             return [
-                'id' => $id,
+                'id' => $email['id'],
                 'idle' => true,
                 'canCreate' => false,
                 'canUpdate' => false,
@@ -110,6 +112,9 @@ class EmailDataSource extends AbstractDataSource
         if (($this->emailAutomatation['create'] && $check['canCreate']) || $this->emailAutomatation['update'] && $check['canUpdate']) {
             $email = $this->createOrUpdate($node, $arguments['domain']);
             $message = $this->messageCheck($node, $check, false);
+            if (!isset($email['id'])) {
+                return $this->returnReloadWindow();
+            }
             return [
                 'id' => $email['id'],
                 'canDelete' => $canDelete,
@@ -131,6 +136,19 @@ class EmailDataSource extends AbstractDataSource
             $check['canDelete'] = $canDelete;
         }
         return $check;
+    }
+
+    private function returnReloadWindow() {
+        return [
+            'id' => null,
+            'idle' => false,
+            'canCreate' => false,
+            'canUpdate' =>false,
+            'canDelete' => false,
+            'reloadWindow' => true,
+            'message' => $this->getMessage('error.reloadWindow'),
+            'messageType' => 'error',
+        ];
     }
 
     private function messageCheck(NodeInterface $node, array $check, $canUpdateCheck = false): ?string

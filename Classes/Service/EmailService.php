@@ -162,12 +162,19 @@ class EmailService
         $name = $node->getProperty('title');
         $subject = $node->getProperty('subject') ?: $name;
 
+        $plainText = Utils::contentsFromUrl($this->nodeService->getNodeUri($node, $domain, 'plaintext'));
+        $customHtml = Utils::contentsFromUrl($this->nodeService->getNodeUri($node, $domain, 'email'));
+
+        if (!isset($plainText) || !isset($customHtml)) {
+            return null;
+        }
+
         $data = [
             'name' => $name,
             'subject' => $this->personalizationService->mail($subject),
             'preheaderText' => $this->personalizationService->mail($preheaderText),
-            'plainText' => Utils::contentsFromUrl($this->nodeService->getNodeUri($node, $domain, 'plaintext')),
-            'customHtml' => Utils::contentsFromUrl($this->nodeService->getNodeUri($node, $domain, 'email')),
+            'plainText' => $plainText,
+            'customHtml' => $customHtml,
             'template' => 'mautic_code_mode',
             'emailType' => $emailType,
             'isPublished' => !$node->isHidden(),
