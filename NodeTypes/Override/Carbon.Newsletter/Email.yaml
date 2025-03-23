@@ -12,8 +12,12 @@
             dataSource: garagist-mautic-email
     globalSenderName:
       type: string
+      search:
+        indexing: false
     senderName:
       type: string
+      search:
+        indexing: false
       ui:
         label: 'Garagist.Mautic:NodeTypes.Override.Email:properties.senderName'
         inspector:

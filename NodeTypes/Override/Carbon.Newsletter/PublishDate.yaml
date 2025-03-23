@@ -5,6 +5,8 @@
         label: 'Garagist.Mautic:NodeTypes.Override.PublishDate:properties.publishDate'
     publishDateRange:
       type: array
+      search:
+        indexing: false
       defaultValue:
         amount: 0
         unit: 'day'

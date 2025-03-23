@@ -13,6 +13,8 @@
   properties:
     mauticFormId:
       type: integer
+      search:
+        indexing: false
       ui:
         label: i18n
         reloadPageIfChanged: true

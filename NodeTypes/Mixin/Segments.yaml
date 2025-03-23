@@ -8,6 +8,8 @@
   properties:
     segments:
       type: array
+      search:
+        indexing: false
       ui:
         label: i18n
         reloadPageIfChanged: true
