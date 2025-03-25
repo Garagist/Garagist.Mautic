@@ -301,7 +301,7 @@ class EmailService
      * @param NodeInterface $node
      * @return array|null
      */
-    private function getEmail(NodeInterface $node): ?array
+    public function getEmail(NodeInterface $node): ?array
     {
         $emails = $this->apiService->getList(ApiService::ENDPOINT_EMAILS);
         $nodeIdentifier = $this->getNodeIdentifier($node);

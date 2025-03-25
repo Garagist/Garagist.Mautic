@@ -69,7 +69,6 @@
         indexing: false
       ui:
         label: 'Garagist.Mautic:NodeTypes.Override.Container:properties.globalSenderName'
-        showInCreationDialog: true
         inspector:
           group: email
           position: 20
@@ -79,7 +78,6 @@
         indexing: false
       ui:
         label: 'Garagist.Mautic:NodeTypes.Override.Container:properties.globalSenderMail'
-        showInCreationDialog: true
         inspector:
           group: email
           position: 30

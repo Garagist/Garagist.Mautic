@@ -1,17 +1,32 @@
+'Carbon.Newsletter:Mixin.Email.Variant':
+  ui:
+    inspector:
+      views:
+        emailData:
+          viewOptions:
+            arguments:
+              variant: true
+
 'Carbon.Newsletter:Mixin.Email':
+  ui:
+    inspector:
+      views:
+        emailData:
+          group: document
+          position: 'start 999'
+          view: 'Carbon.Newsletter/EmailView'
+          viewOptions:
+            dataSource: garagist-mautic-email
+            arguments:
+              system: Mautic
+              testEmailDataSource: garagist-mautic-test-email
+              reportDataSource: garagist-mautic-email-report
   options:
     template:
       properties:
         globalSenderName: '${Carbon.Newsletter.globalProperty(node, "globalSenderName")}'
         globalSenderMail: '${Carbon.Newsletter.globalProperty(node, "globalSenderMail")}'
   properties:
-    id:
-      ui:
-        inspector:
-          editorOptions:
-            system: Mautic
-            dataSource: garagist-mautic-email
-            testEmailDataSource: garagist-mautic-test-email
     globalSenderName:
       type: string
       search:
