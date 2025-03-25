@@ -93,7 +93,7 @@ class EmailDataSource extends AbstractDataSource
 
         $canDelete = !$this->emailAutomatation['create'];
         if ($action === 'create' || $action === 'update') {
-            $email = $this->createOrUpdate($node, $arguments['domain']);
+            $email = $this->createOrUpdate($liveNode, $arguments['domain']);
             if (!isset($email['id'])) {
                 return $this->returnReloadWindow();
             }
@@ -110,11 +110,11 @@ class EmailDataSource extends AbstractDataSource
         $check = $this->emailService->emailCheck($node);
 
         if (($this->emailAutomatation['create'] && $check['canCreate']) || $this->emailAutomatation['update'] && $check['canUpdate']) {
-            $email = $this->createOrUpdate($node, $arguments['domain']);
-            $message = $this->messageCheck($node, $check, false);
+            $email = $this->createOrUpdate($liveNode, $arguments['domain']);
             if (!isset($email['id'])) {
                 return $this->returnReloadWindow();
             }
+            $message = $this->messageCheck($node, $check, false);
             return [
                 'id' => $email['id'],
                 'canDelete' => $canDelete,
@@ -169,7 +169,7 @@ class EmailDataSource extends AbstractDataSource
     }
 
 
-    private function createOrUpdate(NodeInterface $node, $domain): array
+    private function createOrUpdate(NodeInterface $node, $domain): ?array
     {
         $segmentIds = null;
         $excludedSegmentIds = null;
