@@ -10,6 +10,7 @@
           editorOptions:
             system: Mautic
             dataSource: garagist-mautic-email
+            testEmailDataSource: garagist-mautic-test-email
     globalSenderName:
       type: string
       search:

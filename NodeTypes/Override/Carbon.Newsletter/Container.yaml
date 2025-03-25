@@ -1,4 +1,6 @@
 'Carbon.Newsletter:Mixin.Container':
+  superTypes:
+    'Carbon.Newsletter:Mixin.TestEmailRecipients': true
   ui:
     inspector:
       groups:
@@ -49,4 +51,8 @@
         showInCreationDialog: true
         inspector:
           group: email
-          position: 10
+    testEmailRecipients:
+      ui:
+        inspector:
+          group: email
+          position: 100
