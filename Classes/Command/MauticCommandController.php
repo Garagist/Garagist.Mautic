@@ -126,13 +126,12 @@ class MauticCommandController extends CommandController
         ]);
         $informal = $this->output->askConfirmation(' Do you want to use informal language? [y/<info>N</info>] ', false);
         $singlePerson = $this->output->askConfirmation(' Is the sender a single person? [y/<info>N</info>] ', false);
-        $sender = $this->output->ask(' What is the name of the sender? (optional) ');
         $this->outputLine('');
         $this->outputLine('');
         $this->outputLine(' Thank you for your input. Let me setup Mautic for you.');
         $this->outputLine('');
         $this->outputLine('');
-        $this->setupWithNode($domain, $nodes, $language, $informal, $singlePerson, $deleteThemes, $sender);
+        $this->setupWithNode($domain, $nodes, $language, $informal, $singlePerson, $deleteThemes);
     }
 
     /**
@@ -266,7 +265,6 @@ class MauticCommandController extends CommandController
      * @param boolean $informal
      * @param boolean $singlePerson
      * @param boolean $deleteThemes
-     * @param string|null $sender
      * @return void
      */
     private function setupWithNode(
@@ -276,16 +274,9 @@ class MauticCommandController extends CommandController
         bool $informal,
         bool $singlePerson,
         bool $deleteThemes,
-        ?string $sender = null
     ): void {
         $salutation = $informal ? 'informal' : 'formal';
         $typeOfContact = $singlePerson ? 'single' : 'group';
-
-        if ($sender) {
-            $nodes['container']->setProperty('globalSenderName', $sender);
-            sleep(1);
-            $this->successMessage('Set global sender name to %s', [$sender]);
-        }
 
         $service = new SetupService($language, $salutation, $typeOfContact, $domain, $nodes);
 
@@ -326,7 +317,6 @@ class MauticCommandController extends CommandController
      * @param bool $singlePerson Sender is a single person
      * @param bool $group Sender is a group, e.g. a company or organization. Wins over --single-person
      * @param bool $deleteAllThemes Delete all themes
-     * @param string|null $sender The name of the sender e.g. John Doe
      * @return void
      */
     public function setupCommand(
@@ -338,7 +328,6 @@ class MauticCommandController extends CommandController
         ?bool $singlePerson = null,
         ?bool $group = null,
         ?bool $deleteAllThemes = null,
-        ?string $sender = null
     ): void {
         if (!in_array($language, ['de', 'en'])) {
             throw new InvalidArgumentException('Please provide a valid language (de or en)');
@@ -392,6 +381,6 @@ class MauticCommandController extends CommandController
 
         $nodes = $this->getNewsletterNodes($newsletterNode);
 
-        $this->setupWithNode($domain, $nodes, $language, $informal, $singlePerson, $deleteAllThemes, $sender);
+        $this->setupWithNode($domain, $nodes, $language, $informal, $singlePerson, $deleteAllThemes);
     }
 }
