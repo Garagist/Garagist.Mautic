@@ -7,9 +7,21 @@
                 <source>Email settings</source>
                 <target>E-Mail Einstellungen</target>
             </trans-unit>
+            <trans-unit id="properties.senderEmails" xml:space="preserve">
+                <source>Possible sender addresses</source>
+                <target>Mögliche Absenderadressen</target>
+            </trans-unit>
+            <trans-unit id="properties.senderEmails.add" xml:space="preserve">
+                <source>Add email address</source>
+                <target>E-Mail Adresse hinzufügen</target>
+            </trans-unit>
             <trans-unit id="properties.globalSenderName" xml:space="preserve">
                 <source>Global sender name</source>
                 <target>Globaler Absender Name</target>
+            </trans-unit>
+            <trans-unit id="properties.globalSenderMail" xml:space="preserve">
+                <source>Global sender email address</source>
+                <target>Globale Absender-E-Mail-Adresse</target>
             </trans-unit>
         </body>
     </file>

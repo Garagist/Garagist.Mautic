@@ -23,14 +23,17 @@
                 mail-subscribe:
                   properties:
                     globalSenderName: '${data.globalSenderName}'
+                    globalSenderMail: '${data.globalSenderMail}'
                 mail-subscribe-repeat:
                   properties:
                     globalSenderName: '${data.globalSenderName}'
+                    globalSenderMail: '${data.globalSenderMail}'
             settings:
               childNodes:
                 mail-settings:
                   properties:
                     globalSenderName: '${data.globalSenderName}'
+                    globalSenderMail: '${data.globalSenderMail}'
                 main:
                   name: 'main'
                   childNodes:
@@ -41,7 +44,25 @@
                 mail-delete:
                   properties:
                     globalSenderName: '${data.globalSenderName}'
+                    globalSenderMail: '${data.globalSenderMail}'
   properties:
+    senderEmails:
+      type: repeatable
+      search:
+        indexing: false
+      ui:
+        label: 'Garagist.Mautic:NodeTypes.Override.Container:properties.senderEmails'
+        inspector:
+          group: email
+          position: 10
+          editorOptions:
+            buttonAddLabel: 'Garagist.Mautic:NodeTypes.Override.Container:properties.senderEmails.add'
+            properties:
+              email:
+                type: 'string'
+                validation:
+                  Neos.Neos/Validation/NotEmptyValidator: {}
+                  Neos.Neos/Validation/EmailAddressValidator: {}
     globalSenderName:
       type: string
       search:
@@ -51,6 +72,21 @@
         showInCreationDialog: true
         inspector:
           group: email
+          position: 20
+    globalSenderMail:
+      type: string
+      search:
+        indexing: false
+      ui:
+        label: 'Garagist.Mautic:NodeTypes.Override.Container:properties.globalSenderMail'
+        showInCreationDialog: true
+        inspector:
+          group: email
+          position: 30
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            allowEmpty: true
+            values: 'ClientEval: node.properties.senderEmails.map(({email}) => ({ label: email, value: email}))'
     testEmailRecipients:
       ui:
         inspector:

@@ -6,8 +6,17 @@
             <trans-unit id="groups.email" xml:space="preserve">
                 <source>Email settings</source>
             </trans-unit>
+            <trans-unit id="properties.senderEmails" xml:space="preserve">
+                <source>Possible sender addresses</source>
+            </trans-unit>
+            <trans-unit id="properties.senderEmails.add" xml:space="preserve">
+                <source>Add email address</source>
+            </trans-unit>
             <trans-unit id="properties.globalSenderName" xml:space="preserve">
                 <source>Global sender name</source>
+            </trans-unit>
+            <trans-unit id="properties.globalSenderMail" xml:space="preserve">
+                <source>Global sender email address</source>
             </trans-unit>
         </body>
     </file>

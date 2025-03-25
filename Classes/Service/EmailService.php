@@ -116,9 +116,10 @@ class EmailService
      */
     public function nodePropertyChanged(NodeInterface $node, string $propertyName, mixed $oldValue, mixed $value): void
     {
-        if ($propertyName !== 'globalSenderName' || !$node->getNodeType()->isOfType('Carbon.Newsletter:Mixin.Container')) {
+        if ($oldValue == $value || !in_array($propertyName, ['globalSenderMail', 'globalSenderName']) || !$node->getNodeType()->isOfType('Carbon.Newsletter:Mixin.Container')) {
             return;
         }
+
         $fQ = new FlowQuery([$node]);
         $nodes = $fQ->find('[instanceof Carbon.Newsletter:Mixin.Email]')->get();
         foreach ($nodes as $node) {
@@ -181,6 +182,8 @@ class EmailService
             'language' => $this->nodeService->getLanguage($node),
             'utmTags' => $this->utmTagsService->getUtmTags($node),
             'fromName' => $node->getProperty('senderName') ?: $node->getProperty('globalSenderName') ?: null,
+            'fromAddress' => $node->getProperty('senderMail') ?: $node->getProperty('globalSenderMail') ?: null,
+            'replyToAddress' => $node->getProperty('replyToMail') ?: null,
         ];
 
         if (isset($category)) {
@@ -245,6 +248,45 @@ class EmailService
         }
 
         return $email;
+    }
+
+    /**
+     * Send test email
+     *
+     * @param NodeInterface $node
+     * @param array $recipients
+     * @param int $contactId
+     * @return array
+     */
+    public function sendTestEmail(NodeInterface $node, array $recipients, int $contactId): array
+    {
+        $email = $this->getEmail($node);
+        if (!$email) {
+            return [
+                'success' => false,
+                'error' => 'notPublished',
+            ];
+        }
+        try {
+            $this->apiService->makeCall([ApiService::ENDPOINT_EMAILS, $email['id'], 'example'], ['recipients' => $recipients, 'contactId' => $contactId], 'POST', true, false);
+            return [
+                'success' => true,
+                'error' => false,
+            ];
+        } catch (\Throwable $th) {
+            $message = $th->getMessage();
+            $message = json_decode($message, true);
+            if (isset($message['errors'][0]['message'])) {
+                return [
+                    'success' => false,
+                    'error' => $message['errors'][0]['message'],
+                ];
+            }
+            return [
+                'success' => false,
+                'error' => 'send',
+            ];
+        }
     }
 
     private function getNodeIdentifier(NodeInterface $node): string

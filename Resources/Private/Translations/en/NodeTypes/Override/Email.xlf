@@ -6,6 +6,12 @@
             <trans-unit id="properties.senderName" xml:space="preserve">
                 <source>Sender name</source>
             </trans-unit>
+            <trans-unit id="properties.senderMail" xml:space="preserve">
+                <source>Sender email address</source>
+            </trans-unit>
+            <trans-unit id="properties.replyToMail" xml:space="preserve">
+                <source>Reply email address</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

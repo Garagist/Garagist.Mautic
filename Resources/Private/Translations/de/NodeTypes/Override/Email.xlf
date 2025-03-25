@@ -7,6 +7,14 @@
                 <source>Sender name</source>
                 <target>Absender Name</target>
             </trans-unit>
+            <trans-unit id="properties.senderMail" xml:space="preserve">
+                <source>Sender email address</source>
+                <target>Absender E-Mail Adresse</target>
+            </trans-unit>
+            <trans-unit id="properties.replyToMail" xml:space="preserve">
+                <source>Reply email address</source>
+                <target>Antwort E-Mail Adresse</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
