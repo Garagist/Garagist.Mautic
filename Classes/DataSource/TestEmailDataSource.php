@@ -55,7 +55,7 @@ class TestEmailDataSource extends AbstractDataSource
     {
         if (!isset($arguments['recipients']) || !isset($arguments['contactId'])) {
             return [
-                'message' => 'Carbon.Newsletter:NodeTypes.TestEmail.error.missingParameter',
+                'message' => 'Carbon.Newsletter:EmailView:test.error.missingParameter',
                 'messageType' => 'error'
             ];
         }
@@ -63,7 +63,7 @@ class TestEmailDataSource extends AbstractDataSource
         $result = $this->emailService->sendTestEmail($node, $arguments['recipients'], $arguments['contactId']);
         if ($result['error'] ?? false) {
             if (in_array($result['error'], ['send', 'notPublished'])) {
-                $result['error'] = sprintf('Carbon.Newsletter:NodeTypes.TestEmail.error.%s', $result['error']);
+                $result['error'] = sprintf('Carbon.Newsletter:EmailView:test.error.%s', $result['error']);
             }
 
             return [
@@ -73,7 +73,7 @@ class TestEmailDataSource extends AbstractDataSource
         }
 
         return [
-            'message' => 'Carbon.Newsletter:NodeTypes.TestEmail.success',
+            'message' => 'Carbon.Newsletter:EmailView:test.success',
             'messageType' => 'success'
         ];
     }

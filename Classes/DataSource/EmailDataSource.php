@@ -165,7 +165,7 @@ class EmailDataSource extends AbstractDataSource
 
     private function getMessage($key): string
     {
-        return 'Carbon.Newsletter:NodeTypes.EmailDataSource:' . $key;
+        return 'Carbon.Newsletter:EmailView:' . $key;
     }
 
 
