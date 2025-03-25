@@ -32,8 +32,7 @@ class SegmentsDataSource extends AbstractDataSource
             return [];
         }
         $fQ = new FlowQuery([$node]);
-        $containerNode = $fQ->closest('[instanceof Carbon.Newsletter:Mixin.Container]')->get(0);
-        $config = $containerNode->getProperty('newsletterSystemConfig');
+        $config = $fQ->closest('[instanceof Carbon.Newsletter:Mixin.Container]')->property('newsletterSystemConfig');
         $systemSegments = $config['systemSegments'] ?? [];
         $result = [];
         $segments = $this->apiService->getList(ApiService::ENDPOINT_SEGMENTS);
