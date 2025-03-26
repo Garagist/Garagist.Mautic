@@ -146,6 +146,7 @@ class EmailService
      * @param integer|null $category
      * @param int[]|int|null $segmentIds
      * @param int[]|int|null $excludedSegmentIds
+     * @param bool $mjml
      * @return array|null
      */
     public function call(
@@ -154,6 +155,7 @@ class EmailService
         ?int $category = null,
         array|int|null $segmentIds = null,
         array|int|null $excludedSegmentIds = null,
+        bool $mjml = false,
     ): ?array {
         $email = $this->getEmail($node);
 
@@ -185,6 +187,11 @@ class EmailService
             'fromAddress' => $node->getProperty('senderMail') ?: $node->getProperty('globalSenderMail') ?: null,
             'replyToAddress' => $node->getProperty('replyToMail') ?: null,
         ];
+
+        if ($mjml) {
+            $data['grapesjsbuilder'] = Utils::contentsFromUrl($this->nodeService->getNodeUri($node, $domain, 'mjml'));
+            $data['template'] = 'blank';
+        }
 
         if (isset($category)) {
             $data['category'] = $category;
