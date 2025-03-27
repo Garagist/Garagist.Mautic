@@ -43,8 +43,9 @@ class EmailService
      */
     public function emailCheck(NodeInterface $node): array
     {
+        $isVariantEmail = $this->variantEmailService->isVariantEmail($node);
         // Check if the parent is published (if it is a variant email)
-        if ($this->variantEmailService->isVariantEmail($node)) {
+        if ($isVariantEmail) {
             $parentNodeIsPublished = false;
             try {
                 $parentNodeIsPublished = !!$this->getEmail($node->findParentNode());
@@ -91,12 +92,18 @@ class EmailService
         // Compare the dates
         $canUpdate = $lastNodePublication > $lastEmailModification;
 
+        // Get the stats of the email
+        $sentCount = $email[$isVariantEmail ? 'variantSentCount' : 'sentCount'] ?: 0;
+        $readCount = $email[$isVariantEmail ? 'variantReadCount' : 'readCount'] ?: 0;
+
         return [
             'id' => $email['id'],
             'canDelete' => true,
             'canUpdate' => $canUpdate,
             'canCreate' => false,
             'idle' => !$canUpdate,
+            'sentCount' => $sentCount,
+            'readCount' => $readCount,
         ];
     }
 

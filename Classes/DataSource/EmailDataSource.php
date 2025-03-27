@@ -98,13 +98,13 @@ class EmailDataSource extends AbstractDataSource
                 return $this->returnReloadWindow();
             }
 
-            return [
+            return array_merge([
                 'id' => $email['id'],
                 'idle' => true,
                 'canCreate' => false,
                 'canUpdate' => false,
                 'canDelete' => $canDelete,
-            ];
+            ], $this->getStats($node, $email));
         }
 
         $check = $this->emailService->emailCheck($node);
@@ -115,7 +115,7 @@ class EmailDataSource extends AbstractDataSource
                 return $this->returnReloadWindow();
             }
             $message = $this->messageCheck($node, $check, false);
-            return [
+            return array_merge([
                 'id' => $email['id'],
                 'canDelete' => $canDelete,
                 'canUpdate' => false,
@@ -123,7 +123,7 @@ class EmailDataSource extends AbstractDataSource
                 'idle' => true,
                 'message' => $message,
                 'messageType' => 'warn'
-            ];
+            ], $this->getStats($node, $email));
         }
 
         $message = $this->messageCheck($node, $check, true);
@@ -136,6 +136,15 @@ class EmailDataSource extends AbstractDataSource
             $check['canDelete'] = $canDelete;
         }
         return $check;
+    }
+
+    private function getStats(NodeInterface $node, array $email): array
+    {
+        $isVariantEmail = $this->variantEmailService->isVariantEmail($node);
+        return [
+            'sentCount' => $email[$isVariantEmail ? 'variantSentCount' : 'sentCount'] ?: 0,
+            'readCount' => $email[$isVariantEmail ? 'variantReadCount' : 'readCount'] ?: 0,
+        ];
     }
 
     private function returnReloadWindow() {
