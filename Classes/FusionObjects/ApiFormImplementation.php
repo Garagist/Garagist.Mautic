@@ -18,14 +18,24 @@ class ApiFormImplementation extends AbstractFusionObject
     {
         $id = (int) $this->fusionValue('id');
         $url = $this->fusionValue('url');
+        $username = $this->fusionValue('username');
+        $password = $this->fusionValue('password');
 
-        if (!isset($id) || !$url) {
+        if (!isset($id) || !$url || !$username || !$password) {
             return [];
         }
 
-        $data = $this->apiService->getForm($id);
+        $apiSettings = [
+            'url' => $url,
+            'username' => $username,
+            'password' => $password,
+        ];
 
-        if (!$data || !isset($data['fields'])) {
+        $data = $this->apiService->makeCall([ApiService::ENDPOINT_FORMS, $id], throwExeptions: false, apiSettings: $apiSettings);
+
+        if (isset($data['form']) && $data['form']['isPublished'] && isset($data['form']['fields'])) {
+            $data = $data['form'];
+        } else {
             return [];
         }
 

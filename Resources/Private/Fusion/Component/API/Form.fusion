@@ -2,4 +2,7 @@ prototype(Garagist.Mautic:API.Form) {
     @class = 'Garagist\\Mautic\\FusionObjects\\ApiFormImplementation'
 
     id = null
+    url = null
+    username = null
+    password = null
 }

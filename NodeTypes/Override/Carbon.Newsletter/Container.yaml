@@ -90,3 +90,39 @@
         inspector:
           group: email
           position: 100
+    mauticSettings:
+      type: repeatable
+      search:
+        indexing: false
+      ui:
+        label: 'Garagist.Mautic:NodeTypes.Override.Container:properties.mauticSettings'
+        inspector:
+          group: email
+          position: 500
+          editorOptions:
+            max: 1
+            buttonAddLabel: 'Garagist.Mautic:NodeTypes.Override.Container:properties.mauticSettings.add'
+            properties:
+              url:
+                type: string
+                label: 'Garagist.Mautic:NodeTypes.Override.Container:properties.mauticSettings.url'
+                editor: 'Carbon.Editor.Styling/TextInput'
+                editorOptions:
+                  type: 'url'
+                validation:
+                  Neos.Neos/Validation/NotEmptyValidator: {}
+              username:
+                type: string
+                label: 'Garagist.Mautic:NodeTypes.Override.Container:properties.mauticSettings.username'
+                editor: 'Carbon.Editor.Styling/TextInput'
+                validation:
+                  Neos.Neos/Validation/NotEmptyValidator: {}
+              password:
+                type: string
+                label: 'Garagist.Mautic:NodeTypes.Override.Container:properties.mauticSettings.password'
+                editor: 'Carbon.Editor.Styling/TextInput'
+                editorOptions:
+                  type: 'password'
+                  autoComplete: 'off'
+                validation:
+                  Neos.Neos/Validation/NotEmptyValidator: {}

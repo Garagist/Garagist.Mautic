@@ -23,6 +23,26 @@
                 <source>Global sender email address</source>
                 <target>Globale Absender-E-Mail-Adresse</target>
             </trans-unit>
+            <trans-unit id="properties.mauticSettings" xml:space="preserve">
+                <source>Mautic settings</source>
+                <target>Mautic Einstellungen</target>
+            </trans-unit>
+            <trans-unit id="properties.mauticSettings.add" xml:space="preserve">
+                <source>Add API settings</source>
+                <target>API-Einstellungen hinzufügen</target>
+            </trans-unit>
+            <trans-unit id="properties.mauticSettings.url" xml:space="preserve">
+                <source>URL</source>
+                <target>URL</target>
+            </trans-unit>
+            <trans-unit id="properties.mauticSettings.username" xml:space="preserve">
+                <source>Username</source>
+                <target>Benutzername</target>
+            </trans-unit>
+            <trans-unit id="properties.mauticSettings.password" xml:space="preserve">
+                <source>Password</source>
+                <target>Passwort</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -31,18 +31,8 @@ The default values are set in [`Settings.Garagist.yaml`].
 
 ### `api` setting
 
-Set your credentials `userName` and `password` from Mautic. `baseUrl` is the URL where Mautic can be reached via PHP.
-This may be different from the `publicUrl` (see next section) if Mautic is running in its own Docker container.
-
-### `publicUrl` setting
-
-Set here the URL where the Mautic installation is publicly accessible. This will be used for tracking, forms and links
-in the newsletter module.
-
-### `enableTracking` setting
-
-Enable the Javascript tracking code from Mautic. By default it is set to `false` in the development context and to
-`true` in the production context.
+Set your credentials `username` and `password` from Mautic. `url` is the URL where Mautic can be reached via PHP
+and also publicly accessible.
 
 ### `form` setting
 

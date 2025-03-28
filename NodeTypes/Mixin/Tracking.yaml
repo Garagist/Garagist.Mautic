@@ -1,0 +1,26 @@
+# Add this to you homepage
+
+'Garagist.Mautic:Mixin.Tracking':
+  abstract: true
+  ui:
+    inspector:
+      groups:
+        mautic:
+          label: Mautic
+          icon: envelope-open-text
+  properties:
+    mauticTrackingUrl:
+      defaultValue: ''
+      type: string
+      search:
+        indexing: false
+      ui:
+        label: i18n
+        inspector:
+          group: mautic
+          editor: 'Beromir.ToggleEditor/Editor'
+          editorOptions:
+            layout: 'list'
+            allowEmpty: false
+            dataSourceIdentifier: garagist-mautic-tracking
+            dataSourceDisableCaching: false

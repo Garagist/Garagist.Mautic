@@ -1,26 +1,19 @@
 prototype(Garagist.Mautic:Component.Form.Fragment.Plain) < prototype(Neos.Fusion:Component) {
     @propTypes {
-        id = ${PropTypes.integer}
-        url = ${PropTypes.string}
-        apiUrl = ${PropTypes.string}
         waitMessage = ${PropTypes.string}
     }
 
     waitMessage = ${Translation.translate('pleaseWait', 'Please wait…', [], 'Main', 'Garagist.Mautic')}
-
-    id = null
-    url = null
-    apiUrl = null
     removeStyles = true
 
-    @if.hasUrl_Id_ApiUrl = ${this.url && this.id && this.apiUrl}
+    @if.hasUrlAndId = ${this.mauticForm.url && this.mauticForm.id}
 
     @private {
-        javascript = ${props.url + '/media/js/mautic-form.js'}
-        embededFile = ${File.readFile(props.apiUrl + "/form/embed/" + props.id)}
+        javascript = ${props.mauticForm.url + '/media/js/mautic-form.js'}
+        embededFile = ${File.readFile(props.mauticForm.url + '/form/embed/' + props.mauticForm.id)}
         embededFile.@process.removeStyles = ${props.removeStyles && value ? String.pregReplace(value, '~<style([.\s\S]*?)</style>~', ''): value}
         hasReplacements = ${Carbon.Array.check(props.replacements)}
-        globalVariables = ${'window.MauticDomain="' + props.url + '";window.MauticLang={submittingMessage:"' + props.waitMessage + '"}'}
+        globalVariables = ${'window.MauticDomain="' + props.mauticForm.url + '";window.MauticLang={submittingMessage:"' + props.waitMessage + '"}'}
     }
 
     renderer = afx`
@@ -35,7 +28,7 @@ prototype(Garagist.Mautic:Component.Form.Fragment.Plain) < prototype(Neos.Fusion
         />
     `
 
-    @context.cacheEntryIdentifier = ${'MauticFormPlain'+ this.url + this.id + this.apiUrl}
+    @context.cacheEntryIdentifier = ${'MauticFormPlain'+ this.mauticForm.url + this.mauticForm.id}
 
     @cache {
         mode = 'cached'

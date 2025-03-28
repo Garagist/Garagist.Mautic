@@ -18,6 +18,21 @@
             <trans-unit id="properties.globalSenderMail" xml:space="preserve">
                 <source>Global sender email address</source>
             </trans-unit>
+            <trans-unit id="properties.mauticSettings" xml:space="preserve">
+                <source>Mautic settings</source>
+            </trans-unit>
+            <trans-unit id="properties.mauticSettings.add" xml:space="preserve">
+                <source>Add API settings</source>
+            </trans-unit>
+            <trans-unit id="properties.mauticSettings.url" xml:space="preserve">
+                <source>URL</source>
+            </trans-unit>
+            <trans-unit id="properties.mauticSettings.username" xml:space="preserve">
+                <source>Username</source>
+            </trans-unit>
+            <trans-unit id="properties.mauticSettings.password" xml:space="preserve">
+                <source>Password</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

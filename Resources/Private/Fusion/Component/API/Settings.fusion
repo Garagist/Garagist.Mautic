@@ -1,0 +1,10 @@
+prototype(Garagist.Mautic:API.Settings) {
+    @class = 'Garagist\\Mautic\\FusionObjects\\ApiSettingsImplementation'
+
+    node = ${node}
+
+    /// string saved property has following format: id---nodeIndentifier or id---default (if default is set)
+    propertyName = null
+
+    // Will return array { id: ID, url: URL from Mautic, username: Username from Mautic, password: Password from Mautic }
+}

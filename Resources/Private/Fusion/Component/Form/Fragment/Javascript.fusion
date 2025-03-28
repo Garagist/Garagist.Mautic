@@ -1,15 +1,11 @@
 prototype(Garagist.Mautic:Component.Form.Fragment.Javascript) < prototype(Neos.Fusion:Component) {
-    @propTypes {
-        id = ${PropTypes.integer}
-        url = ${PropTypes.string}
-    }
-
-    id = null
-    url = null
-
-    @if.hasUrl_Id = ${this.url && this.id}
+    @if.hasUrlAndId = ${this.mauticForm.url && this.mauticForm.id}
 
     renderer = afx`
-        <script type="text/javascript" src={props.url + "/form/generate.js?id=" + props.id} defer></script>
+        <script
+            type="text/javascript"
+            src={props.mauticForm.url + "/form/generate.js?id=" + props.mauticForm.id}
+            defer
+        ></script>
     `
 }

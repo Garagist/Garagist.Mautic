@@ -20,16 +20,12 @@ class FormsDataSource extends AbstractDataSource
     /**
      * Get data
      *
-     * @param NodeInterface $node The node that is currently edited (optional)
-     * @param array $arguments Additional arguments (key / value)
+     * @param NodeInterface $node The node that is currently edited
+     * @param array $arguments
      * @return array JSON serializable data
      */
     public function getData(NodeInterface $node = null, array $arguments = [])
     {
-        $options = [];
-        foreach ($this->apiService->getForms() as $id => $name) {
-            $options[$id] = ['label' => sprintf('%s: %s', $id, $name)];
-        }
-        return $options;
+        return $this->apiService->getFormsForSelectbox($node);
     }
 }

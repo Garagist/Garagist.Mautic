@@ -1,12 +1,3 @@
-'Carbon.Newsletter:Mixin.Email.Variant':
-  ui:
-    inspector:
-      views:
-        emailData:
-          viewOptions:
-            arguments:
-              variant: true
-
 'Carbon.Newsletter:Mixin.Email':
   ui:
     inspector:
@@ -20,7 +11,6 @@
             arguments:
               system: Mautic
               testEmailDataSource: garagist-mautic-test-email
-              reportDataSource: garagist-mautic-email-report
   options:
     template:
       properties:

@@ -1,6 +1,6 @@
 'Garagist.Mautic:Mixin.Form':
   abstract: true
-  label: "${Neos.Node.labelForNode(node).postfix(' (' + q(node).property('mauticFormId') + ')')}"
+  label: "${Neos.Node.labelForNode(node).postfix(' (' + Array.first(String.split(q(node).property('mauticForm'), '---')) + ')')}"
   ui:
     label: i18n
     icon: envelope-open-text
@@ -9,10 +9,10 @@
       groups:
         mautic:
           label: Mautic
-          icon: paper-plane
+          icon: envelope-open-text
   properties:
-    mauticFormId:
-      type: integer
+    mauticForm:
+      type: string
       search:
         indexing: false
       ui:
