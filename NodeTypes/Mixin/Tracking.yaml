@@ -1,13 +1,9 @@
-# Add this to you homepage
+# Add this to your homepage
 
 'Garagist.Mautic:Mixin.Tracking':
   abstract: true
-  ui:
-    inspector:
-      groups:
-        mautic:
-          label: Mautic
-          icon: envelope-open-text
+  superTypes:
+    'Garagist.Mautic:Mixin.Group': true
   properties:
     mauticTrackingUrl:
       defaultValue: ''

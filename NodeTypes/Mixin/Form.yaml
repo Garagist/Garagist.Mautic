@@ -1,15 +1,12 @@
 'Garagist.Mautic:Mixin.Form':
   abstract: true
   label: "${Neos.Node.labelForNode(node).postfix(' (' + Array.first(String.split(q(node).property('mauticForm'), '---')) + ')')}"
+  superTypes:
+    'Garagist.Mautic:Mixin.Group': true
   ui:
     label: i18n
     icon: envelope-open-text
     position: 2000
-    inspector:
-      groups:
-        mautic:
-          label: Mautic
-          icon: envelope-open-text
   properties:
     mauticForm:
       type: string

@@ -1,0 +1,8 @@
+'Garagist.Mautic:Mixin.Group':
+  abstract: true
+  ui:
+    inspector:
+      groups:
+        mautic:
+          label: Mautic
+          icon: 'resource://Garagist.Mautic/Mautic.svg'

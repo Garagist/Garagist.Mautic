@@ -6,6 +6,7 @@
     "require": {
         "ext-intl": "*",
         "ext-json": "*",
+        "beromir/neos-toggle-editor": "^1.1",
         "neos/neos-ui": "^8.3",
         "neos/neos": "^8.3",
         "neos/fusion-form": "^2.0",
