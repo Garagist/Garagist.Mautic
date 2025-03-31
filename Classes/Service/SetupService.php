@@ -34,6 +34,8 @@ class SetupService
         'newsletterSegment' => null,
     ];
 
+    protected array $apiSettings = [];
+
     protected array $emails = [];
 
     protected string $language = 'en';
@@ -59,12 +61,14 @@ class SetupService
     protected array $forms = [];
 
     public function __construct(
+        array $apiSettings,
         string $language,
         string $salutation,
         string $typeOfContact,
         string $domain,
-        array $nodes,
+        array $nodes
     ) {
+        $this->apiSettings = $apiSettings;
         $this->language = $language;
         $this->salutation = $salutation;
         $this->typeOfContact = $typeOfContact;
@@ -74,7 +78,7 @@ class SetupService
 
     public function setCategories(): void
     {
-        $this->fetchedCategories = $this->apiService->getList(ApiService::ENDPOINT_CATEGORIES)['categories'];
+        $this->fetchedCategories = $this->apiService->getList($this->apiSettings, ApiService::ENDPOINT_CATEGORIES)['categories'];
         $categoriesNames = $this->settingService->path('categories');
 
         if (!isset($categoriesNames['system'])) {
@@ -120,7 +124,7 @@ class SetupService
             'bundle' => 'global',
         ];
 
-        $category = $this->apiService->create(ApiService::ENDPOINT_CATEGORIES, $data);
+        $category = $this->apiService->create($this->apiSettings, ApiService::ENDPOINT_CATEGORIES, $data)['category'];
         return $category['category']['id'];
     }
 
@@ -129,7 +133,7 @@ class SetupService
      */
     public function setSegments(): void
     {
-        $fetchedSegments = $this->apiService->getList(ApiService::ENDPOINT_SEGMENTS);
+        $fetchedSegments = $this->apiService->getList($this->apiSettings, ApiService::ENDPOINT_SEGMENTS);
         $segmentNames = $this->settingService->path('segments');
 
         if (!isset($segmentNames['optInPending'])) {
@@ -191,7 +195,7 @@ class SetupService
             'isPreferenceCenter' => $category !== 'system',
             'category' => $this->categories[$category],
         ];
-        return $this->apiService->create(ApiService::ENDPOINT_SEGMENTS, $data)['list'];
+        return $this->apiService->create($this->apiSettings, ApiService::ENDPOINT_SEGMENTS, $data)['list'];
     }
 
     /**
@@ -199,7 +203,7 @@ class SetupService
      */
     public function setForms(): void
     {
-        $this->fetchedForms = $this->apiService->getList(ApiService::ENDPOINT_FORMS)['forms'];
+        $this->fetchedForms = $this->apiService->getList($this->apiSettings, ApiService::ENDPOINT_FORMS)['forms'];
 
         $settings = $this->settingsForm();
         $newsletter = $this->newsletterForm();
@@ -349,7 +353,7 @@ class SetupService
                 'language' => $this->language,
             ];
 
-            return $this->apiService->create(ApiService::ENDPOINT_FORMS, $data)['form'];
+            return $this->apiService->create($this->apiSettings, ApiService::ENDPOINT_FORMS, $data)['form'];
         }
 
         // Form is already here, we merge the fields
@@ -365,6 +369,7 @@ class SetupService
         }
 
         return $this->apiService->edit(
+            $this->apiSettings,
             ApiService::ENDPOINT_FORMS,
             $availableForm['id'],
             array_merge($availableForm, [
@@ -397,16 +402,12 @@ class SetupService
     {
         $node = $this->nodes['mail' . ucfirst($key)];
         $node->setProperty('category', $category);
-        return $this->emailService->call(
-            $node,
-            $this->domain,
-            $category,
-        );
+        return $this->emailService->call($node, $this->domain, $category);
     }
 
     public function setCampaigns(): void
     {
-        $this->fetchedCampaigns = $this->apiService->getList(ApiService::ENDPOINT_CAMPAIGNS)['campaigns'];
+        $this->fetchedCampaigns = $this->apiService->getList($this->apiSettings, ApiService::ENDPOINT_CAMPAIGNS)['campaigns'];
         $this->setOptInCampaign();
         $this->setSettingsOrDeleteCampaign();
         $this->setNewsletterCampaign();
@@ -495,7 +496,7 @@ class SetupService
             ],
         ];
 
-        $this->apiService->create(ApiService::ENDPOINT_CAMPAIGNS, $data)['campaign'];
+        $this->apiService->create($this->apiSettings, ApiService::ENDPOINT_CAMPAIGNS, $data)['campaign'];
     }
 
     private function setNewsletterCampaign(): void
@@ -579,7 +580,7 @@ class SetupService
             ],
         ];
 
-        $this->apiService->create(ApiService::ENDPOINT_CAMPAIGNS, $data)['campaign'];
+        $this->apiService->create($this->apiSettings, ApiService::ENDPOINT_CAMPAIGNS, $data)['campaign'];
     }
 
     private function setOptInCampaign(): void
@@ -807,7 +808,7 @@ class SetupService
             ],
         ];
 
-        $this->apiService->create(ApiService::ENDPOINT_CAMPAIGNS, $data)['campaign'];
+        $this->apiService->create($this->apiSettings, ApiService::ENDPOINT_CAMPAIGNS, $data)['campaign'];
     }
 
     private function positionInCanvas(string $id, int $x, int $y): array

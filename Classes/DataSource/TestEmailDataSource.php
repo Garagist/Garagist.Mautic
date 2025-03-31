@@ -3,6 +3,7 @@
 namespace Garagist\Mautic\DataSource;
 
 use Garagist\Mautic\Service\ApiService;
+use Garagist\Mautic\Service\SettingsService;
 use Garagist\Mautic\Service\EmailService;
 use Carbon\Newsletter\Service\TestEmailService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -20,6 +21,9 @@ class TestEmailDataSource extends AbstractDataSource
     protected TestEmailService $testEmailService;
 
     #[Flow\Inject]
+    protected SettingsService $settingsService;
+
+    #[Flow\Inject]
     protected ApiService $apiService;
 
     #[Flow\Inject]
@@ -28,7 +32,7 @@ class TestEmailDataSource extends AbstractDataSource
     /**
      * Get data
      *
-     * @param NodeInterface $node The node that is currently edited (optional)
+     * @param NodeInterface $node The node that is currently edited
      * @param array $arguments Additional arguments (key / value)
      * @return array JSON serializable data
      */
@@ -43,7 +47,7 @@ class TestEmailDataSource extends AbstractDataSource
             case 'recipients':
                 return $this->testEmailService->getRecipients($node);
             case 'contact':
-                return $this->getContacts($arguments['contact']);
+                return $this->getContacts($node, $arguments['contact']);
             case 'send':
                 return $this->sendTestEmail($node, $arguments);
             default:
@@ -56,7 +60,7 @@ class TestEmailDataSource extends AbstractDataSource
         if (!isset($arguments['recipients']) || !isset($arguments['contactId'])) {
             return [
                 'message' => 'Carbon.Newsletter:EmailView:test.error.missingParameter',
-                'messageType' => 'error'
+                'messageType' => 'error',
             ];
         }
 
@@ -68,19 +72,20 @@ class TestEmailDataSource extends AbstractDataSource
 
             return [
                 'message' => $result['error'],
-                'messageType' => 'error'
+                'messageType' => 'error',
             ];
         }
 
         return [
             'message' => 'Carbon.Newsletter:EmailView:test.success',
-            'messageType' => 'success'
+            'messageType' => 'success',
         ];
     }
 
-    private function getContacts(string $search): ?array
+    private function getContacts(NodeInterface $node, string $search): array
     {
-        $contacts = $this->apiService->getList(ApiService::ENDPOINT_CONTACTS, $search, limit: 10, publishedOnly: true);
+        $apiSettings = $this->settingsService->getFromNodeOrConfig($node);
+        $contacts = $this->apiService->getList($apiSettings, ApiService::ENDPOINT_CONTACTS, $search, limit: 10, publishedOnly: true);
         $result = [];
 
         foreach ($contacts['contacts'] as $contact) {
@@ -88,10 +93,6 @@ class TestEmailDataSource extends AbstractDataSource
             $lastname = $contact['fields']['all']['lastname'] ?? '';
             $label = sprintf('%s %s', $firstname, $lastname);
             $result[trim($label)] = $contact['id'];
-        }
-
-        if (empty($result)) {
-            return null;
         }
 
         return $result;

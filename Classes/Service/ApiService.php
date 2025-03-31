@@ -2,10 +2,13 @@
 
 namespace Garagist\Mautic\Service;
 
+use Carbon\Newsletter\Service\NodeService;
+use Garagist\Mautic\Service\SettingsService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\RequestOptions;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Psr\Log\LoggerInterface;
@@ -33,8 +36,14 @@ class ApiService
     const ENDPOINT_SMSES = 'smses';
     const ENDPOINT_THEMES = 'themes';
 
-    #[Flow\InjectConfiguration('api')]
-    protected array $apiSettings;
+    #[Flow\InjectConfiguration('api.ignoreHttpsErrors')]
+    protected bool $ignoreHttpsErrors;
+
+    #[Flow\Inject]
+    protected NodeService $nodeService;
+
+    #[Flow\Inject]
+    protected SettingsService $settingsService;
 
     /**
      * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
@@ -43,76 +52,24 @@ class ApiService
     protected $mauticLogger;
 
     /**
-     * @throws Exception
-     */
-    protected function initializeObject(): void
-    {
-        if (
-            !isset($this->apiSettings['baseUrl']) ||
-            !isset($this->apiSettings['userName']) ||
-            !isset($this->apiSettings['password'])
-        ) {
-            throw new Exception('Mautic API settings are not correct');
-        }
-    }
-
-    /**
-     * Get a single form. Fails gracefully
-     *
-     * @param integer $id
-     * @return array
-     */
-    public function getForm(int $id): array
-    {
-        $data = $this->makeCall([self::ENDPOINT_FORMS, $id], throwExeptions: false);
-        if (isset($data['form']) && $data['form']['isPublished']) {
-            return $data['form'];
-        }
-
-        return [];
-    }
-
-    /**
-     * Get the list of all forms
-     *
-     * @return array
-     */
-    public function getForms(): array
-    {
-        $response = $this->getList(self::ENDPOINT_FORMS, orderBy: 'id', publishedOnly: true, throwExeptions: false);
-
-        if ($response['total'] === 0) {
-            return [];
-        }
-
-        $data = [];
-        foreach ($response['forms'] as $form) {
-            $id = $form['id'];
-            $data[$id] = $form['name'];
-        }
-
-        return $data;
-    }
-
-    public function check(mixed $endpoint): bool
-    {
-        try {
-            $this->makeCall($endpoint);
-            return true;
-        } catch (Throwable $th) {
-            return false;
-        }
-    }
-
-    /**
      * Ping the mautic service
      *
+     * @param array|null $apiSettings api settings
      * @return bool
      */
-    public function ping(): bool
+    public function ping(?array $apiSettings = null): bool
     {
+        if (empty($apiSettings)) {
+            return false;
+        }
         try {
-            $this->getList(self::ENDPOINT_EMAILS, limit: 1, throwExeptions: true, ray: false);
+            $this->getList(
+                $apiSettings,
+                self::ENDPOINT_EMAILS,
+                limit: 1,
+                throwExeptions: true,
+                ray: false
+            );
             return true;
         } catch (Throwable $th) {
             return false;
@@ -122,6 +79,7 @@ class ApiService
     /**
      * Get a list of items
      *
+     * @param array $apiSettings
      * @param string $endpoint
      * @param string $search
      * @param int $start
@@ -132,9 +90,12 @@ class ApiService
      * @param bool $minimal
      * @param bool $throwExeptions,
      * @param bool $ray,
+     * @param NodeInterface|null $node
+     * @param array|null $apiSettings api settings
      * @return array
      */
     public function getList(
+        array $apiSettings,
         string $endpoint,
         string $search = '',
         int $start = 0,
@@ -144,7 +105,7 @@ class ApiService
         bool $publishedOnly = false,
         bool $minimal = false,
         bool $throwExeptions = true,
-        bool $ray = true
+        bool $ray = true,
     ): array {
         $parameters = [
             'search' => $search,
@@ -156,19 +117,29 @@ class ApiService
             'minimal' => $minimal,
         ];
         $parameters = array_filter($parameters);
-        return $this->makeCall($endpoint, $parameters, throwExeptions: $throwExeptions, ray: $ray);
+        return $this->makeCall(
+            $apiSettings,
+            $endpoint,
+            $parameters,
+            throwExeptions: $throwExeptions,
+            ray: $ray,
+        );
     }
 
     /**
      * Create a new item
      *
+     * @param array $apiSettings
      * @param string $endpoint
      * @param array $parameters
      * @return array
      */
-    public function create(string $endpoint, ?array $parameters = null): array
-    {
-        return $this->makeCall([$endpoint, 'new'], $parameters, 'POST');
+    public function create(
+        array $apiSettings,
+        string $endpoint,
+        ?array $parameters = null
+    ): array {
+        return $this->makeCall($apiSettings, [$endpoint, 'new'], $parameters, 'POST');
     }
 
     /**
@@ -176,23 +147,39 @@ class ApiService
      *
      * @param string $endpoint
      * @param string|int $id
+     * @param array|null $apiSettings api settings
      * @return array
      */
-    public function delete(string $endpoint, string|int $id): array
-    {
-        return $this->makeCall([$endpoint, $id, 'delete'], method: 'DELETE');
+    public function delete(
+        array $apiSettings,
+        string $endpoint,
+        string|int $id,
+    ): array {
+        return $this->makeCall($apiSettings, [$endpoint, $id, 'delete'], method: 'DELETE');
     }
 
     /**
-     * Delete an item.
+     * Delete a batch of items.
      *
      * @param string $endpoint
      * @param array $ids
+     * @param NodeInterface|null $node
+     * @param array|null $apiSettings api settings
      * @return array
      */
-    public function deleteBatch(string $endpoint, array $ids): array
-    {
-        return $this->makeCall([$endpoint, 'batch/delete'], parameters: ['ids' => $ids], method: 'DELETE');
+    public function deleteBatch(
+        string $endpoint,
+        array $ids,
+        ?NodeInterface $node = null,
+        ?array $apiSettings = null
+    ): array {
+        return $this->makeCall(
+            $apiSettings,
+            [$endpoint, 'batch/delete'],
+            parameters: ['ids' => $ids],
+            method: 'DELETE',
+            node: $node,
+        );
     }
 
     /**
@@ -201,53 +188,62 @@ class ApiService
      * @param string $endpoint
      * @param int|string|null  $id
      * @param array $parameters
+     * @param NodeInterface|null $node
+     * @param array|null $apiSettings api settings
      * @param bool $createIfNotExists = false
      *
      * @return array
      */
     public function edit(
+        array $apiSettings,
         string $endpoint,
         mixed $id = null,
         ?array $parameters = null,
-        bool $createIfNotExists = false
+        bool $createIfNotExists = false,
     ): array {
         $method = $createIfNotExists ? 'PUT' : 'PATCH';
-        return $this->makeCall([$endpoint, $id, 'edit'], parameters: $parameters, method: $method);
+        return $this->makeCall(
+            $apiSettings,
+            [$endpoint, $id, 'edit'],
+            parameters: $parameters,
+            method: $method,
+        );
     }
 
     /**
      * Make a call to the mautic api
      *
+     * @param array $apiSettings
      * @param array|string $endpoint
      * @param array|null $parameters key value pairs.
      * @param string $method GET, POST, DELETE, PATCH, or PUT
      * @param bool $throwExeptions
+     * @param bool $ray
      * @return array
      * @throws Exception
      */
     public function makeCall(
+        $apiSettings,
         array|string $endpoint,
         ?array $parameters = null,
         string $method = 'GET',
         bool $throwExeptions = true,
-        bool $ray = true
+        bool $ray = true,
     ): ?array {
         if (is_array($endpoint)) {
             $endpoint = implode('/', array_filter($endpoint));
         }
 
         $method = strtoupper($method);
-        $endpoint = sprintf('%s/api/%s', rtrim($this->apiSettings['baseUrl'], '/'), ltrim($endpoint, '/'));
-        $userName = $this->apiSettings['userName'];
-        $password = $this->apiSettings['password'];
-        $ignoreHttpsErrors = $this->apiSettings['ignoreHttpsErrors'];
+        $endpoint = sprintf('%s/api/%s', rtrim($apiSettings['url'], '/'), ltrim($endpoint, '/'));
+        $ignoreHttpsErrors = $this->ignoreHttpsErrors;
 
         $client = new Client(['verify' => !$ignoreHttpsErrors]);
         $options = [
             RequestOptions::HEADERS => [
                 'Accepts' => 'application/json',
             ],
-            RequestOptions::AUTH => [$userName, $password],
+            RequestOptions::AUTH => [$apiSettings['username'], $apiSettings['password']],
         ];
 
         if (isset($parameters)) {

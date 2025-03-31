@@ -3,6 +3,7 @@
 namespace Garagist\Mautic\DataSource;
 
 use Garagist\Mautic\Service\ApiService;
+use Garagist\Mautic\Service\SettingsService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
@@ -18,6 +19,9 @@ class CategoriesDataSource extends AbstractDataSource
     #[Flow\Inject]
     protected ApiService $apiService;
 
+    #[Flow\Inject]
+    protected SettingsService $settingsService;
+
     /**
      * Get data
      *
@@ -27,7 +31,8 @@ class CategoriesDataSource extends AbstractDataSource
      */
     public function getData(NodeInterface $node = null, array $arguments = []): array
     {
-        $ping = $this->apiService->ping();
+        $apiSettings = $this->settingsService->getFromNodeOrConfig($node);
+        $ping = $this->apiService->ping($apiSettings);
         if (!$ping) {
             return [];
         }
@@ -45,7 +50,7 @@ class CategoriesDataSource extends AbstractDataSource
         $systemCategoryId = $config['categories']['system'] ?? null;
 
         $result = [];
-        $categories = $this->apiService->getList(ApiService::ENDPOINT_CATEGORIES);
+        $categories = $this->apiService->getList($apiSettings, ApiService::ENDPOINT_CATEGORIES);
         foreach ($categories['categories'] as $category) {
             if ($allowSystemCategories || $systemCategoryId !== $category['id']) {
                 $result[] = [

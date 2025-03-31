@@ -31,7 +31,12 @@ class ApiFormImplementation extends AbstractFusionObject
             'password' => $password,
         ];
 
-        $data = $this->apiService->makeCall([ApiService::ENDPOINT_FORMS, $id], throwExeptions: false, apiSettings: $apiSettings);
+        $data = $this->apiService->makeCall(
+            $apiSettings,
+            [ApiService::ENDPOINT_FORMS, $id],
+            ray: false,
+            throwExeptions: false,
+        );
 
         if (isset($data['form']) && $data['form']['isPublished'] && isset($data['form']['fields'])) {
             $data = $data['form'];

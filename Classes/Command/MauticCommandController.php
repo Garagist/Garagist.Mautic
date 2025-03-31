@@ -4,6 +4,7 @@ namespace Garagist\Mautic\Command;
 
 use Carbon\Newsletter\Service\NodeService;
 use Garagist\Mautic\Service\ApiService;
+use Garagist\Mautic\Service\SettingsService;
 use Garagist\Mautic\Service\SetupService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
@@ -15,6 +16,9 @@ class MauticCommandController extends CommandController
 {
     #[Flow\Inject]
     protected ApiService $apiService;
+
+    #[Flow\Inject]
+    protected SettingsService $settingsService;
 
     #[Flow\Inject]
     protected NodeService $nodeService;
@@ -105,6 +109,10 @@ class MauticCommandController extends CommandController
             $newsletterNode = $newsletterKeyedOptions[$newsletterNode];
         }
 
+        $apiSettings = $this->settingsService->getFromNodeOrConfig($newsletterNode);
+        if (empty($apiSettings)) {
+            $this->quitOnError('No Mautic API settings found. Please configure it first in the Neos Backend or in Settings.yaml');
+        }
         $nodes = $this->getNewsletterNodes($newsletterNode);
 
         if (!$domain) {
@@ -118,7 +126,7 @@ class MauticCommandController extends CommandController
 
         $this->successMessage('Set domain to %s', [$domain], marginBottom: true);
 
-        $deleteThemes = $this->output->askConfirmation(' Do you want to delete all themes? [<info>Y</info>/n] ', true);
+        $hideThemes = $this->output->askConfirmation(' Do you want to hide all themes in Mautic? [<info>Y</info>/n] ', true);
 
         $language = $this->output->select(' What is the language of the website? ', [
             'de' => 'German',
@@ -131,7 +139,90 @@ class MauticCommandController extends CommandController
         $this->outputLine(' Thank you for your input. Let me setup Mautic for you.');
         $this->outputLine('');
         $this->outputLine('');
-        $this->setupWithNode($domain, $nodes, $language, $informal, $singlePerson, $deleteThemes);
+        $this->setupWithNode($apiSettings, $domain, $nodes, $language, $informal, $singlePerson, $hideThemes);
+    }
+
+        /**
+     * Set up segments, forms, pages and emails for the newsletter
+     *
+     * @param string $identifier Identifier of the newsletter container
+     * @param string $language Language of the website (en or de)
+     * @param string $domain Domain of the website, incl. protocol e.g. https://www.domain.tld
+     * @param bool $informal Use informal language
+     * @param bool $formal Use formal language. Wins over --informal
+     * @param bool $singlePerson Sender is a single person
+     * @param bool $group Sender is a group, e.g. a company or organization. Wins over --single-person
+     * @param bool $deleteAllThemes Delete all themes
+     * @return void
+     */
+    public function setupCommand(
+        string $identifier,
+        string $language,
+        ?string $domain = null,
+        ?bool $informal = null,
+        ?bool $formal = null,
+        ?bool $singlePerson = null,
+        ?bool $group = null,
+        ?bool $deleteAllThemes = null
+    ): void {
+        if (!in_array($language, ['de', 'en'])) {
+            throw new InvalidArgumentException('Please provide a valid language (de or en)');
+        }
+
+        $sites = $this->nodeService->getSites();
+        $domainFromSite = null;
+        $newsletterNode = null;
+        foreach ($sites as $siteNode) {
+            $nodeInSite = $this->nodeService->findNodeById($siteNode['node'], $identifier, true);
+            if ($nodeInSite) {
+                $domainFromSite = $siteNode['domain'];
+                $newsletterNode = $nodeInSite;
+                break;
+            }
+        }
+
+        if (!$newsletterNode) {
+            throw new InvalidArgumentException('No newsletter container found');
+        }
+        if (!$newsletterNode->getNodeType()->isOfType('Carbon.Newsletter:Mixin.Container')) {
+            throw new InvalidArgumentException('The provided node is not a newsletter container');
+        }
+
+        $domain = $domain ?? $domainFromSite;
+        if (!$domain) {
+            throw new InvalidArgumentException('Please provide a domain');
+        }
+        if (!filter_var($domain, FILTER_VALIDATE_URL)) {
+            throw new InvalidArgumentException('Please provide a valid domain (inclusive protocol)');
+        }
+
+        $apiSettings = $this->settingsService->getFromNodeOrConfig($newsletterNode);
+        if (empty($apiSettings)) {
+            $this->quitOnError('No Mautic API settings found. Please configure it first in the Neos Backend or in Settings.yaml');
+        }
+
+        if ($formal === true) {
+            $informal = false;
+        }
+
+        if ($group === true) {
+            $singlePerson = false;
+        }
+
+        if (!isset($informal)) {
+            $informal = false;
+        }
+
+        if (!isset($singlePerson)) {
+            $singlePerson = false;
+        }
+        if (!isset($deleteAllThemes)) {
+            $deleteAllThemes = false;
+        }
+
+        $nodes = $this->getNewsletterNodes($newsletterNode);
+
+        $this->setupWithNode($apiSettings, $domain, $nodes, $language, $informal, $singlePerson, $deleteAllThemes);
     }
 
     /**
@@ -237,11 +328,12 @@ class MauticCommandController extends CommandController
     /**
      * Delete all themes
      *
+     * @param array $apiSettings
      * @return void
      */
-    public function deleteThemesCommand(): void
+    private function hideThemes(array $apiSettings): void
     {
-        $themes = $this->apiService->getList(ApiService::ENDPOINT_THEMES);
+        $themes = $this->apiService->getList($apiSettings, ApiService::ENDPOINT_THEMES);
         $numberOfThemes = count($themes['themes']);
         if ($numberOfThemes === 0) {
             $this->successMessage('No themes found');
@@ -249,7 +341,7 @@ class MauticCommandController extends CommandController
             $this->output->progressStart($numberOfThemes);
             foreach ($themes['themes'] as $theme) {
                 $this->output->progressAdvance();
-                $this->apiService->delete(ApiService::ENDPOINT_THEMES, $theme['key']);
+                $this->apiService->delete($apiSettings, ApiService::ENDPOINT_THEMES, $theme['key']);
             }
             $this->output->progressFinish();
             $this->successMessage('%s Themes deleted', [$numberOfThemes]);
@@ -259,29 +351,31 @@ class MauticCommandController extends CommandController
     /**
      * Make API calls to mautic
      *
+     * @param array $apiSettings
      * @param string $domain
      * @param NodeInterface[] $nodes
      * @param string $language
      * @param boolean $informal
      * @param boolean $singlePerson
-     * @param boolean $deleteThemes
+     * @param boolean $hideThemes
      * @return void
      */
     private function setupWithNode(
+        array $apiSettings,
         string $domain,
         array $nodes,
         string $language,
         bool $informal,
         bool $singlePerson,
-        bool $deleteThemes,
+        bool $hideThemes
     ): void {
         $salutation = $informal ? 'informal' : 'formal';
         $typeOfContact = $singlePerson ? 'single' : 'group';
 
-        $service = new SetupService($language, $salutation, $typeOfContact, $domain, $nodes);
+        $service = new SetupService($apiSettings, $language, $salutation, $typeOfContact, $domain, $nodes);
 
-        if ($deleteThemes) {
-            $this->deleteThemesCommand();
+        if ($hideThemes) {
+            $this->hideThemes($apiSettings);
         }
 
         $service->setCategories();
@@ -304,83 +398,5 @@ class MauticCommandController extends CommandController
 
         $service->saveConfig();
         $this->successMessage('Save configuration in Neos', marginBottom: true);
-    }
-
-    /**
-     * Set up segments, forms, pages and emails for the newsletter
-     *
-     * @param string $identifier Identifier of the newsletter container
-     * @param string $language Language of the website (en or de)
-     * @param string $domain Domain of the website, incl. protocol e.g. https://www.domain.tld
-     * @param bool $informal Use informal language
-     * @param bool $formal Use formal language. Wins over --informal
-     * @param bool $singlePerson Sender is a single person
-     * @param bool $group Sender is a group, e.g. a company or organization. Wins over --single-person
-     * @param bool $deleteAllThemes Delete all themes
-     * @return void
-     */
-    public function setupCommand(
-        string $identifier,
-        string $language,
-        ?string $domain = null,
-        ?bool $informal = null,
-        ?bool $formal = null,
-        ?bool $singlePerson = null,
-        ?bool $group = null,
-        ?bool $deleteAllThemes = null,
-    ): void {
-        if (!in_array($language, ['de', 'en'])) {
-            throw new InvalidArgumentException('Please provide a valid language (de or en)');
-        }
-
-        $sites = $this->nodeService->getSites();
-        $domainFromSite = null;
-        $newsletterNode = null;
-        foreach ($sites as $siteNode) {
-            $nodeInSite = $this->nodeService->findNodeById($siteNode['node'], $identifier, true);
-            if ($nodeInSite) {
-                $domainFromSite = $siteNode['domain'];
-                $newsletterNode = $nodeInSite;
-                break;
-            }
-        }
-
-        if (!$newsletterNode) {
-            throw new InvalidArgumentException('No newsletter container found');
-        }
-        if (!$newsletterNode->getNodeType()->isOfType('Carbon.Newsletter:Mixin.Container')) {
-            throw new InvalidArgumentException('The provided node is not a newsletter container');
-        }
-
-        $domain = $domain ?? $domainFromSite;
-        if (!$domain) {
-            throw new InvalidArgumentException('Please provide a domain');
-        }
-        if (!filter_var($domain, FILTER_VALIDATE_URL)) {
-            throw new InvalidArgumentException('Please provide a valid domain (inclusive protocol)');
-        }
-
-        if ($formal === true) {
-            $informal = false;
-        }
-
-        if ($group === true) {
-            $singlePerson = false;
-        }
-
-        if (!isset($informal)) {
-            $informal = false;
-        }
-
-        if (!isset($singlePerson)) {
-            $singlePerson = false;
-        }
-        if (!isset($deleteAllThemes)) {
-            $deleteAllThemes = false;
-        }
-
-        $nodes = $this->getNewsletterNodes($newsletterNode);
-
-        $this->setupWithNode($domain, $nodes, $language, $informal, $singlePerson, $deleteAllThemes);
     }
 }

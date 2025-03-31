@@ -2,14 +2,14 @@
 
 namespace Garagist\Mautic\FusionObjects;
 
-use Garagist\Mautic\Service\ApiService;
+use Garagist\Mautic\Service\SettingsService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 class ApiSettingsImplementation extends AbstractFusionObject
 {
     #[Flow\Inject]
-    protected ApiService $apiService;
+    protected SettingsService $settingsService;
 
     /**
      * @return array|null
@@ -23,6 +23,6 @@ class ApiSettingsImplementation extends AbstractFusionObject
             return null;
         }
 
-        return $this->apiService->getSettingsFromPropertyValue($node, $propertyName);
+        return $this->settingsService->getFromPropertyValue($node, $propertyName);
     }
 }

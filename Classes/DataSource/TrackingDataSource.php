@@ -2,7 +2,7 @@
 
 namespace Garagist\Mautic\DataSource;
 
-use Garagist\Mautic\Service\ApiService;
+use Garagist\Mautic\Service\SettingsService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Carbon\Eel\EelHelper\BackendHelper;
@@ -16,7 +16,7 @@ class TrackingDataSource extends AbstractDataSource
     protected static $identifier = 'garagist-mautic-tracking';
 
     #[Flow\Inject]
-    protected ApiService $apiService;
+    protected SettingsService $settingsService;
 
     #[Flow\Inject]
     protected BackendHelper $backendHelper;
@@ -30,7 +30,7 @@ class TrackingDataSource extends AbstractDataSource
      */
     public function getData(NodeInterface $node = null, array $arguments = []): array
     {
-        $settings = $this->apiService->getAllMauticInstances($node, false);
+        $settings = $this->settingsService->getAll($node, false);
         $result = [
             [
                 'value' => '',
@@ -44,13 +44,16 @@ class TrackingDataSource extends AbstractDataSource
                 'hidden' => true,
             ];
         }
-        $label = count($settings) == 1 ? $this->backendHelper->translate('Garagist.Mautic:NodeTypes.Mixin.Tracking:enabled') : null;
+        $label =
+            count($settings) == 1
+                ? $this->backendHelper->translate('Garagist.Mautic:NodeTypes.Mixin.Tracking:enabled')
+                : null;
 
         foreach ($settings as $setting) {
             $result[] = [
                 'value' => $setting['url'],
                 // Remove protocol from the url
-                'label' => $label ?? preg_replace('#^[^:/.]*[:/]+#i', '', $setting['url'] ),
+                'label' => $label ?? preg_replace('#^[^:/.]*[:/]+#i', '', $setting['url']),
                 'icon' => $label ? 'check' : 'link',
             ];
         }

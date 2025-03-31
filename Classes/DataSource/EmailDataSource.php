@@ -6,6 +6,7 @@ use Carbon\Newsletter\Service\NodeService;
 use Carbon\Newsletter\Service\VariantEmailService;
 use Garagist\Mautic\Service\ApiService;
 use Garagist\Mautic\Service\EmailService;
+use Garagist\Mautic\Service\SettingsService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
@@ -30,6 +31,9 @@ class EmailDataSource extends AbstractDataSource
     #[Flow\Inject]
     protected NodeService $nodeService;
 
+    #[Flow\Inject]
+    protected SettingsService $settingsService;
+
     #[Flow\InjectConfiguration('emailAutomatation')]
     protected $emailAutomatation;
 
@@ -42,7 +46,8 @@ class EmailDataSource extends AbstractDataSource
      */
     public function getData(NodeInterface $node = null, array $arguments = []): array
     {
-        $ping = $this->apiService->ping();
+        $apiSettings = $this->settingsService->getFromNodeOrConfig($node);
+        $ping = $this->apiService->ping($apiSettings);
         if (!$ping) {
             sleep(8);
             return [
@@ -67,9 +72,9 @@ class EmailDataSource extends AbstractDataSource
             ];
 
             if ($this->emailAutomatation['create'] || $this->emailAutomatation['update']) {
-                $check = $this->emailService->emailCheck($node);
+                $check = $this->emailService->emailCheck($node, $apiSettings);
                 $key = $check['canCreate'] ? 'publishFirst.create' : 'publishFirst.update';
-            } else if ($liveNode) {
+            } elseif ($liveNode) {
                 $key = 'nodeNotLive';
             } else {
                 $key = 'publishFirst';
@@ -79,7 +84,7 @@ class EmailDataSource extends AbstractDataSource
         }
 
         if ($action === 'delete') {
-            $this->emailService->delete($node);
+            $this->emailService->delete($node, $apiSettings);
 
             return [
                 'id' => null,
@@ -98,32 +103,41 @@ class EmailDataSource extends AbstractDataSource
                 return $this->returnReloadWindow();
             }
 
-            return array_merge([
-                'id' => $email['id'],
-                'idle' => true,
-                'canCreate' => false,
-                'canUpdate' => false,
-                'canDelete' => $canDelete,
-            ], $this->getStats($node, $email));
+            return array_merge(
+                [
+                    'id' => $email['id'],
+                    'idle' => true,
+                    'canCreate' => false,
+                    'canUpdate' => false,
+                    'canDelete' => $canDelete,
+                ],
+                $this->getStats($node, $email)
+            );
         }
 
         $check = $this->emailService->emailCheck($node);
 
-        if (($this->emailAutomatation['create'] && $check['canCreate']) || $this->emailAutomatation['update'] && $check['canUpdate']) {
+        if (
+            ($this->emailAutomatation['create'] && $check['canCreate']) ||
+            ($this->emailAutomatation['update'] && $check['canUpdate'])
+        ) {
             $email = $this->createOrUpdate($liveNode, $arguments['domain']);
             if (!isset($email['id'])) {
                 return $this->returnReloadWindow();
             }
             $message = $this->messageCheck($node, $check, false);
-            return array_merge([
-                'id' => $email['id'],
-                'canDelete' => $canDelete,
-                'canUpdate' => false,
-                'canCreate' => false,
-                'idle' => true,
-                'message' => $message,
-                'messageType' => 'warn'
-            ], $this->getStats($node, $email));
+            return array_merge(
+                [
+                    'id' => $email['id'],
+                    'canDelete' => $canDelete,
+                    'canUpdate' => false,
+                    'canCreate' => false,
+                    'idle' => true,
+                    'message' => $message,
+                    'messageType' => 'warn',
+                ],
+                $this->getStats($node, $email)
+            );
         }
 
         $message = $this->messageCheck($node, $check, true);
@@ -147,12 +161,13 @@ class EmailDataSource extends AbstractDataSource
         ];
     }
 
-    private function returnReloadWindow() {
+    private function returnReloadWindow()
+    {
         return [
             'id' => null,
             'idle' => false,
             'canCreate' => false,
-            'canUpdate' =>false,
+            'canUpdate' => false,
             'canDelete' => false,
             'reloadWindow' => true,
             'message' => $this->getMessage('error.reloadWindow'),
@@ -164,9 +179,9 @@ class EmailDataSource extends AbstractDataSource
     {
         if ($check['parentNeedPublishFirst'] ?? false) {
             return $this->getMessage('parentNeedPublishFirst');
-        } else if ($node->isHidden()) {
+        } elseif ($node->isHidden()) {
             return $this->getMessage('isHidden');
-        } else if ($canUpdateCheck && $check['canUpdate']) {
+        } elseif ($canUpdateCheck && $check['canUpdate']) {
             return $this->getMessage('outdated');
         }
         return null;
@@ -176,7 +191,6 @@ class EmailDataSource extends AbstractDataSource
     {
         return 'Carbon.Newsletter:EmailView:' . $key;
     }
-
 
     private function createOrUpdate(NodeInterface $node, $domain): ?array
     {
@@ -190,20 +204,12 @@ class EmailDataSource extends AbstractDataSource
             $fQ = new FlowQuery([$node]);
             $rootNode = $fQ->closest('[instanceof Carbon.Newsletter:Mixin.Container]')->get(0);
             $newsletterSystemConfig = $rootNode->getProperty('newsletterSystemConfig') ?? [];
-            $category = $category ?? $newsletterSystemConfig['categories']['newsletter'] ?? null;
+            $category = $category ?? ($newsletterSystemConfig['categories']['newsletter'] ?? null);
             $segmentsFromNode = $this->variantEmailService->getProperty($node, 'segments') ?? [];
-            $segmentIds = count($segmentsFromNode)
-                ? $segmentsFromNode
-                : $newsletterSystemConfig['newsletterSegment'];
+            $segmentIds = count($segmentsFromNode) ? $segmentsFromNode : $newsletterSystemConfig['newsletterSegment'];
             $excludedSegmentIds = $newsletterSystemConfig['systemSegments']['optInPending'] ?? null;
         }
 
-        return $this->emailService->call(
-            $node,
-            $domain,
-            $category,
-            $segmentIds,
-            $excludedSegmentIds
-        );
+        return $this->emailService->call($node, $domain, $category, $segmentIds, $excludedSegmentIds);
     }
 }

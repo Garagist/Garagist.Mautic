@@ -8,6 +8,7 @@ use Carbon\Newsletter\Service\UtmTagsService;
 use Carbon\Newsletter\Service\VariantEmailService;
 use Carbon\Newsletter\Utils;
 use Garagist\Mautic\Service\ApiService;
+use Garagist\Mautic\Service\SettingsService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -35,20 +36,24 @@ class EmailService
     #[Flow\Inject]
     protected VariantEmailService $variantEmailService;
 
+    #[Flow\Inject]
+    protected SettingsService $settingsService;
+
     #[Flow\InjectConfiguration('emailAutomatation')]
     protected $emailAutomatation;
 
     /**
      * Check the status of the email node
      */
-    public function emailCheck(NodeInterface $node): array
+    public function emailCheck(NodeInterface $node, ?array $apiSettings = null): array
     {
+        $apiSettings = $apiSettings ?? $this->settingsService->getFromNodeOrConfig($node);
         $isVariantEmail = $this->variantEmailService->isVariantEmail($node);
         // Check if the parent is published (if it is a variant email)
         if ($isVariantEmail) {
             $parentNodeIsPublished = false;
             try {
-                $parentNodeIsPublished = !!$this->getEmail($node->findParentNode());
+                $parentNodeIsPublished = !!$this->getEmail($node->findParentNode(), $apiSettings);
             } catch (\Exception $e) {
                 // Do nothing
             }
@@ -65,7 +70,7 @@ class EmailService
         }
 
         // Check if the email exists
-        $email = $this->getEmail($node);
+        $email = $this->getEmail($node, $apiSettings);
         if (!isset($email)) {
             return [
                 'id' => null,
@@ -123,7 +128,11 @@ class EmailService
      */
     public function nodePropertyChanged(NodeInterface $node, string $propertyName, mixed $oldValue, mixed $value): void
     {
-        if ($oldValue == $value || !in_array($propertyName, ['globalSenderMail', 'globalSenderName']) || !$node->getNodeType()->isOfType('Carbon.Newsletter:Mixin.Container')) {
+        if (
+            $oldValue == $value ||
+            !in_array($propertyName, ['globalSenderMail', 'globalSenderName']) ||
+            !$node->getNodeType()->isOfType('Carbon.Newsletter:Mixin.Container')
+        ) {
             return;
         }
 
@@ -137,11 +146,12 @@ class EmailService
     /**
      * Delete email
      */
-    public function delete(NodeInterface $node): void
+    public function delete(NodeInterface $node, ?array $apiSettings = null): void
     {
-        $email = $this->getEmail($node);
+        $apiSettings = $apiSettings ?? $this->settingsService->getFromNodeOrConfig($node);
+        $email = $this->getEmail($node, $apiSettings);
         if ($email) {
-            $this->apiService->delete(ApiService::ENDPOINT_EMAILS, $email['id']);
+            $this->apiService->delete($apiSettings, ApiService::ENDPOINT_EMAILS, $email['id']);
         }
     }
 
@@ -163,8 +173,10 @@ class EmailService
         array|int|null $segmentIds = null,
         array|int|null $excludedSegmentIds = null,
         bool $mjml = false,
+        array $apiSettings = null
     ): ?array {
-        $email = $this->getEmail($node);
+        $apiSettings = $apiSettings ?? $this->settingsService->getFromNodeOrConfig($node);
+        $email = $this->getEmail($node, $apiSettings);
 
         $preheaderText = $node->getProperty('previewText') ?: '';
         $emailType = isset($segmentIds) ? 'list' : 'template';
@@ -212,7 +224,7 @@ class EmailService
         $isVariantEmail = $this->variantEmailService->isVariantEmail($node);
         if ($isVariantEmail) {
             $parentNode = $this->variantEmailService->getParentEmailNode($node);
-            $parentEmail = $this->getEmail($parentNode);
+            $parentEmail = $this->getEmail($parentNode, $apiSettings);
             if (!$parentEmail) {
                 return null;
             }
@@ -229,18 +241,20 @@ class EmailService
                 !isset($excludedSegmentIds) || is_array($excludedSegmentIds)
                     ? $excludedSegmentIds
                     : [$excludedSegmentIds];
-            $data = array_filter(array_merge($data, $publish, [
-                'lists' => $lists,
-                'excludedLists' => $excludedLists ?? [],
-            ]));
+            $data = array_filter(
+                array_merge($data, $publish, [
+                    'lists' => $lists,
+                    'excludedLists' => $excludedLists ?? [],
+                ])
+            );
         }
 
         $data['dynamicContent'] = $this->generateNeosData($dynamicContentData, $email);
 
         if (isset($email)) {
-            $email = $this->apiService->edit(ApiService::ENDPOINT_EMAILS, $email['id'], $data)['email'];
+            $email = $this->apiService->edit($apiSettings, ApiService::ENDPOINT_EMAILS, $email['id'], $data)['email'];
         } else {
-            $email = $this->apiService->create(ApiService::ENDPOINT_EMAILS, $data)['email'];
+            $email = $this->apiService->create($apiSettings, ApiService::ENDPOINT_EMAILS, $data)['email'];
         }
 
         if ($isVariantEmail) {
@@ -258,7 +272,7 @@ class EmailService
                 'dynamicContent' => $parentEmail['dynamicContent'],
             ];
 
-            $this->apiService->edit(ApiService::ENDPOINT_EMAILS, $parentEmail['id'], $parentData);
+            $this->apiService->edit($apiSettings, ApiService::ENDPOINT_EMAILS, $parentEmail['id'], $parentData);
         }
 
         return $email;
@@ -274,7 +288,8 @@ class EmailService
      */
     public function sendTestEmail(NodeInterface $node, array $recipients, int $contactId): array
     {
-        $email = $this->getEmail($node);
+        $apiSettings = $this->settingsService->getFromNodeOrConfig($node);
+        $email = $this->getEmail($node, $apiSettings);
         if (!$email) {
             return [
                 'success' => false,
@@ -282,7 +297,14 @@ class EmailService
             ];
         }
         try {
-            $this->apiService->makeCall([ApiService::ENDPOINT_EMAILS, $email['id'], 'example'], ['recipients' => $recipients, 'contactId' => $contactId], 'POST', true, false);
+            $this->apiService->makeCall(
+                $apiSettings,
+                [ApiService::ENDPOINT_EMAILS, $email['id'], 'example'],
+                ['recipients' => $recipients, 'contactId' => $contactId],
+                'POST',
+                true,
+                false,
+            );
             return [
                 'success' => true,
                 'error' => false,
@@ -313,11 +335,12 @@ class EmailService
      * Get email by node
      *
      * @param NodeInterface $node
+     * @param array $apiSettings
      * @return array|null
      */
-    public function getEmail(NodeInterface $node): ?array
+    public function getEmail(NodeInterface $node, array $apiSettings): ?array
     {
-        $emails = $this->apiService->getList(ApiService::ENDPOINT_EMAILS);
+        $emails = $this->apiService->getList($apiSettings, ApiService::ENDPOINT_EMAILS);
         $nodeIdentifier = $this->getNodeIdentifier($node);
 
         $variants = [];
@@ -340,7 +363,7 @@ class EmailService
             }
         }
         if (isset($variantId)) {
-            return $this->apiService->makeCall([ApiService::ENDPOINT_EMAILS, $variantId])['email'];
+            return $this->apiService->makeCall($apiSettings, [ApiService::ENDPOINT_EMAILS, $variantId])['email'];
         }
 
         return null;
