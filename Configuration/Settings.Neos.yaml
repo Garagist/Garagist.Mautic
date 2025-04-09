@@ -1,13 +1,4 @@
 Neos:
-  EventSourcing:
-    EventStore:
-      stores:
-        'Garagist.Mautic:EventStore':
-          storage: 'Neos\EventSourcing\EventStore\Storage\Doctrine\DoctrineEventStorage'
-          storageOptions:
-            eventTableName: 'garagist_mautic_events'
-          listeners:
-            'Garagist\Mautic\Manager\MauticProcessManager': true
   Flow:
     log:
       psr3:
@@ -24,29 +15,7 @@ Neos:
       translation:
         autoInclude:
           Garagist.Mautic:
-            - Module
             - 'NodeTypes/*'
     fusion:
       autoInclude:
         Garagist.Mautic: true
-    modules:
-      management:
-        submodules:
-          mautic:
-            label: 'Garagist.Mautic:Module:module.mautic.label'
-            description: 'Garagist.Mautic:Module:module.mautic.description'
-            icon: 'fas fa-paper-plane'
-            controller: \Garagist\Mautic\Controller\BackendController
-            privilegeTarget: 'Garagist.Mautic:BackendModule'
-            position: end
-            mainStylesheet: Lite
-            additionalResources:
-              javaScripts:
-                - 'resource://Garagist.Mautic/Public/Backend/Scripts.js'
-              styleSheets:
-                - 'resource://Garagist.Mautic/Public/Backend/Styles.css'
-    Ui:
-      resources:
-        javascript:
-          Garagist.Mautic:EmailModuleEditor:
-            resource: resource://Garagist.Mautic/Public/Editor/Plugin.js

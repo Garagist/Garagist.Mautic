@@ -6,6 +6,3 @@
   arguments:
     1:
       value: 'Garagist.Mautic:MauticLogger'
-
-Garagist\Mautic\Provider\DataProviderInterface:
-  className: 'Garagist\Mautic\Provider\DataProvider'

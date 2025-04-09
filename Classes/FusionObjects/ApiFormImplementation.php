@@ -8,28 +8,39 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 class ApiFormImplementation extends AbstractFusionObject
 {
-
-    /**
-     * @Flow\Inject
-     * @var ApiService
-     */
-    protected $apiService;
+    #[Flow\Inject]
+    protected ApiService $apiService;
 
     /**
      * @return string
      */
     public function evaluate()
     {
-        $id = (int)$this->fusionValue('id');
+        $id = (int) $this->fusionValue('id');
         $url = $this->fusionValue('url');
+        $username = $this->fusionValue('username');
+        $password = $this->fusionValue('password');
 
-        if (!isset($id) || !$url) {
+        if (!isset($id) || !$url || !$username || !$password) {
             return [];
         }
 
-        $data = $this->apiService->getForm($id);
+        $apiSettings = [
+            'url' => $url,
+            'username' => $username,
+            'password' => $password,
+        ];
 
-        if (!$data || !isset($data['fields'])) {
+        $data = $this->apiService->makeCall(
+            $apiSettings,
+            [ApiService::ENDPOINT_FORMS, $id],
+            ray: false,
+            throwExeptions: false,
+        );
+
+        if (isset($data['form']) && $data['form']['isPublished'] && isset($data['form']['fields'])) {
+            $data = $data['form'];
+        } else {
             return [];
         }
 
@@ -40,18 +51,14 @@ class ApiFormImplementation extends AbstractFusionObject
         $page = 1;
         $prevLabel = null;
         $fields = [
-            1 => []
+            1 => [],
         ];
-        $hiddenFields = [
-            ['formId', $data['id']],
-            ['formName', $data['alias']],
-            ['messenger', 1]
-        ];
+        $hiddenFields = [['formId', $data['id']], ['formName', $data['alias']], ['messenger', 1]];
         $defaultValues = [];
         foreach ($data['fields'] as $field) {
             $type = $field['type'];
             $name = $field['alias'];
-            $value =  $field['defaultValue'];
+            $value = $field['defaultValue'];
 
             if ($type === 'hidden') {
                 $hiddenFields[] = [$name, $value];
@@ -59,7 +66,20 @@ class ApiFormImplementation extends AbstractFusionObject
             }
 
             $tagName = null;
-            if (in_array($type, ['email', 'password', 'text', 'file', 'date', 'datetime', 'number', 'captcha', 'url', 'tel'])) {
+            if (
+                in_array($type, [
+                    'email',
+                    'password',
+                    'text',
+                    'file',
+                    'date',
+                    'datetime',
+                    'number',
+                    'captcha',
+                    'url',
+                    'tel',
+                ])
+            ) {
                 $tagName = 'input';
             } elseif (in_array($type, ['select', 'country'])) {
                 $tagName = 'select';
@@ -85,28 +105,30 @@ class ApiFormImplementation extends AbstractFusionObject
             $fields[$page][] = array_filter([
                 'name' => $name,
                 'label' => $field['label'],
-                'showLabel' =>  $field['showLabel'],
-                'type' =>  $type == 'datetime' ? 'datetime-local' : $type,
+                'showLabel' => $field['showLabel'],
+                'type' => $type == 'datetime' ? 'datetime-local' : $type,
                 'inputAttributes' => $this->parseStringToArray($field['inputAttributes'] ?? null),
                 'accept' => $accept ?? null,
                 'filesize' => $filesize ?? null,
-                'tagName' =>  $tagName,
-                'value' =>  $field['defaultValue'],
+                'tagName' => $tagName,
+                'value' => $field['defaultValue'],
                 'required' => $field['isRequired'],
                 'validation' => $field['validationMessage'],
                 'help' => $field['helpMessage'],
                 'placeholder' => $field['properties']['placeholder'] ?? null,
-                'options' => $field['properties']['list']['list'] ?? $field['properties']['optionlist']['list'] ?? [],
+                'options' => $field['properties']['list']['list'] ?? ($field['properties']['optionlist']['list'] ?? []),
                 'multiple' => !!($field['properties']['multiple'] ?? null),
                 'text' => $field['properties']['text'] ?? null,
                 'nextPageLabel' => $field['properties']['next_page_label'] ?? null,
                 'prevPageLabel' => $field['properties']['prev_page_label'] ?? null,
                 'captcha' => $field['properties']['captcha'] ?? null,
                 'errorMessage' => $field['properties']['errorMessage'] ?? null,
-                'dependOn' => $field['parent'] ? [
-                    'name' => $parentsMap[$field['parent']],
-                    'conditions' => $field['conditions']
-                ] : null
+                'dependOn' => $field['parent']
+                    ? [
+                        'name' => $parentsMap[$field['parent']],
+                        'conditions' => $field['conditions'],
+                    ]
+                    : null,
             ]);
             if ($type === 'pagebreak') {
                 $page++;
@@ -117,7 +139,8 @@ class ApiFormImplementation extends AbstractFusionObject
         return [
             'form' => [
                 'id' => $data['id'],
-                'name' => $data['alias'],
+                'alias' => $data['alias'],
+                'name' => $data['name'],
                 'action' => $url . '/form/submit',
                 'origin' => $url,
                 'showMessage' => $data['postAction'] === 'message',

@@ -1,0 +1,66 @@
+'Carbon.Newsletter:Mixin.Email':
+  ui:
+    inspector:
+      views:
+        emailData:
+          group: document
+          position: 'start 999'
+          view: 'Carbon.Newsletter/EmailView'
+          viewOptions:
+            dataSource: garagist-mautic-email
+            arguments:
+              system: Mautic
+              testEmailDataSource: garagist-mautic-test-email
+  options:
+    template:
+      properties:
+        globalSenderName: '${Carbon.Newsletter.globalProperty(node, "globalSenderName")}'
+        globalSenderMail: '${Carbon.Newsletter.globalProperty(node, "globalSenderMail")}'
+  properties:
+    globalSenderName:
+      type: string
+      search:
+        indexing: false
+    globalSenderMail:
+      type: string
+      search:
+        indexing: false
+    senderName:
+      type: string
+      search:
+        indexing: false
+      ui:
+        label: 'Garagist.Mautic:NodeTypes.Override.Email:properties.senderName'
+        inspector:
+          group: document
+          position: 210
+          editorOptions:
+            placeholder: 'ClientEval: node.properties.globalSenderName'
+    senderMail:
+      type: string
+      search:
+        indexing: false
+      ui:
+        label: 'Garagist.Mautic:NodeTypes.Override.Email:properties.senderMail'
+        inspector:
+          group: document
+          position: 220
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            allowEmpty: true
+            placeholder: 'ClientEval: node.properties.globalSenderMail'
+            dataSourceDisableCaching: true
+            dataSourceIdentifier: 'garagist-mautic-sender-email-addresses'
+    replyToMail:
+      type: string
+      search:
+        indexing: false
+      ui:
+        label: 'Garagist.Mautic:NodeTypes.Override.Email:properties.replyToMail'
+        inspector:
+          group: document
+          position: 230
+          editorOptions:
+            placeholder: 'ClientEval: node.properties.senderMail || node.properties.globalSenderMail'
+      validation:
+        Neos.Neos/Validation/EmailAddressValidator: {}

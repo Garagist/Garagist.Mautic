@@ -1,0 +1,23 @@
+'Garagist.Mautic:Mixin.Segments':
+  abstract: true
+  options:
+    template:
+      properties:
+        category: '${Carbon.Newsletter.newsletterSystemConfig(node, "categories.newsletter")}'
+        segments: '${Carbon.Newsletter.newsletterSystemConfig(node, "newsletterSegment", true)}'
+  properties:
+    segments:
+      type: array
+      search:
+        indexing: false
+      ui:
+        label: i18n
+        reloadPageIfChanged: true
+        inspector:
+          group: document
+          position: 'before title'
+          editor: Neos.Neos/Inspector/Editors/SelectBoxEditor
+          editorOptions:
+            dataSourceIdentifier: garagist-mautic-segments
+      validation:
+        'Neos.Neos/Validation/NotEmptyValidator': []

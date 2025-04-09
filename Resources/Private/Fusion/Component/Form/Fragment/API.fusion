@@ -1,24 +1,24 @@
 prototype(Garagist.Mautic:Component.Form.Fragment.API) < prototype(Neos.Fusion:Component) {
     @propTypes {
-        id = ${PropTypes.integer}
-        url = ${PropTypes.string}
         class = ${PropTypes.anyOf( PropTypes.string, PropTypes.arrayOf( PropTypes.string ) )}
+        titleWrapper  = ${PropTypes.string}
         renderPrototype  = ${PropTypes.string}
     }
 
-    id = null
-    url = null
     class = null
     renderPrototype = ${Configuration.Setting('Garagist.Mautic.apiRenderer')}
 
-    @if.hasUrl_Id = ${this.url && this.id && this.renderPrototype}
+    @if.hasNeededProps = ${this.renderPrototype && this.mauticForm && this.mauticForm.id && this.mauticForm.url && this.mauticForm.username && this.mauticForm.password}
 
     renderer = Neos.Fusion:Renderer {
         type = ${props.renderPrototype}
         element.class = ${props.class}
+        element.titleWrapper = ${props.titleWrapper}
         element.data = Garagist.Mautic:API.Form {
-            id = ${props.id}
-            url = ${props.url}
+            id = ${props.mauticForm.id}
+            url = ${props.mauticForm.url}
+            username = ${props.mauticForm.username}
+            password = ${props.mauticForm.password}
        }
     }
 

@@ -3,8 +3,11 @@
     xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file original="" product-name="Garagist.Mautic" source-language="en" datatype="plaintext">
         <body>
-            <trans-unit id="properties.mauticFormId" xml:space="preserve">
-                <source>Mautic form</source>
+            <trans-unit id="properties.mauticForm" xml:space="preserve">
+                <source>Form</source>
+            </trans-unit>
+            <trans-unit id="noFormSelected" xml:space="preserve">
+                <source>No form has been selected. Please set in the inspector.</source>
             </trans-unit>
         </body>
     </file>

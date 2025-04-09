@@ -1,24 +1,35 @@
 prototype(Garagist.Mautic:Component.Form) < prototype(Neos.Fusion:Component) {
     @propTypes {
-        id = ${PropTypes.integer}
-        url = ${PropTypes.string}
-        apiUrl = ${PropTypes.string}
         embedType = ${PropTypes.oneOf(['javascript', 'iframe', 'plain', 'api'])}
         iframeClass = ${PropTypes.anyOf( PropTypes.string, PropTypes.arrayOf( PropTypes.string ) )}
         waitMessage = ${PropTypes.string}
+        titleWrapper = ${PropTypes.string}
     }
 
-    id = ${q(node).property('mauticFormId')}
-    url = ${Configuration.Setting('Garagist.Mautic.publicUrl')}
-    apiUrl = ${Configuration.Setting('Garagist.Mautic.api.baseUrl') || this.url}
+    mauticForm = Garagist.Mautic:API.Settings {
+        node = ${node}
+        propertyName = 'mauticForm'
+    }
+
     embedType = ${Configuration.Setting('Garagist.Mautic.embedType')}
     iframeClass = null
     replacements = Neos.Fusion:DataStructure
 
+    // %title% is replaced with the title of the form. Only in API mode.
+    titleWrapper = null
+
+    notification = false
+
+    @private.notification = Carbon.Notification:Backend {
+        @if.set = ${props.notification && !props.mauticForm}
+        content = ${Carbon.Backend.translate('noFormSelected', null, [], 'NodeTypes.Mixin.Form', 'Garagist.Mautic')}
+    }
+
     renderer = afx`
-        <Garagist.Mautic:Component.Form.Fragment.Javascript @if={props.embedType == 'javascript'} {...props} />
-        <Garagist.Mautic:Component.Form.Fragment.Iframe @if={props.embedType == 'iframe'} {...props} />
-        <Garagist.Mautic:Component.Form.Fragment.Plain @if={props.embedType == 'plain'} {...props} />
+        {private.notification}
         <Garagist.Mautic:Component.Form.Fragment.API @if={props.embedType == 'api'} {...props} />
+        <Garagist.Mautic:Component.Form.Fragment.Iframe @if={props.embedType == 'iframe'} {...props} />
+        <Garagist.Mautic:Component.Form.Fragment.Javascript @if={props.embedType == 'javascript'} {...props} />
+        <Garagist.Mautic:Component.Form.Fragment.Plain @if={props.embedType == 'plain'} {...props} />
     `
 }

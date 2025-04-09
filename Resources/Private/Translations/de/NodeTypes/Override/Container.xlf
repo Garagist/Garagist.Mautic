@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2"
+    xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file original="" product-name="Garagist.Mautic" source-language="en" target-language="de" datatype="plaintext">
+        <body>
+            <trans-unit id="groups.email" xml:space="preserve">
+                <source>Email settings</source>
+                <target>E-Mail Einstellungen</target>
+            </trans-unit>
+            <trans-unit id="properties.senderEmails" xml:space="preserve">
+                <source>Possible sender addresses</source>
+                <target>Mögliche Absenderadressen</target>
+            </trans-unit>
+            <trans-unit id="properties.senderEmails.add" xml:space="preserve">
+                <source>Add email address</source>
+                <target>E-Mail Adresse hinzufügen</target>
+            </trans-unit>
+            <trans-unit id="properties.globalSenderName" xml:space="preserve">
+                <source>Global sender name</source>
+                <target>Globaler Absender Name</target>
+            </trans-unit>
+            <trans-unit id="properties.globalSenderMail" xml:space="preserve">
+                <source>Global sender email address</source>
+                <target>Globale Absender-E-Mail-Adresse</target>
+            </trans-unit>
+            <trans-unit id="properties.mauticSettings" xml:space="preserve">
+                <source>Mautic settings</source>
+                <target>Mautic Einstellungen</target>
+            </trans-unit>
+            <trans-unit id="properties.mauticSettings.add" xml:space="preserve">
+                <source>Add API settings</source>
+                <target>API-Einstellungen hinzufügen</target>
+            </trans-unit>
+            <trans-unit id="properties.mauticSettings.url" xml:space="preserve">
+                <source>URL</source>
+                <target>URL</target>
+            </trans-unit>
+            <trans-unit id="properties.mauticSettings.username" xml:space="preserve">
+                <source>Username</source>
+                <target>Benutzername</target>
+            </trans-unit>
+            <trans-unit id="properties.mauticSettings.password" xml:space="preserve">
+                <source>Password</source>
+                <target>Passwort</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

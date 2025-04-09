@@ -1,78 +1,49 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Garagist\Mautic\Service;
 
-use Garagist\Mautic\Api\Emails;
-use Mautic\Api\Campaigns;
-use Mautic\Api\Contacts;
-use Mautic\Api\Forms;
-use Mautic\Api\Pages;
-use Mautic\Api\Segments;
-use Mautic\Auth\ApiAuth;
-use Mautic\Auth\AuthInterface;
-use Mautic\Exception\ContextNotFoundException;
-use Mautic\MauticApi;
-use Neos\ContentRepository\Exception\NodeException;
+use Carbon\Newsletter\Service\NodeService;
+use Garagist\Mautic\Service\SettingsService;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\RequestOptions;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Psr\Log\LoggerInterface;
 use Throwable;
-use function array_pop;
 use function in_array;
 use function sprintf;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class ApiService
 {
-    /**
-     * @Flow\InjectConfiguration
-     * @var array
-     */
-    protected $settings = [];
+    const ENDPOINT_ASSETS = 'assets';
+    const ENDPOINT_CAMPAIGNS = 'campaigns';
+    const ENDPOINT_CATEGORIES = 'categories';
+    const ENDPOINT_COMPANY_FIELDS = 'fields/company';
+    const ENDPOINT_CONTACT_FIELDS = 'fields/contact';
+    const ENDPOINT_CONTACTS = 'contacts';
+    const ENDPOINT_EMAILS = 'emails';
+    const ENDPOINT_FORMS = 'forms';
+    const ENDPOINT_NOTIFICATIONS = 'notifications';
+    const ENDPOINT_PAGES = 'pages';
+    const ENDPOINT_POINTS = 'points';
+    const ENDPOINT_POINTS_GROUPS = 'points/groups';
+    const ENDPOINT_REPORTS = 'reports';
+    const ENDPOINT_SEGMENTS = 'segments';
+    const ENDPOINT_SMSES = 'smses';
+    const ENDPOINT_THEMES = 'themes';
 
-    /**
-     * @var AuthInterface
-     */
-    protected $auth;
+    #[Flow\InjectConfiguration('api.ignoreHttpsErrors')]
+    protected bool $ignoreHttpsErrors;
 
-    /**
-     * @var MauticApi
-     */
-    protected $api;
+    #[Flow\Inject]
+    protected NodeService $nodeService;
 
-    /**
-     * @var Emails
-     */
-    protected $emailApi;
-
-    /**
-     * @var Contacts
-     */
-    protected $contactApi;
-
-    /**
-     * @var Forms
-     */
-    protected $formApi;
-
-    /**
-     * @var Segments
-     */
-    protected $segmentApi;
-
-    /**
-     * @var Campaigns
-     */
-    protected $campaignApi;
-
-    /**
-     * @var Pages
-     */
-    protected $pageApi;
+    #[Flow\Inject]
+    protected SettingsService $settingsService;
 
     /**
      * @Flow\Inject(name="Garagist.Mautic:MauticLogger")
@@ -81,287 +52,290 @@ class ApiService
     protected $mauticLogger;
 
     /**
-     * @throws Exception
-     * @throws ContextNotFoundException
-     */
-    protected function initializeObject(): void
-    {
-        if (
-            !isset($this->settings['api']['baseUrl']) ||
-            !isset($this->settings['api']['userName']) ||
-            !isset($this->settings['api']['password'])
-        ) {
-            throw new Exception('Mautic api settings are not correct');
-        }
-
-        $initAuth = new ApiAuth();
-        $auth = $initAuth->newAuth($this->settings['api'], 'BasicAuth');
-
-        $api = new MauticApi();
-        $url = $this->settings['api']['baseUrl'] . '/api/';
-        $this->emailApi = new Emails($auth, $url);
-        $this->contactApi = $api->newApi("contacts", $auth, $url);
-        $this->formApi = $api->newApi("forms", $auth, $url);
-        $this->segmentApi = $api->newApi("segments", $auth, $url);
-        $this->campaignApi = $api->newApi("campaigns", $auth, $url);
-        $this->pageApi = $api->newApi("pages", $auth, $url);
-    }
-
-    /**
-     * @param string $emailIdentifier
-     * @return void
-     *@throws NodeException|Exception
-     */
-    public function deleteEmail(string $emailIdentifier): void
-    {
-        $emailRecord = $this->findMauticRecordByEmailIdentifier($emailIdentifier);
-        if ($emailRecord) {
-            $response = $this->emailApi->delete($emailRecord['id']);
-            $this->mauticLogger->info(sprintf('Delete mautic record with identifier %s', $emailIdentifier));
-            $this->handleError($response);
-        }
-    }
-
-    /**
-     * @throws NodeException|Exception
-     * @return array
-     */
-    public function alterEmail(string $emailIdentifier, array $data): array
-    {
-
-        $emailRecord = $this->findMauticRecordByEmailIdentifier($emailIdentifier);
-
-        if ($emailRecord) { //match found -> update
-            $response = $this->emailApi->edit($emailRecord['id'], $data);
-            $this->mauticLogger->info(sprintf('Edit mautic record with identifier %s', $emailIdentifier));
-        } else { // no match found -> create
-            $response = $this->emailApi->create($data);
-            $this->mauticLogger->info(sprintf('Create new mautic record with identifier %s', $emailIdentifier));
-        }
-
-        $this->handleError($response);
-
-        return $response;
-    }
-
-    /**
-     * @throws NodeException|Exception
-     * @return void
-     */
-    protected function handleError($response): void
-    {
-        if (isset($response['error'])) {
-            throw new Exception(json_encode($response['error']));
-        }
-        if (isset($response['errors'])) {
-            throw new Exception(json_encode($response['errors']));
-        }
-    }
-
-    /**
-     * @param string $emailIdentifier
-     * @return int|null
-     */
-    public function isEmailPublished(string $emailIdentifier)
-    {
-        $emailRecord = $this->findMauticRecordByEmailIdentifier($emailIdentifier);
-
-        return $emailRecord['isPublished'] === true ? (int) $emailRecord['id'] : null;
-    }
-
-    /**
-     * @param string $emailIdentifier
-     * @return mixed|null
-     */
-    public function findMauticRecordByEmailIdentifier(string $emailIdentifier)
-    {
-        $match = $this->validateResponse($this->emailApi->getList($emailIdentifier));
-        if ($match['total'] === 1) { //match found
-            return array_pop($match['emails']);
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string $emailIdentifier
-     * @return array
-     * @throws Exception
-     */
-    public function sendEmail(string $emailIdentifier, $mauticIdentifier): array
-    {
-        $mauticIdentifier = $this->isEmailPublished($emailIdentifier);
-
-        if ($mauticIdentifier) {
-            //TODO: new contacts, that are in the same list, will be added as pending contacts at any point in time. Therefore it's hard to say when a send out is done
-            //array(3)
-            // string "success" (7) => integer 1
-            // string "sentCount" (9) => integer 0
-            // string "failedRecipients" (16) => integer 0
-
-            $response = $this->validateResponse($this->emailApi->send($mauticIdentifier));
-
-            return $response;
-        }
-
-        throw new Exception('Email could not be send because it does not exist or ist not published');
-    }
-
-    /**
-     * @param string $emailIdentifier
-     * @param array $recipients
-     * @return array
-     * @throws Exception
-     */
-    public function sendTestEmail(string $emailIdentifier, array $recipients): array
-    {
-        $emailRecord = $this->findMauticRecordByEmailIdentifier($emailIdentifier);
-
-        if (!empty($emailRecord['id'])) {
-            //array(3)
-            // string "success" (7) => integer 1
-            // string "recipients" (16) => integer 0
-
-            $response = $this->validateResponse($this->emailApi->sendExample($emailRecord['id'], $recipients));
-
-            return $response;
-        }
-
-        throw new Exception('TestEmail could not be send because it does not exist');
-    }
-
-    /**
-     * @return array
-     */
-    public function getAllSegments(): array
-    {
-        return $this->validateResponse($this->contactApi->getSegments());
-    }
-
-    /**
-     * Get a single form. Fails gracefully
-     *
-     * @param integer $id
-     * @return array
-     */
-    public function getForm(int $id): array
-    {
-        $data = $this->validateResponse($this->formApi->get($id), null, false);
-        if (isset($data['form']) && $data['form']['isPublished']) {
-            return $data['form'];
-        }
-
-        return [];
-    }
-
-    /**
-     * Get the list of all forms
-     *
-     * @return array
-     */
-    public function getForms(): array
-    {
-        $response = $this->validateResponse($this->formApi->getList('', 0, 0, 'id', 'ASC', true));
-
-        if ($response['total'] === 0) {
-            return [];
-        }
-
-        $data = [];
-        $hideFormIds = $this->settings['form']['hide'];
-
-        if (is_int($hideFormIds)) {
-            $hideFormIds = [$hideFormIds];
-        }
-
-        if (!is_array($hideFormIds)) {
-            $hideFormIds = [];
-        }
-
-        foreach ($response['forms'] as $form) {
-            $id = $form['id'];
-            if (!in_array($id, $hideFormIds)) {
-                $data[$id] = $form['name'];
-            }
-        }
-
-        return $data;
-    }
-
-    /**
      * Ping the mautic service
      *
+     * @param array|null $apiSettings api settings
      * @return bool
      */
-    public function ping(): bool
+    public function ping(?array $apiSettings = null): bool
     {
+        if (empty($apiSettings)) {
+            return false;
+        }
         try {
-            $this->validateResponse($this->emailApi->getList('', 0, 1));
+            $this->getList(
+                $apiSettings,
+                self::ENDPOINT_EMAILS,
+                limit: 1,
+                throwExeptions: true,
+                ray: false
+            );
             return true;
         } catch (Throwable $th) {
             return false;
         }
     }
 
-    public function getFormApi(): Forms
-    {
-        return $this->formApi;
-    }
-
-    public function getContactApi(): Contacts
-    {
-        return $this->contactApi;
-    }
-
-    public function getEmailApi(): Emails
-    {
-        return $this->emailApi;
-    }
-
-    public function getSegmentApi(): Segments
-    {
-        return $this->segmentApi;
-    }
-
-    public function getCampaignApi(): Campaigns
-    {
-        return $this->campaignApi;
-    }
-
-    public function getPageApi(): Pages
-    {
-        return $this->pageApi;
+    /**
+     * Get a list of items
+     *
+     * @param array $apiSettings
+     * @param string $endpoint
+     * @param string $search
+     * @param int $start
+     * @param int $limit
+     * @param string $orderBy
+     * @param string $orderByDir
+     * @param bool $publishedOnly
+     * @param bool $minimal
+     * @param bool $throwExeptions,
+     * @param bool $ray,
+     * @param NodeInterface|null $node
+     * @param array|null $apiSettings api settings
+     * @return array
+     */
+    public function getList(
+        array $apiSettings,
+        string $endpoint,
+        string $search = '',
+        int $start = 0,
+        int $limit = 0,
+        string $orderBy = '',
+        string $orderByDir = 'ASC',
+        bool $publishedOnly = false,
+        bool $minimal = false,
+        bool $throwExeptions = true,
+        bool $ray = true,
+    ): array {
+        $parameters = [
+            'search' => $search,
+            'start' => $start,
+            'limit' => $limit,
+            'orderBy' => $orderBy,
+            'orderByDir' => $orderByDir,
+            'publishedOnly' => $publishedOnly,
+            'minimal' => $minimal,
+        ];
+        $parameters = array_filter($parameters);
+        return $this->makeCall(
+            $apiSettings,
+            $endpoint,
+            $parameters,
+            throwExeptions: $throwExeptions,
+            ray: $ray,
+        );
     }
 
     /**
-     * Validate the response from mautic
+     * Create a new item
      *
-     * @param array $response
-     * @param string|null $additionalText
-     * @param bool $throwExeptions
+     * @param array $apiSettings
+     * @param string $endpoint
+     * @param array $parameters
      * @return array
      */
-    protected function validateResponse(array $response, ?string $additionalText = null, bool $throwExeptions = true): array
-    {
-        if (!isset($additionalText)) {
-            $additionalText = '';
+    public function create(
+        array $apiSettings,
+        string $endpoint,
+        ?array $parameters = null
+    ): array {
+        return $this->makeCall($apiSettings, [$endpoint, 'new'], $parameters, 'POST');
+    }
+
+    /**
+     * Delete an item.
+     *
+     * @param string $endpoint
+     * @param string|int $id
+     * @param array|null $apiSettings api settings
+     * @return array
+     */
+    public function delete(
+        array $apiSettings,
+        string $endpoint,
+        string|int $id,
+    ): array {
+        return $this->makeCall($apiSettings, [$endpoint, $id, 'delete'], method: 'DELETE');
+    }
+
+    /**
+     * Delete a batch of items.
+     *
+     * @param string $endpoint
+     * @param array $ids
+     * @param NodeInterface|null $node
+     * @param array|null $apiSettings api settings
+     * @return array
+     */
+    public function deleteBatch(
+        string $endpoint,
+        array $ids,
+        ?NodeInterface $node = null,
+        ?array $apiSettings = null
+    ): array {
+        return $this->makeCall(
+            $apiSettings,
+            [$endpoint, 'batch/delete'],
+            parameters: ['ids' => $ids],
+            method: 'DELETE',
+            node: $node,
+        );
+    }
+
+    /**
+     * Edit an item with option to create if it doesn't exist.
+     *
+     * @param string $endpoint
+     * @param int|string|null  $id
+     * @param array $parameters
+     * @param NodeInterface|null $node
+     * @param array|null $apiSettings api settings
+     * @param bool $createIfNotExists = false
+     *
+     * @return array
+     */
+    public function edit(
+        array $apiSettings,
+        string $endpoint,
+        mixed $id = null,
+        ?array $parameters = null,
+        bool $createIfNotExists = false,
+    ): array {
+        $method = $createIfNotExists ? 'PUT' : 'PATCH';
+        return $this->makeCall(
+            $apiSettings,
+            [$endpoint, $id, 'edit'],
+            parameters: $parameters,
+            method: $method,
+        );
+    }
+
+    /**
+     * Make a call to the mautic api
+     *
+     * @param array $apiSettings
+     * @param array|string $endpoint
+     * @param array|null $parameters key value pairs.
+     * @param string $method GET, POST, DELETE, PATCH, or PUT
+     * @param bool $throwExeptions
+     * @param bool $ray
+     * @return array
+     * @throws Exception
+     */
+    public function makeCall(
+        $apiSettings,
+        array|string $endpoint,
+        ?array $parameters = null,
+        string $method = 'GET',
+        bool $throwExeptions = true,
+        bool $ray = true,
+    ): ?array {
+        if (is_array($endpoint)) {
+            $endpoint = implode('/', array_filter($endpoint));
         }
 
-        if (isset($response['error'])) {
-            $json = json_encode($response['error']);
-            $this->mauticLogger->error($additionalText . $json);
-            if ($throwExeptions) {
-                throw new Exception($json);
+        $method = strtoupper($method);
+        $endpoint = sprintf('%s/api/%s', rtrim($apiSettings['url'], '/'), ltrim($endpoint, '/'));
+        $ignoreHttpsErrors = $this->ignoreHttpsErrors;
+
+        $client = new Client(['verify' => !$ignoreHttpsErrors]);
+        $options = [
+            RequestOptions::HEADERS => [
+                'Accepts' => 'application/json',
+            ],
+            RequestOptions::AUTH => [$apiSettings['username'], $apiSettings['password']],
+        ];
+
+        if (isset($parameters)) {
+            // Call is a post request
+            if (in_array($method, ['POST', 'PUT', 'PATCH'])) {
+                // We don't send files in the backend, the forms are handled by the frontend
+                $options[RequestOptions::HEADERS]['Content-Type'] = 'application/json';
+                $options[RequestOptions::JSON] = $parameters;
+            } else {
+                $options[RequestOptions::QUERY] = $parameters;
             }
         }
-        if (isset($response['errors'])) {
-            $json = json_encode($response['errors']);
-            $this->mauticLogger->error($additionalText . $json);
-            if ($throwExeptions) {
-                throw new Exception($json);
-            }
+        $json = [];
+        try {
+            $response = $client->request($method, $endpoint, $options);
+            $contents = $response->getBody()->getContents();
+            $json = json_decode($contents, true);
+        } catch (ClientException $exception) {
+            $message = $exception->getResponse()->getBody()->getContents();
+            $this->errorHandling('ClientException', $message, $exception, $throwExeptions, $ray);
+            $this->mauticLogger->error($message);
+        } catch (ServerException $exception) {
+            $message = $exception->getResponse()->getBody()->getContents();
+            $this->errorHandling('ServerException', $message, $exception, $throwExeptions, $ray);
         }
 
-        return $response;
+        return $this->errorCheck($json, $throwExeptions, $ray);
+    }
+
+    private function errorHandling(
+        ?string $type = null,
+        mixed $data = null,
+        $exception = null,
+        bool $die = true,
+        bool $ray = true
+    ): void {
+        if (function_exists('ray') && $ray) {
+            $type = $type ? $type : 'Error';
+            ray()
+                ->newScreen(sprintf('%s %s', $type, date('H:i:s')))
+                ->red();
+            if ($exception && $die) {
+                ray()->exception($exception)->hide();
+            }
+
+            if (is_string($data)) {
+                ray()->json($data)->label('Message');
+            } elseif ($data) {
+                ray()->toJson($data)->label('Message');
+            }
+
+            ray()->showApp();
+            ray()->die(sprintf('%s, see ray app for more information', $type));
+            return;
+        }
+
+        if (is_array($data)) {
+            $data = json_encode($data);
+        }
+        if (!is_string($data)) {
+            $data = (string) $data;
+        }
+        $this->mauticLogger->error($data);
+
+        if ($die) {
+            throw new Exception($data, 1739916383);
+        }
+    }
+
+    private function errorCheck(
+        array $array,
+        bool $throwExeptions = true,
+        string $title = 'Error',
+        bool $ray = true
+    ): ?array {
+        $error = isset($array['error']) ? $array['error'] : null;
+        $errors = isset($array['errors']) ? $array['errors'] : null;
+
+        if ($error === null && $errors === null) {
+            return $array;
+        }
+
+        if ($error && $errors) {
+            $error = [
+                'error' => $error,
+                'errors' => $errors,
+            ];
+        } elseif ($errors) {
+            $error = $errors;
+        }
+
+        $this->errorHandling($title, $array, null, $throwExeptions, $ray);
+        return null;
     }
 }

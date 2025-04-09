@@ -2,53 +2,401 @@
 
 namespace Garagist\Mautic\Command;
 
+use Carbon\Newsletter\Service\NodeService;
 use Garagist\Mautic\Service\ApiService;
-use Garagist\Mautic\Service\MauticService;
+use Garagist\Mautic\Service\SettingsService;
+use Garagist\Mautic\Service\SetupService;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
-use function \Neos\Flow\var_dump;
+use InvalidArgumentException;
 
-/**
- *
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class MauticCommandController extends CommandController
 {
+    #[Flow\Inject]
+    protected ApiService $apiService;
+
+    #[Flow\Inject]
+    protected SettingsService $settingsService;
+
+    #[Flow\Inject]
+    protected NodeService $nodeService;
 
     /**
-     * @Flow\Inject
-     * @var ApiService
+     * Set up segments, forms, pages and emails for the newsletter interactively
+     * @return void
+     * @throws CommandException
      */
-    protected $apiService;
+    public function setupInteractiveCommand()
+    {
+        $this->outputLine('');
+        $this->outputLine('');
+        $this->outputLine('         __  __             _   _');
+        $this->outputLine('        |  \/  | __ _ _   _| |_(_) ___');
+        $this->outputLine('        | |\/| |/ _` | | | | __| |/ __|');
+        $this->outputLine('        | |  | | (_| | |_| | |_| | (__');
+        $this->outputLine('        |_|  |_|\__,_|\__,_|\__|_|\___|');
+        $this->outputLine('');
+        $this->outputLine('          Integrated into Neos. Easy.');
+        $this->outputLine('');
+        $this->outputLine('');
+        $this->outputLine('');
+        $this->outputLine(' Let\'s start with a few questions to setup Mautic');
+        $this->outputLine('');
+
+        $keyedOptions = [];
+        $options = [];
+        foreach ($this->nodeService->getSites() as $site) {
+            $description = sprintf('%s (%s)', $site['name'], $site['domain'] ?? 'No domain set');
+            $keyedOptions[$description] = $site;
+            $options[] = $description;
+        }
+
+        switch (count($options)) {
+            case 0:
+                $this->quitOnError('No sites found');
+            // no break
+            case 1:
+                $key = array_key_first($keyedOptions);
+                $this->successMessage('Found one configured Neos site', null, $key);
+                break;
+            default:
+                $key = $this->output->select(
+                    ' For which site you want to configure Mautic? [<info>0</info>]',
+                    $options,
+                    0
+                );
+                break;
+        }
+
+        $siteNode = $keyedOptions[$key]['node'];
+        $domain = $keyedOptions[$key]['domain'] ?? null;
+
+        // Get Newsletter container
+        if ($siteNode->getNodeType()->isOfType('Carbon.Newsletter:Document.HomePage')) {
+            $newsletterNode = $siteNode;
+            $this->successMessage('The site node is a newsletter container');
+        } else {
+            $newsletterKeyedOptions = [];
+            $newsletterOptions = [];
+            foreach (
+                $this->nodeService->findNodesByNodeTypeNameAndPathEnd($siteNode, 'Carbon.Newsletter:Mixin.Container')
+                as $node
+            ) {
+                $description = sprintf('%s (%s)', $node->getProperty('title'), $node->getIdentifier());
+                $newsletterKeyedOptions[$description] = $node;
+                $newsletterOptions[] = $description;
+            }
+
+            switch (count($newsletterOptions)) {
+                case 0:
+                    $this->quitOnError('No newsletter page found. Please create it first in the Neos Backened.');
+                // no break
+                case 1:
+                    $newsletterNode = array_key_first($newsletterKeyedOptions);
+                    $this->successMessage('Found following newsletter container:', null, $newsletterNode);
+                    break;
+
+                default:
+                    $newsletterNode = $this->output->select(
+                        ' What is the container for newsletter? [<info>0</info>]',
+                        $newsletterOptions,
+                        0
+                    );
+                    break;
+            }
+            $newsletterNode = $newsletterKeyedOptions[$newsletterNode];
+        }
+
+        $apiSettings = $this->settingsService->getFromNodeOrConfig($newsletterNode);
+        if (empty($apiSettings)) {
+            $this->quitOnError('No Mautic API settings found. Please configure it first in the Neos Backend or in Settings.yaml');
+        }
+        $nodes = $this->getNewsletterNodes($newsletterNode);
+
+        if (!$domain) {
+            $domain = $this->output->askAndValidate(' What is the domain of the website? ', function ($value) {
+                if (!filter_var($value, FILTER_VALIDATE_URL)) {
+                    throw new InvalidArgumentException('Please enter a valid domain (incl. protocol)');
+                }
+                return $value;
+            });
+        }
+
+        $this->successMessage('Set domain to %s', [$domain], marginBottom: true);
+
+        $hideThemes = $this->output->askConfirmation(' Do you want to hide all themes in Mautic? [<info>Y</info>/n] ', true);
+
+        $language = $this->output->select(' What is the language of the website? ', [
+            'de' => 'German',
+            'en' => 'English',
+        ]);
+        $informal = $this->output->askConfirmation(' Do you want to use informal language? [y/<info>N</info>] ', false);
+        $singlePerson = $this->output->askConfirmation(' Is the sender a single person? [y/<info>N</info>] ', false);
+        $this->outputLine('');
+        $this->outputLine('');
+        $this->outputLine(' Thank you for your input. Let me setup Mautic for you.');
+        $this->outputLine('');
+        $this->outputLine('');
+        $this->setupWithNode($apiSettings, $domain, $nodes, $language, $informal, $singlePerson, $hideThemes);
+    }
+
+        /**
+     * Set up segments, forms, pages and emails for the newsletter
+     *
+     * @param string $identifier Identifier of the newsletter container
+     * @param string $language Language of the website (en or de)
+     * @param string $domain Domain of the website, incl. protocol e.g. https://www.domain.tld
+     * @param bool $informal Use informal language
+     * @param bool $formal Use formal language. Wins over --informal
+     * @param bool $singlePerson Sender is a single person
+     * @param bool $group Sender is a group, e.g. a company or organization. Wins over --single-person
+     * @param bool $deleteAllThemes Delete all themes
+     * @return void
+     */
+    public function setupCommand(
+        string $identifier,
+        string $language,
+        ?string $domain = null,
+        ?bool $informal = null,
+        ?bool $formal = null,
+        ?bool $singlePerson = null,
+        ?bool $group = null,
+        ?bool $deleteAllThemes = null
+    ): void {
+        if (!in_array($language, ['de', 'en'])) {
+            throw new InvalidArgumentException('Please provide a valid language (de or en)');
+        }
+
+        $sites = $this->nodeService->getSites();
+        $domainFromSite = null;
+        $newsletterNode = null;
+        foreach ($sites as $siteNode) {
+            $nodeInSite = $this->nodeService->findNodeById($siteNode['node'], $identifier, true);
+            if ($nodeInSite) {
+                $domainFromSite = $siteNode['domain'];
+                $newsletterNode = $nodeInSite;
+                break;
+            }
+        }
+
+        if (!$newsletterNode) {
+            throw new InvalidArgumentException('No newsletter container found');
+        }
+        if (!$newsletterNode->getNodeType()->isOfType('Carbon.Newsletter:Mixin.Container')) {
+            throw new InvalidArgumentException('The provided node is not a newsletter container');
+        }
+
+        $domain = $domain ?? $domainFromSite;
+        if (!$domain) {
+            throw new InvalidArgumentException('Please provide a domain');
+        }
+        if (!filter_var($domain, FILTER_VALIDATE_URL)) {
+            throw new InvalidArgumentException('Please provide a valid domain (inclusive protocol)');
+        }
+
+        $apiSettings = $this->settingsService->getFromNodeOrConfig($newsletterNode);
+        if (empty($apiSettings)) {
+            $this->quitOnError('No Mautic API settings found. Please configure it first in the Neos Backend or in Settings.yaml');
+        }
+
+        if ($formal === true) {
+            $informal = false;
+        }
+
+        if ($group === true) {
+            $singlePerson = false;
+        }
+
+        if (!isset($informal)) {
+            $informal = false;
+        }
+
+        if (!isset($singlePerson)) {
+            $singlePerson = false;
+        }
+        if (!isset($deleteAllThemes)) {
+            $deleteAllThemes = false;
+        }
+
+        $nodes = $this->getNewsletterNodes($newsletterNode);
+
+        $this->setupWithNode($apiSettings, $domain, $nodes, $language, $informal, $singlePerson, $deleteAllThemes);
+    }
 
     /**
-     * @Flow\Inject
-     * @var MauticService
+     * Get nodes for newsletter
+     *
+     * @param NodeInterface $node
+     * @return array
      */
-    protected $mauticService;
-
-    public function getCommand(string $emailIdentifier)
+    private function getNewsletterNodes(NodeInterface $node): array
     {
-        var_dump($this->apiService->findMauticRecordByEmailIdentifier($emailIdentifier));
+        $confirmed = $this->nodeService->findNodeByNodeTypeNameAndPathEnd(
+            $node,
+            'Carbon.Newsletter:Document.Page.Generated',
+            '/system/confirmed'
+        );
+        $mailSubscribe = $this->nodeService->findNodeByNodeTypeNameAndPathEnd(
+            $confirmed,
+            'Carbon.Newsletter:Document.Transactional.Generated',
+            '/mail-subscribe'
+        );
+        $mailSubscribeRepeat = $this->nodeService->findNodeByNodeTypeNameAndPathEnd(
+            $confirmed,
+            'Carbon.Newsletter:Document.Transactional.Generated',
+            '/mail-subscribe-repeat'
+        );
+
+        $settings = $this->nodeService->findNodeByNodeTypeNameAndPathEnd(
+            $node,
+            'Carbon.Newsletter:Document.Page.Generated',
+            '/system/settings'
+        );
+        $mailSettings = $this->nodeService->findNodeByNodeTypeNameAndPathEnd(
+            $settings,
+            'Carbon.Newsletter:Document.Transactional.Generated',
+            '/mail-settings'
+        );
+
+        $deleted = $this->nodeService->findNodeByNodeTypeNameAndPathEnd(
+            $node,
+            'Carbon.Newsletter:Document.Page.Generated',
+            '/system/deleted'
+        );
+        $mailDelete = $this->nodeService->findNodeByNodeTypeNameAndPathEnd(
+            $deleted,
+            'Carbon.Newsletter:Document.Transactional.Generated',
+            '/mail-delete'
+        );
+
+        return [
+            'container' => $node,
+            'confirmed' => $confirmed,
+            'mailSubscribe' => $mailSubscribe,
+            'mailSubscribeRepeat' => $mailSubscribeRepeat,
+            'settings' => $settings,
+            'mailSettings' => $mailSettings,
+            'deleted' => $deleted,
+            'mailDelete' => $mailDelete,
+        ];
     }
 
-    public function segmentsCommand(string $emailIdentifier)
-    {
-        $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
-        var_dump($this->mauticService->getSegmentsForEmail($email));
+    /**
+     * Output a success message
+     *
+     * @param string $message
+     * @param array|null $arguments
+     * @param string $messageOutsideInfoBlock
+     * @return void
+     */
+    private function successMessage(
+        $message,
+        ?array $arguments = null,
+        string $messageOutsideInfoBlock = '',
+        bool $marginBottom = false
+    ): void {
+        if ($arguments && count($arguments)) {
+            $message = vsprintf($message, $arguments);
+        }
+        $this->outputLine('');
+        $this->outputLine('<info> ✅ %s </info> %s', [$message, $messageOutsideInfoBlock]);
+        if ($marginBottom) {
+            $this->outputLine('');
+        }
     }
 
-    public function streamCommand(string $emailIdentifier)
+    /**
+     * Quit the command with an error message
+     *
+     * @param string|null $message
+     * @return void
+     */
+    private function quitOnError(?string $message = null): void
     {
-        $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
-        var_dump($this->mauticService->getAuditLog($email));
+        if ($message) {
+            $this->outputLine('');
+            $this->outputLine('');
+            $this->outputLine('<error> ✖ %s </error>', [$message]);
+        }
+        $this->outputLine('');
+        $this->outputLine('');
+        $this->quit(1);
     }
 
-    public function sendTestEmailCommand(string $emailIdentifier, string $recipients)
+    /**
+     * Delete all themes
+     *
+     * @param array $apiSettings
+     * @return void
+     */
+    private function hideThemes(array $apiSettings): void
     {
-        $email = $this->mauticService->getByEmailIdentifier($emailIdentifier);
-        $this->mauticService->sendExampleEmail($email, explode(',', $recipients));
+        $themes = $this->apiService->getList($apiSettings, ApiService::ENDPOINT_THEMES);
+        $numberOfThemes = count($themes['themes']);
+        if ($numberOfThemes === 0) {
+            $this->successMessage('No themes found');
+        } else {
+            $this->output->progressStart($numberOfThemes);
+            foreach ($themes['themes'] as $theme) {
+                $this->output->progressAdvance();
+                $this->apiService->delete($apiSettings, ApiService::ENDPOINT_THEMES, $theme['key']);
+            }
+            $this->output->progressFinish();
+            $this->successMessage('%s Themes deleted', [$numberOfThemes]);
+        }
+    }
 
-        var_dump($email);
+    /**
+     * Make API calls to mautic
+     *
+     * @param array $apiSettings
+     * @param string $domain
+     * @param NodeInterface[] $nodes
+     * @param string $language
+     * @param boolean $informal
+     * @param boolean $singlePerson
+     * @param boolean $hideThemes
+     * @return void
+     */
+    private function setupWithNode(
+        array $apiSettings,
+        string $domain,
+        array $nodes,
+        string $language,
+        bool $informal,
+        bool $singlePerson,
+        bool $hideThemes
+    ): void {
+        $salutation = $informal ? 'informal' : 'formal';
+        $typeOfContact = $singlePerson ? 'single' : 'group';
+
+        $service = new SetupService($apiSettings, $language, $salutation, $typeOfContact, $domain, $nodes);
+
+        if ($hideThemes) {
+            $this->hideThemes($apiSettings);
+        }
+
+        $service->setCategories();
+        $this->successMessage('Configure categories in Mautic');
+
+        $service->setSegments();
+        $this->successMessage('Configure segments in Mautic');
+
+        $service->setForms();
+        $this->successMessage('Configure forms in Mautic');
+
+        $service->setEmails();
+        $this->successMessage('Configure emails in Mautic');
+
+        $service->setCampaigns();
+        $this->successMessage('Configure campaigns in Mautic');
+
+        $service->setFormId();
+        $this->successMessage('Configure forms in Neos');
+
+        $service->saveConfig();
+        $this->successMessage('Save configuration in Neos', marginBottom: true);
     }
 }

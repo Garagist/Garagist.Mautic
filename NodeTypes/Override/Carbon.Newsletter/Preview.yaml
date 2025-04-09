@@ -1,0 +1,3 @@
+'Carbon.Newsletter:Document.Newsletter':
+  superTypes:
+    'Garagist.Mautic:Mixin.Email': true

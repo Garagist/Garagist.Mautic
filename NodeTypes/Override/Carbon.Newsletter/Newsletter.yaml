@@ -1,0 +1,7 @@
+'Carbon.Newsletter:Document.Newsletter':
+  superTypes:
+    'Garagist.Mautic:Mixin.Segments': true
+
+'Carbon.Newsletter:Document.Newsletter.Variant':
+  superTypes:
+    'Garagist.Mautic:Mixin.Segments': false

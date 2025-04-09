@@ -1,0 +1,3 @@
+'Carbon.Newsletter:Document.HomePage':
+  superTypes:
+    'Garagist.Mautic:Mixin.Tracking': true

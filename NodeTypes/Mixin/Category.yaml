@@ -1,4 +1,18 @@
-# This Mixin is for getting the category in the overview
-
 'Garagist.Mautic:Mixin.Category':
   abstract: true
+  properties:
+    category:
+      type: int
+      search:
+        indexing: false
+      ui:
+        label: i18n
+        inspector:
+          group: document
+          position: 'before title'
+          editor: Neos.Neos/Inspector/Editors/SelectBoxEditor
+          editorOptions:
+            allowEmpty: true
+            dataSourceIdentifier: garagist-mautic-categories
+            dataSourceAdditionalData:
+              allowSystemCategories: true
