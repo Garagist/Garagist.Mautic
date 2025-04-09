@@ -45,7 +45,7 @@ class FormsDataSource extends AbstractDataSource
                 ray: false,
                 throwExeptions: false
             );
-            if ($response['total'] === 0) {
+            if (!isset($response['total']) || $response['total'] === 0) {
                 continue;
             }
 

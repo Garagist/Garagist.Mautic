@@ -1,6 +1,7 @@
 prototype(Garagist.Mautic:Component.Form.Fragment.API) < prototype(Neos.Fusion:Component) {
     @propTypes {
         class = ${PropTypes.anyOf( PropTypes.string, PropTypes.arrayOf( PropTypes.string ) )}
+        titleWrapper  = ${PropTypes.string}
         renderPrototype  = ${PropTypes.string}
     }
 
@@ -12,6 +13,7 @@ prototype(Garagist.Mautic:Component.Form.Fragment.API) < prototype(Neos.Fusion:C
     renderer = Neos.Fusion:Renderer {
         type = ${props.renderPrototype}
         element.class = ${props.class}
+        element.titleWrapper = ${props.titleWrapper}
         element.data = Garagist.Mautic:API.Form {
             id = ${props.mauticForm.id}
             url = ${props.mauticForm.url}

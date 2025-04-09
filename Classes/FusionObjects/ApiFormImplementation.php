@@ -139,7 +139,8 @@ class ApiFormImplementation extends AbstractFusionObject
         return [
             'form' => [
                 'id' => $data['id'],
-                'name' => $data['alias'],
+                'alias' => $data['alias'],
+                'name' => $data['name'],
                 'action' => $url . '/form/submit',
                 'origin' => $url,
                 'showMessage' => $data['postAction'] === 'message',

@@ -3,6 +3,7 @@ prototype(Garagist.Mautic:Component.Form) < prototype(Neos.Fusion:Component) {
         embedType = ${PropTypes.oneOf(['javascript', 'iframe', 'plain', 'api'])}
         iframeClass = ${PropTypes.anyOf( PropTypes.string, PropTypes.arrayOf( PropTypes.string ) )}
         waitMessage = ${PropTypes.string}
+        titleWrapper = ${PropTypes.string}
     }
 
     mauticForm = Garagist.Mautic:API.Settings {
@@ -13,6 +14,9 @@ prototype(Garagist.Mautic:Component.Form) < prototype(Neos.Fusion:Component) {
     embedType = ${Configuration.Setting('Garagist.Mautic.embedType')}
     iframeClass = null
     replacements = Neos.Fusion:DataStructure
+
+    // %title% is replaced with the title of the form. Only in API mode.
+    titleWrapper = null
 
     notification = false
 
