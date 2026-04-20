@@ -10,7 +10,7 @@
         "neos/event-sourcing": "^2.0",
         "neos/neos": "^7.3 || ^8.0",
         "neos/fusion-form": "^2.0",
-        "mautic/api-library": "^3.0.0",
+        "mautic/api-library": "^4.0.0",
         "carbon/eel": "^2.0"
     },
     "autoload": {
